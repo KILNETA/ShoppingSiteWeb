@@ -56,11 +56,32 @@
             font-size: 32px;
             font-weight: bolder;
         }
+
+        div.LoginBox {
+            margin: auto;
+            margin-left: 0;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            background-position: center;
+        }
+        div.LoginBoxContent {
+            width: 380px;
+            height: 500px;
+            background-position: center;
+            background: #ffffff;
+        }
+        .auto-style1 {
+            text-align: center;
+        }
+        .TextBox{
+            outline: none;
+        }
     </style>
 </head>
 
 
 <body>
+    <form id="form1" runat="server">
     <header class="HeaderBackground-Style">
         <div class="Body">
             <div class="TitelBox-Style">
@@ -72,7 +93,23 @@
 
     <div class="contentBody">
         <div class="Body">
-            hello world!!
+            <img src="picture/MainActivity.png" width="500" height="500" alt="一張圖片" style="margin: auto; margin-right: 50px;"/>
+            <div class="LoginBox">
+                <div class="LoginBoxContent">
+                    <p class="auto-style1">
+                        登入
+                    </p>
+                    <p class="auto-style1">
+                        <asp:TextBox CssClass="TextBox" ID="TextBox1" runat="server" BorderStyle="None" BorderWidth="0" />
+                    </p>
+                    <p class="auto-style1">
+                        <asp:TextBox CssClass="TextBox" ID="TextBox2" runat="server" BorderStyle="None" BorderWidth="0px"/>
+                    </p>
+                    <p class="auto-style1">
+                        <asp:Label ID="Label1" runat="server" Text="登入"/>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -81,5 +118,6 @@
             <p>&copy; <%: DateTime.Now.Year %> - Einkaufen 愛康福</p>
         </div>
     </footer>
+    </form>
 </body>
 </html>
