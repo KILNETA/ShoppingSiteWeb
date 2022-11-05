@@ -8,9 +8,8 @@
     <title>Einkaufen 愛康福-登入</title>
 
     <style type="text/css">
-        html,body {
+        html,body,form {
             margin: 0;
-            height: 100%;
             display: flex;
             flex-direction: column;
         }
@@ -21,12 +20,12 @@
             background-position: center;
             display: flex;
         }
-        p{
+        p,div{
             font-family: 微軟正黑體;
         }
 
         div.contentBody{
-            flex-grow: 1;
+            height: 700px;
             background-image: url("picture/login_background.jpg");
             background-size: cover;
             background-position: center;
@@ -40,9 +39,9 @@
         }
 
         .FooterBackground-Style {
-            background-color: #CEDDE0;
+            background-color: #c3c8c9;
             width: 100%;
-            height: 240px;
+            height: 320px;
             float: left;
         }
 
@@ -69,20 +68,21 @@
         }
         div.LoginBoxContent {
             width: 350px;
-            height: 450px;
+            height: 500px;
             background-position: center;
             background: #ffffff;
             padding: 30px;
-            padding-top: 10px;
             box-shadow: 0 0 5px 3px #003b3b3b;
+	        display: flex;
+	        flex-direction: column;
         }
         div.InputBox{
-            text-align: center;
-            margin-top: 20px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
         }
         div.Button{
-            margin-top: 20px;
             text-align: center;
+            flex-shrink: 0;
         }
         .TextBox{
             border: 1px solid #AAAAAA;
@@ -110,6 +110,11 @@
             box-sizing: border-box;
             box-shadow: 0 0 3px 2px #003b3b3b;
         }
+        .ErrorMessage{
+            font-size: 12px; 
+            margin-top:0px; 
+            color:red
+        }
         .LoginButton{
             font-family: 微軟正黑體;
             font-size: 16px;
@@ -124,12 +129,43 @@
         .LoginButton:active{
             background: #3d474d;
         }
-        #LoginQRcode{
-            width: 128px;
+        .otherLoginBox{
+            width: 144px;
             background: #ffffff;
             box-shadow: 0 0 3px 2px #003b3b3b;
             border-radius: 5px;
             padding: 10px;
+        }
+        .otherLoginButton{
+            width: 144px;
+            background: #ffffff;
+            box-shadow: 0 0 3px 2px #003b3b3b;
+            border-radius: 5px;
+            padding: 10px;
+            color:#000000;
+            text-decoration:none;
+        }
+        .otherLoginButton:hover {
+            background: #fdfdfd;
+            box-shadow: 0 0 3px 2px #00004469;
+        }
+        .otherLoginButton:active{
+            background: #f8f8f8;
+            box-shadow: 0 0 3px 2px #00004469;
+            color:#000000;
+        }
+        .otherLoginButtonContent {
+            display: flex;
+            align-items: center;
+        }
+        .generalLink{
+            color:#1871a1;
+            text-decoration:none;
+            font-size:12px;
+        }
+        .generalLink:active{
+            color:#004469;
+            text-decoration:none;
         }
     </style>
 </head>
@@ -162,7 +198,7 @@
         var time = new Date();
         var text = "Welcome Einkaufen. Current time:" + time.toUTCString();
         jQuery('#LoginQRcode').qrcode({
-            width: 128, height: 128, text: text
+            width: 144, height: 144, text: text
         });
     })
 </script>
@@ -182,25 +218,79 @@
             <img src="picture/MainActivity.png" width="500" height="500" alt="一張圖片" style="margin: auto; margin-right: 50px;"/>
             <div class="LoginBox">
                 <div class="LoginBoxContent">
-                    <p style="font-size: 24px; margin-bottom:30px">
+                    <div style="font-size: 24px; margin-bottom:30px">
                         登入
-                    </p>
-                    <div class="InputBox">
-                        <asp:TextBox CssClass="TextBox" ID="TB_User" placeholder="使用者名稱/E-mail" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)"/>
                     </div>
-                    <p style="font-size: 12px; margin-top:0px; color:red" >
-                        <asp:Label ID="ErrorLB_1" runat="server" Text="　"/>
-                    </p>
+                    <div class="InputBox">
+                        <asp:TextBox CssClass="TextBox" ID="TB_User" placeholder="電話號碼/使用者名稱/E-mail" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)"/>
+                        <div>
+                            <asp:Label CssClass="ErrorMessage" ID="ErrorLB_1" runat="server" Text="　"/>
+                        </div>
+                    </div>
                     <div class="InputBox">
                         <asp:TextBox CssClass="TextBox" ID="TB_Password" placeholder="密碼" runat="server" BorderWidth="1px" TextMode="Password" onBlur="PasswordBoxHasError(this)"/>
+                        <div>
+                            <asp:Label CssClass="ErrorMessage" ID="ErrorLB_2" runat="server" Text="　"/>
+                        </div>
                     </div>
-                    <p style="font-size: 12px; margin-top:0px; color:red" >
-                        <asp:Label ID="ErrorLB_2" runat="server" Text="　"/>
-                    </p>
                     <div class="Button">
-                        <asp:Button  CssClass="LoginButton" ID="Button1" runat="server" Text="登入" BorderStyle="None" ForeColor="White" />
+                        <asp:Button  CssClass="LoginButton" ID="LoginButton" runat="server" Text="登入" BorderStyle="None" ForeColor="White" OnClick="LoginButton_Click" />
                     </div>
-                    <div id="LoginQRcode"></div>
+
+                    <div style="display:flex; margin-top: 5px;">
+                        <div style="flex-grow: 1; font-size:12px">
+                            <asp:LinkButton CssClass="generalLink" ID="LinkButton5" runat="server">忘記密碼</asp:LinkButton>
+                        </div>
+                        <div style="flex-grow: 1; text-align: end; font-size:12px">
+                            <div style="display: inline-block;">
+                                新朋友？
+                            </div>
+                            <asp:LinkButton CssClass="generalLink" ID="LinkButton4" runat="server">註冊</asp:LinkButton>
+                        </div>
+                    </div>
+
+                    <div class="Button" style="width: 100%; display:flex; flex-direction: row; margin-top: 5px;">
+                        <hr style="height: 0.1px; background:#000000; flex-grow: 1;"/>
+                         <div style="margin: 0px 10px">或</div>
+                        <hr style="height: 0.1px; background:#000000; flex-grow: 1;"/>
+                    </div>
+
+                    <div style="width: 100%; flex-grow: 1; margin-top: 10px; display:flex; flex-direction: row; font-size:0">
+                        
+                        <div style="flex-grow: 1;" >
+                            <div class="otherLoginBox">
+                                <div id="LoginQRcode"></div>
+                                <div style="font-size: 16px; text-align: center">使用QRcode登入</div>
+                            </div>
+                        </div>
+
+                        <div style="flex-grow: 1; display:flex; align-items: flex-end; flex-direction: column;">
+                            <div style="margin-bottom: 10px">
+                                 <asp:LinkButton CssClass="otherLoginButton" Height="20px" ID="LinkButton1" runat="server">
+                                    <div class="otherLoginButtonContent">
+                                        <img src="picture/facebook_logo.png" width="20" style="display: inline-block; margin: 0 10px;"/>
+                                        <div style="display: inline-block; font-size:14px">FaceBook</div>
+                                    </div>
+                                </asp:LinkButton>
+                            </div>
+                            <div style="margin-bottom: 10px">
+                                <asp:LinkButton CssClass="otherLoginButton" Height="20px" ID="LinkButton2" runat="server">
+                                    <div class="otherLoginButtonContent">
+                                        <img src="picture/google_logo.png" width="20" style="display: inline-block; margin: 0 10px;"/>
+                                        <div style="display: inline-block; font-size:14px">Google</div>
+                                    </div>
+                                </asp:LinkButton>
+                            </div>
+                            <div style="margin-bottom: 10px">
+                                <asp:LinkButton CssClass="otherLoginButton" Height="20px" ID="LinkButton3" runat="server">
+                                    <div class="otherLoginButtonContent">
+                                        <img src="picture/line_logo.png" width="20" style="display: inline-block; margin: 0 10px;"/>
+                                        <div style="display: inline-block; font-size:14px">LINE</div>
+                                    </div>
+                                </asp:LinkButton>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

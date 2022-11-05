@@ -105,7 +105,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="buyer\DashBoard.aspx" />
     <Content Include="buyer\Login.aspx" />
+    <Content Include="buyer\picture\facebook_logo.png" />
+    <Content Include="buyer\picture\google_logo.png" />
+    <Content Include="buyer\picture\line_logo.png" />
     <Content Include="buyer\picture\login_background.jpg" />
     <Content Include="buyer\picture\MainActivity.png" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -165,6 +169,13 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="buyer\DashBoard.aspx.cs">
+      <DependentUpon>DashBoard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="buyer\DashBoard.aspx.designer.cs">
+      <DependentUpon>DashBoard.aspx</DependentUpon>
+    </Compile>
     <Compile Include="buyer\Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
