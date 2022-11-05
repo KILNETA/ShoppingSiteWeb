@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -29,7 +30,28 @@ namespace ShoppingSiteWeb.buyer
             }
             else
             {
+                String DB_addressStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+                SqlConnection dataConnection = new SqlConnection(DB_addressStr);
 
+                String cmdStr = $"Select userName,userPassword FROM userTable WHERE(userName=\'{TB_User.Text}\' AND userPassword=\'{TB_Password.Text}\')";
+                SqlCommand cmd = new SqlCommand(cmdStr, dataConnection);
+                dataConnection.Open();
+
+                SqlDataReader dr = cmd.ExecuteReader();
+                useCheckLoginTable.DataSource = dr;
+                useCheckLoginTable.DataBind();
+
+                dataConnection.Close();
+
+                if(1 == useCheckLoginTable.DataItemCount)
+                {
+                    ErrorLB_1.Text = "　";
+                    Response.Redirect("DashBoard.aspx");
+                }
+                else
+                {
+                    ErrorLB_1.Text = "登入失敗，帳號或密碼有誤！！";
+                }
             }
         }
     }

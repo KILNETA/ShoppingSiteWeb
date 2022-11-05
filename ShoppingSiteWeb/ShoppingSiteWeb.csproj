@@ -105,6 +105,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Database_Main.mdf" />
+    <Content Include="App_Data\Database_Main_log.ldf">
+      <DependentUpon>Database_Main.mdf</DependentUpon>
+    </Content>
     <Content Include="buyer\DashBoard.aspx" />
     <Content Include="buyer\Login.aspx" />
     <Content Include="buyer\picture\facebook_logo.png" />
@@ -209,9 +213,7 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />

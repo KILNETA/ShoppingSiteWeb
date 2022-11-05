@@ -269,7 +269,7 @@
                                  <asp:LinkButton CssClass="otherLoginButton" Height="20px" ID="LinkButton1" runat="server">
                                     <div class="otherLoginButtonContent">
                                         <img src="picture/facebook_logo.png" width="20" style="display: inline-block; margin: 0 10px;"/>
-                                        <div style="display: inline-block; font-size:14px">FaceBook</div>
+                                        <div style="display: inline-block; font-size:14px">Facebook</div>
                                     </div>
                                 </asp:LinkButton>
                             </div>
@@ -301,6 +301,7 @@
             <p>&copy; <%: DateTime.Now.Year %> - Einkaufen 愛康福</p>
         </div>
     </footer>
-    </form>
+    <asp:DetailsView ID="useCheckLoginTable" runat="server" Height="50px" Width="125px" Visible="False"></asp:DetailsView>
+</form>
 </body>
 </html>
