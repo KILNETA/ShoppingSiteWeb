@@ -69,13 +69,13 @@ namespace ShoppingSiteWeb.buyer
         protected global::System.Web.UI.WebControls.LinkButton LinkButton5;
 
         /// <summary>
-        /// LinkButton4 控制項。
+        /// RegisterButton 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton4;
+        protected global::System.Web.UI.WebControls.LinkButton RegisterButton;
 
         /// <summary>
         /// LinkButton1 控制項。

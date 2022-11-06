@@ -95,19 +95,9 @@
         }
         .TextBox:hover,.TextBox:active{
             border: 1px solid #004469;
-            border-radius: 3px;
-            padding: 15px;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
         }
         .TextBox:focus{
             border: 1px solid #004469;
-            border-radius: 3px;
-            padding: 15px;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
             box-shadow: 0 0 3px 2px #003b3b3b;
         }
         .ErrorMessage{
@@ -222,7 +212,7 @@
                         登入
                     </div>
                     <div class="InputBox">
-                        <asp:TextBox CssClass="TextBox" ID="TB_User" placeholder="電話號碼/使用者名稱/E-mail" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)"/>
+                        <asp:TextBox CssClass="TextBox" ID="TB_User" placeholder="使用者名稱/E-mail" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)"/>
                         <div>
                             <asp:Label CssClass="ErrorMessage" ID="ErrorLB_1" runat="server" Text="　"/>
                         </div>
@@ -245,7 +235,7 @@
                             <div style="display: inline-block;">
                                 新朋友？
                             </div>
-                            <asp:LinkButton CssClass="generalLink" ID="LinkButton4" runat="server">註冊</asp:LinkButton>
+                            <asp:LinkButton CssClass="generalLink" ID="RegisterButton" runat="server" OnClick="RegisterButton_Click">註冊</asp:LinkButton>
                         </div>
                     </div>
 

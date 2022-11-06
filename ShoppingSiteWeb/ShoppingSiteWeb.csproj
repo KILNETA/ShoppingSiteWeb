@@ -116,6 +116,9 @@
     <Content Include="buyer\picture\line_logo.png" />
     <Content Include="buyer\picture\login_background.jpg" />
     <Content Include="buyer\picture\MainActivity.png" />
+    <Content Include="buyer\picture\verify_confirm.png" />
+    <Content Include="buyer\picture\verify_fail.png" />
+    <Content Include="buyer\Register.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -186,6 +189,13 @@
     </Compile>
     <Compile Include="buyer\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="buyer\Register.aspx.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="buyer\Register.aspx.designer.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

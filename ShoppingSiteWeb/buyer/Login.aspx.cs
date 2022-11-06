@@ -33,7 +33,9 @@ namespace ShoppingSiteWeb.buyer
                 String DB_addressStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
                 SqlConnection dataConnection = new SqlConnection(DB_addressStr);
 
-                String cmdStr = $"Select userName,userPassword FROM userTable WHERE(userName=\'{TB_User.Text}\' AND userPassword=\'{TB_Password.Text}\')";
+                String SwitchField = (TB_User.Text.ToLower().Contains("@".ToLower())) ? "userEMail" : "userName";
+
+                String cmdStr = $"Select userId FROM userTable WHERE({SwitchField}=\'{TB_User.Text}\' AND userPassword=\'{TB_Password.Text}\')";
                 SqlCommand cmd = new SqlCommand(cmdStr, dataConnection);
                 dataConnection.Open();
 
@@ -53,6 +55,11 @@ namespace ShoppingSiteWeb.buyer
                     ErrorLB_1.Text = "登入失敗，帳號或密碼有誤！！";
                 }
             }
+        }
+
+        protected void RegisterButton_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Register.aspx");
         }
     }
 }
