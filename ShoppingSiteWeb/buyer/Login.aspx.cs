@@ -12,6 +12,20 @@ namespace ShoppingSiteWeb.buyer
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (IsPostBack)
+            {
+                if (Session["UserId"] != null)
+                {
+                    Response.Write("<script>alert('已登入！進入個人儀錶板！');window.location='DashBoard.aspx';</script>");
+                }
+            }
+            else
+            {
+                if (Session["UserId"] != null)
+                {
+                    Response.Redirect("DashBoard.aspx");
+                }
+            }
         }
 
         protected void LoginButton_Click(object sender, EventArgs e)
@@ -35,7 +49,11 @@ namespace ShoppingSiteWeb.buyer
 
                 String SwitchField = (TB_User.Text.ToLower().Contains("@".ToLower())) ? "userEMail" : "userName";
 
-                String cmdStr = $"Select userId FROM userTable WHERE({SwitchField}=\'{TB_User.Text}\' AND userPassword=\'{TB_Password.Text}\')";
+                String cmdStr = 
+                    $"Select userId " +
+                    $"FROM userTable " +
+                    $"WHERE( {SwitchField}=\'{TB_User.Text}\' COLLATE SQL_Latin1_General_CP1_CS_AS ) " +
+                    $"AND ( userPassword=\'{TB_Password.Text}\' COLLATE SQL_Latin1_General_CP1_CS_AS ) ";
                 SqlCommand cmd = new SqlCommand(cmdStr, dataConnection);
                 dataConnection.Open();
 
@@ -48,6 +66,7 @@ namespace ShoppingSiteWeb.buyer
                 if(1 == useCheckLoginTable.DataItemCount)
                 {
                     ErrorLB_1.Text = "　";
+                    Session["UserId"] = useCheckLoginTable.Rows[0].Cells[1].Text;
                     Response.Redirect("DashBoard.aspx");
                 }
                 else
