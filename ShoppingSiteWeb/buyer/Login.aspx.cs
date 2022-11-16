@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -44,25 +46,33 @@ namespace ShoppingSiteWeb.buyer
             }
             else
             {
-                String DB_addressStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-                SqlConnection dataConnection = new SqlConnection(DB_addressStr);
+                SqlDataSource SqlDataSource_LoginUser = new SqlDataSource();
 
+                //連結資料庫的連接字串 ConnectionString
+                SqlDataSource_LoginUser.ConnectionString =
+                    "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+                //判斷用戶是使用 Email 或 UserName 登入
                 String SwitchField = (TB_User.Text.ToLower().Contains("@".ToLower())) ? "userEMail" : "userName";
+                
+                SqlDataSource_LoginUser.SelectParameters.Add("TB_User", TB_User.Text);
+                SqlDataSource_LoginUser.SelectParameters.Add("TB_Password", TB_Password.Text);
 
-                String cmdStr = 
-                    $"Select userId " +
-                    $"FROM userTable " +
-                    $"WHERE( {SwitchField}=\'{TB_User.Text}\' COLLATE SQL_Latin1_General_CP1_CS_AS ) " +
-                    $"AND ( userPassword=\'{TB_Password.Text}\' COLLATE SQL_Latin1_General_CP1_CS_AS ) ";
-                SqlCommand cmd = new SqlCommand(cmdStr, dataConnection);
-                dataConnection.Open();
+                // SQL指令 ==
+                SqlDataSource_LoginUser.SelectCommand =
+                    $"Select [userId] " +
+                    $"FROM [userTable] " +
+                    $"WHERE( [{SwitchField}] = @TB_User COLLATE SQL_Latin1_General_CP1_CS_AS ) " +
+                    $"AND ( [userPassword] = @TB_Password COLLATE SQL_Latin1_General_CP1_CS_AS ) ";
 
-                SqlDataReader dr = cmd.ExecuteReader();
-                useCheckLoginTable.DataSource = dr;
+                // 執行SQL指令 .select() ==
+                SqlDataSource_LoginUser.DataSourceMode = SqlDataSourceMode.DataSet;
+                DataView dv = (DataView)SqlDataSource_LoginUser.Select(new DataSourceSelectArguments());
+
+                useCheckLoginTable.DataSource = dv;
                 useCheckLoginTable.DataBind();
 
-                dataConnection.Close();
-
+                SqlDataSource_LoginUser.Dispose();
+                
                 if(1 == useCheckLoginTable.DataItemCount)
                 {
                     ErrorLB_1.Text = "　";
