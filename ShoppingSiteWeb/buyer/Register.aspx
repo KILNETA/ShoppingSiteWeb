@@ -278,7 +278,7 @@
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">
-                            <asp:Label CssClass="ErrorMessage" ID="Label5" runat="server" Text="　"/>
+                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_BirthdayDate" runat="server" Text="　"/>
                         </div>
                     </div>
                     <div class="Button" style="margin: 0px 60px">
