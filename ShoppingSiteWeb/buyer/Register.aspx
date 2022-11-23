@@ -194,7 +194,7 @@
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">電子信箱</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_EMail" placeholder="sample@example.com" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" AutoPostBack="True" OnTextChanged="TB_EMail_TextChanged"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_EMail" placeholder="sample@example.com" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" AutoPostBack="True" OnTextChanged="TB_EMail_TextChanged" MaxLength="320"/>
                             <div class="Button" style="margin: 0px 10px">
                                 <asp:Button  CssClass="RegisterButton" ID="BT_SendCheckCodeEMail" runat="server" Text="驗證" BorderStyle="None" ForeColor="White" OnClick="BT_SendCheckCodeEMail_Click"/>
                             </div>
@@ -233,7 +233,7 @@
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">姓　　名</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_RealName" placeholder="" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_RealName" placeholder="真實姓名，最長20個字" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="20"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">
@@ -243,7 +243,7 @@
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">行動電話</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_PhoneNum" placeholder="" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_PhoneNum" placeholder="09XXXXXXXX" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="10"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">
@@ -253,7 +253,7 @@
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">地　　址</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_Address" placeholder="" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_Address" placeholder="XX市XX路XX巷XX號XX樓，最長50個字" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="50"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">

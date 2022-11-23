@@ -109,6 +109,7 @@
     <Content Include="App_Data\Database_Main_log.ldf">
       <DependentUpon>Database_Main.mdf</DependentUpon>
     </Content>
+    <Content Include="App_Data\defineSQL_userTable.txt" />
     <Content Include="buyer\DashBoard.aspx" />
     <Content Include="buyer\Login.aspx" />
     <Content Include="buyer\picture\facebook_logo.png" />

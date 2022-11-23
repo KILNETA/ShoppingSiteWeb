@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using System;
+using System.Data;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace ShoppingSiteWeb.buyer
@@ -165,18 +164,32 @@ namespace ShoppingSiteWeb.buyer
                 return;
             }
 
-            String DB_addressStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-            SqlConnection dataConnection = new SqlConnection(DB_addressStr);
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_CheckUserName = new SqlDataSource();
 
-            String cmdStr = $"Select userName FROM userTable WHERE ( userName =\'{TB_UserName.Text}\' COLLATE SQL_Latin1_General_CP1_CS_AS )";
-            SqlCommand cmd = new SqlCommand(cmdStr, dataConnection);
-            dataConnection.Open();
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_CheckUserName.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
 
-            SqlDataReader dr = cmd.ExecuteReader();
-            useCheckUserNameTable.DataSource = dr;
+            //新增SQL參數
+            SqlDataSource_CheckUserName.SelectParameters.Add("TB_User", TB_UserName.Text);
+
+            //SQL指令 ==
+            SqlDataSource_CheckUserName.SelectCommand =
+                $"Select userName " +
+                $"FROM userTable " +
+                $"WHERE ( userName = @TB_User COLLATE SQL_Latin1_General_CP1_CS_AS )";
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_CheckUserName.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_CheckUserName.Select(new DataSourceSelectArguments());
+            //資料匯入表格
+            useCheckUserNameTable.DataSource = dv;
+            //更新表格
             useCheckUserNameTable.DataBind();
-
-            dataConnection.Close();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_CheckUserName.Dispose();
 
             if (0 == useCheckUserNameTable.DataItemCount)
             {
@@ -209,18 +222,32 @@ namespace ShoppingSiteWeb.buyer
                 return;
             }
 
-            String DB_addressStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-            SqlConnection dataConnection = new SqlConnection(DB_addressStr);
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_CheckEmail = new SqlDataSource();
 
-            String cmdStr = $"Select userEMail FROM userTable WHERE( userEMail =\'{TB_EMail.Text}\' )";
-            SqlCommand cmd = new SqlCommand(cmdStr, dataConnection);
-            dataConnection.Open();
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_CheckEmail.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
 
-            SqlDataReader dr = cmd.ExecuteReader();
-            useCheckEmailTable.DataSource = dr;
+            //新增SQL參數
+            SqlDataSource_CheckEmail.SelectParameters.Add("TB_EMail", TB_EMail.Text);
+
+            //SQL指令 ==
+            SqlDataSource_CheckEmail.SelectCommand =
+                $"Select userEMail " +
+                $"FROM userTable " +
+                $"WHERE( userEMail = @TB_EMail )";
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_CheckEmail.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_CheckEmail.Select(new DataSourceSelectArguments());
+            //資料匯入表格
+            useCheckEmailTable.DataSource = dv;
+            //更新表格
             useCheckEmailTable.DataBind();
-
-            dataConnection.Close();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_CheckEmail.Dispose();
 
             //信箱未被使用 顯示可用消息(綠色)
             if (0 == useCheckEmailTable.DataItemCount)
@@ -260,7 +287,7 @@ namespace ShoppingSiteWeb.buyer
                 if (TB_EMail.Text == String.Empty)
                     LB_ErrorMessage_EMail.Text = "請輸入電子信箱";
                 else
-                    LB_ErrorMessage_EMail.Text = "格式錯誤";
+                    LB_ErrorMessage_EMail.Text = "欄位有誤";
             }
         }
 
@@ -302,6 +329,14 @@ namespace ShoppingSiteWeb.buyer
             else if (TB_Password.Text.Length < 6)
             {
                 LB_ErrorMessage_Password.Text = "密碼過短";
+            }
+            else if (!new Regex("^[a-zA-Z0-9 ]*$").IsMatch(TB_Password.Text))
+            {
+                LB_ErrorMessage_Password.Text = "密碼包含特殊字元";
+            }
+            else if (new Regex("^[0-9]*$").IsMatch(TB_Password.Text))
+            {
+                LB_ErrorMessage_Password.Text = "密碼需包含至少一個英文字母";
             }
             //密碼輸入正確
             else
@@ -365,7 +400,7 @@ namespace ShoppingSiteWeb.buyer
                 LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Red;
                 LB_ErrorMessage_EMail.Text = "此欄填寫有誤";
             }
-            //電子信箱為驗證
+            //電子信箱未驗證
             else if (ViewState["isFinish_CheckEMail"].ToString() != "true" ||
                 ViewState["isSendCheckCodeEMail"].ToString() != "true")
             {
@@ -434,73 +469,79 @@ namespace ShoppingSiteWeb.buyer
                 return;
             }
 
-            String DB_addressStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-            SqlConnection dataConnection = new SqlConnection(DB_addressStr);
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
 
-            /*檢驗此用戶名稱是否已被使用*/
-            String cmdStr_CheckUserName = $"Select userName FROM userTable WHERE ( userName ='{TB_UserName.Text}' COLLATE SQL_Latin1_General_CP1_CS_AS )";
-            SqlCommand cmd_CheckUserName = new SqlCommand(cmdStr_CheckUserName, dataConnection);
-            /*檢驗此信箱是否已被使用*/
-            String cmdStr_CheckEmail = $"Select userEMail FROM userTable WHERE( userEMail =\'{TB_EMail.Text}\' )";
-            SqlCommand cmd_CheckEmail = new SqlCommand(cmdStr_CheckEmail, dataConnection);
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_RegisterUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
 
+            //新增SQL參數
+            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userName", TB_UserName.Text);
+            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userPhoneNum", TB_PhoneNum.Text);
+            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userEMail", TB_EMail.Text);
+            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userRealName", TB_RealName.Text);
+            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userBirthday", $"{DDL_BirthdayYear.Text}/{DDL_BirthdayMonth.Text}/{DDL_BirthdayDay.Text}");
+            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userAddress", TB_Address.Text);
+            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userPassword", TB_PasswordCheck.Text);
 
-            //搜索用戶名稱
-            dataConnection.Open();
-            SqlDataReader dr_CheckUserName = cmd_CheckUserName.ExecuteReader();
-            useCheckUserNameTable.DataSource = dr_CheckUserName;
-            useCheckUserNameTable.DataBind();
-            dataConnection.Close();
+            //SQL指令
+            SqlDataSource_RegisterUser.SelectCommand =
+                $"INSERT INTO userTable([userName],[userPhoneNum],[userEMail],[userRealName],[userBirthday],[userAddress],[userPassword]) " +
+                $"Select " +
+                    $"@TB_userName, " +
+                    $"@TB_userPhoneNum, " +
+                    $"@TB_userEMail, " +
+                    $"@TB_userRealName, " +
+                    $"@TB_userBirthday, " +
+                    $"@TB_userAddress, " +
+                    $"@TB_userPassword " +
+                $"Where Not Exists( " +
+                    $"Select userTable.userName,userTable.userEMail " +
+                    $"From userTable " +
+                    $"Where userName = @TB_userName COLLATE SQL_Latin1_General_CP1_CS_AS " +
+                    $"OR userEMail = @TB_userEMail " +
+                    $") " +
+                $"SELECT ISNULL(successful.userId,0) userId " +
+                $"From (" +
+                    $"SELECT SCOPE_IDENTITY() AS userId" +
+                    $") " +
+                $"successful";
 
-            //搜索信箱
-            dataConnection.Open();
-            SqlDataReader dr_CheckEmail = cmd_CheckEmail.ExecuteReader();
-            useCheckEmailTable.DataSource = dr_CheckEmail;
-            useCheckEmailTable.DataBind();
-            dataConnection.Close();
+            //執行SQL指令 .select() ==
+            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            //資料匯入表格
+            useCheckRegisterTable.DataSource = dv;
+            //更新表格
+            useCheckRegisterTable.DataBind();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_RegisterUser.Dispose();
 
-            //用戶名稱&信箱 均未被使用
-            if (0 == useCheckEmailTable.DataItemCount &&
-                0 == useCheckUserNameTable.DataItemCount)
+            //清除此頁面所有暫存資料
+            ViewState.Clear();
+            //清除Token
+            Session.Remove("Token");
+
+            //判斷用戶帳號註冊成功與否
+            if (1 == useCheckRegisterTable.DataItemCount
+                && useCheckRegisterTable.Rows[0].Cells[1].Text != "0")
             {
-                String cmdStr_RegisterUser =
-                    $"INSERT INTO userTable" +
-                    $"([userName],[userPhoneNum],[userEMail],[userRealName],[userBirthday],[userAddress],[userPassword])" +
-                    $"VALUES ('{TB_UserName.Text}','{TB_PhoneNum.Text}','{TB_EMail.Text}',N'{TB_RealName.Text}'," +
-                    $"'{DDL_BirthdayYear.Text}/{DDL_BirthdayMonth.SelectedIndex}/{DDL_BirthdayDay.SelectedIndex}'," +
-                    $"N'{TB_Address.Text}','{TB_PasswordCheck.Text}') ";
-                SqlCommand cmd_RegisterUser = new SqlCommand(cmdStr_RegisterUser, dataConnection);
-
-                dataConnection.Open();
-                cmd_RegisterUser.ExecuteNonQuery();
-                dataConnection.Close();
-
-                String cmdStr_CheckRegister =
-                    $"Select userId " +
-                    $"FROM userTable " +
-                    $"WHERE ( userName ='{TB_UserName.Text}' COLLATE SQL_Latin1_General_CP1_CS_AS )" +
-                    $"AND ( userPassword=\'{TB_PasswordCheck.Text}\' COLLATE SQL_Latin1_General_CP1_CS_AS ) ";
-                SqlCommand cmd_CheckRegister = new SqlCommand(cmdStr_CheckRegister, dataConnection);
-
-                dataConnection.Open();
-                SqlDataReader dr_CheckRegister = cmd_CheckRegister.ExecuteReader();
-                useCheckRegisterTable.DataSource = dr_CheckRegister;
-                useCheckRegisterTable.DataBind();
-                dataConnection.Close();
-
-                ViewState.Clear();
-                Session.Remove("Token");
-
-                if (1 == useCheckRegisterTable.DataItemCount)
-                {
-                    Session["UserId"] = useCheckRegisterTable.Rows[0].Cells[1].Text;
-                    Response.Write("<script>alert('會員註冊成功！');window.location='DashBoard.aspx';</script>");
-                }
-                else
-                {
-                    Session["UserId"] = null;
-                    Response.Write("<script>alert('會員註冊失敗，創建新註冊表單！');window.location='Register.aspx';</script>");
-                }
+                Session["UserId"] = useCheckRegisterTable.Rows[0].Cells[1].Text;
+                Response.Write("<script>alert('會員註冊成功！');window.location='DashBoard.aspx';</script>");
+            }
+            //會員註冊失敗，用戶名或信箱已被使用
+            else if (useCheckRegisterTable.Rows[0].Cells[1].Text == "0")
+            {
+                Session["UserId"] = null;
+                Response.Write("<script>alert('會員註冊失敗，用戶名或信箱已被使用！');window.location='Register.aspx';</script>");
+            }
+            //表單已失效，創建新註冊表單
+            else
+            {
+                Session["UserId"] = null;
+                Response.Write("<script>alert('表單已失效，創建新註冊表單！');window.location='Register.aspx';</script>");
             }
         }
     }

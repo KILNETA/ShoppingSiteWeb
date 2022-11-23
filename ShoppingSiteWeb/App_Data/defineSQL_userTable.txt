@@ -1,0 +1,13 @@
+﻿//創建 userTable 資料表 欄位格式設定檔
+
+CREATE TABLE [dbo].[userTable] (
+    [userId]       INT           IDENTITY (1, 1) NOT NULL,
+    [userName]     NVARCHAR (24) NOT NULL,
+    [userPhoneNum] NVARCHAR (10) NOT NULL,
+    [userEMail]    NVARCHAR (320) NOT NULL,
+    [userRealName] NVARCHAR (20) NOT NULL,
+    [userBirthday] DATE          NOT NULL,
+    [userAddress]  NVARCHAR (50) NOT NULL,
+    [userPassword] NVARCHAR (18) NOT NULL,
+    PRIMARY KEY CLUSTERED ([userId] ASC)
+);
