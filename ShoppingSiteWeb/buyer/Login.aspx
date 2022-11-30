@@ -27,6 +27,7 @@
         div.contentBody{
             height: 700px;
             background-image: url("picture/login_background.jpg");
+            min-width: 1200px;
             background-size: cover;
             background-position: center;
         }
@@ -34,6 +35,7 @@
         .HeaderBackground-Style {
             background-color: #004469;
             width: 100%;
+            min-width: 1200px;
             height: 90px;
             float: left;
         }
@@ -41,6 +43,7 @@
         .FooterBackground-Style {
             background-color: #c3c8c9;
             width: 100%;
+            min-width: 1200px;
             height: 320px;
             float: left;
         }

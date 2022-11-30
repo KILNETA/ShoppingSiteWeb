@@ -11,7 +11,7 @@ namespace ShoppingSiteWeb
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Response.Redirect("buyer/Login.aspx");
+            //Response.Redirect("buyer/Login.aspx");
         }
     }
 }
