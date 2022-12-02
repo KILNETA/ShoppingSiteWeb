@@ -161,8 +161,199 @@
             background: #f8f8f8;
             color:#004469;
         }
+
+        /*轮播*/
+        #flash {
+            width: 1000px;
+            height: 400px;
+            position: relative;
+        }
+        #flash #play li {
+   
+            /*position: absolute;
+            top: 0px;
+            left: 0px;*/
+        }
+        #play li:not(:first-child) {
+            display: none;
+        }
+        #button {
+            position: absolute;
+            bottom: 20px;
+            list-style: none;
+        }
+        #button li {
+            margin-left: 10px;
+            float: left;
+        }
+
+        #button li div {
+            width: 12px;
+            height: 12px;
+            background: #DDDDDD;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #CarouselPrev {
+            width: 40px;
+            height: 63px;
+            position: absolute;
+            top: 205px;
+            left: 10px;
+        }
+        #CarouselNext {
+            width: 40px;
+            height: 63px;
+            position: absolute;
+            top: 205px;
+            right: 10px;
+        }
+        #CarouselPrev:hover {
+
+        }
+        #CarouselNext:hover {
+
+        }
     </style>
 </head>
+
+<script language="JavaScript" type="text/JavaScript">
+    window.onload = function () {
+        var aDiv = document.getElementById('button').getElementsByTagName('div');
+
+        var CarouselPrev = document.getElementById('CarouselPrev');
+        var CarouselNext = document.getElementById('CarouselNext');
+
+        var CarouselImg = document.getElementById('CarouselView')
+
+        var now = 0;
+        var timer2 = null;
+
+        for (var i = 0; i < aDiv.length; i++) {
+            aDiv[i].index = i;
+            aDiv[i].onclick = function () {
+                if (now == this.index) return;
+                now = this.index;
+                tab();
+            }
+        }
+
+        CarouselPrev.onclick = function () {
+            now--;
+            if (now == -1) {
+                now = aDiv.length - 1;
+            }
+            tab();
+        }
+        CarouselNext.onclick = function () {
+            now++;
+            if (now == aDiv.length) {
+                now = 0;
+            }
+            tab();
+        }
+        CarouselImg.onmouseover = function () {
+            clearInterval(timer2);
+        }
+        CarouselImg.onmouseout = function () {
+            timer2 = setInterval(CarouselNext.onclick, 6000);
+        }
+        timer2 = setInterval(CarouselNext.onclick, 6000);
+
+        function tab() {
+            for (var i = 0; i < aDiv.length; i++) {
+                aDiv[i].style.background = "#DDDDDD";
+            }
+            aDiv[now].style.background = '#004469';
+            moveElement(CarouselImg, -1000 * now, 0, 15);
+        }
+
+        function moveElement(ele, x_final, y_final, interval) {//ele為元素物件
+            var x_pos = ele.offsetLeft;
+            var y_pos = ele.offsetTop;
+            var dist = 0;
+            if (ele.movement) {//防止懸停
+                clearTimeout(ele.movement);
+            }
+            if (x_pos == x_final && y_pos == y_final) {//先判斷是否需要移動
+                return;
+            }
+            dist = Math.ceil(Math.abs(x_final - x_pos) / 10);//分10次移動完成
+            x_pos = x_pos < x_final ? x_pos + dist : x_pos - dist;
+
+
+            ele.style.left = x_pos + 'px';
+
+            ele.movement = setTimeout(function () {//分10次移動，自呼叫10次
+                moveElement(ele, x_final, y_final, interval);
+            }, interval)
+        }
+
+        /*
+        var oPlay = document.getElementById('play');
+        var aLi = oPlay.getElementsByTagName('li');
+        var oButton = document.getElementById('button');
+        var aDiv = oButton.getElementsByTagName('div');
+        var oFlash = document.getElementById('flash');
+        var now = 0;
+        var timer2 = null;
+        for (var i = 0; i < aDiv.length; i++) {
+            aDiv[i].index = i;
+            aDiv[i].onmouseover = function () {
+                if (now == this.index) return;
+                now = this.index;
+                tab();
+            }
+        }
+        oPrev.onclick = function () {
+            now--;
+            if (now == -1) {
+                now = aDiv.length - 1;
+            }
+            tab();
+        }
+        oNext.onclick = function () {
+            now++;
+            if (now == aDiv.length) {
+                now = 0;
+            }
+            tab();
+        }
+        oFlash.onmouseover = function () {
+            clearInterval(timer2);
+        }
+        oFlash.onmouseout = function () {
+            timer2 = setInterval(oNext.onclick, 4000);
+        }
+        timer2 = setInterval(oNext.onclick, 5000);
+        function tab() {
+            for (var i = 0; i < aLi.length; i++) {
+                aLi[i].style.display = 'none';
+            }
+            for (var i = 0; i < aDiv.length; i++) {
+                aDiv[i].style.background = "#DDDDDD";
+            }
+            aDiv[now].style.background = '#004469';
+            aLi[now].style.display = 'block';
+            aLi[now].style.opacity = 0;
+            aLi[now].style.filter = "alpha(opacity=0)";
+            jianbian(aLi[now]);
+        }
+        function jianbian(obj) {
+            var alpha = 0;
+            clearInterval(timer);
+            var timer = setInterval(function () {
+                alpha++;
+                obj.style.opacity = alpha / 100;
+                obj.style.filter = "alpha(opacity=" + alpha + ")";
+                if (alpha == 100) {
+                    clearInterval(timer);
+                }
+            }, 10);
+        }
+        */
+    }
+</script>
 
 <body>
     <form runat="server">
@@ -226,6 +417,37 @@
             </div>
         </div>
     </header>
-    </form>
+
+    <div class="contentBody">
+        <div class="Body">
+            <div style="height:400px; width:1000px; margin:0px auto; display:flex; justify-content: center; position: relative; overflow: hidden;">
+                <div id="CarouselPrev"></div>
+	            <div id="CarouselNext"></div>
+                <ul id="CarouselView" style="display: flex; position: absolute; width:100%; height:100%; padding:0px">
+                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_1.png" alt="img1"/></li>
+                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_2.png" alt="img2"/></li>
+                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_3.png" alt="img3"/></li>
+                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_4.png" alt="img4"/></li>
+                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_5.png" alt="img5"/></li>
+                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_6.png" alt="img6"/></li>
+	            </ul>
+                <ul id="button">
+			        <li><div style="background: #004469;"></div></li>
+			        <li><div></div></li>
+			        <li><div></div></li>
+			        <li><div></div></li>
+			        <li><div></div></li>
+			        <li><div></div></li>
+	            </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer class="FooterBackground-Style">
+        <div class="Body">
+            <p>&copy; <%: DateTime.Now.Year %> - Einkaufen 愛康福</p>
+        </div>
+    </footer>
+</form>
 </body>
 </html>

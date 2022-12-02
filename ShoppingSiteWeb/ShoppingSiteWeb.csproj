@@ -126,6 +126,12 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
+    <Content Include="Default_Picture\DefaultCarousel\DefaultCarousel_1.png" />
+    <Content Include="Default_Picture\DefaultCarousel\DefaultCarousel_2.png" />
+    <Content Include="Default_Picture\DefaultCarousel\DefaultCarousel_3.png" />
+    <Content Include="Default_Picture\DefaultCarousel\DefaultCarousel_4.png" />
+    <Content Include="Default_Picture\DefaultCarousel\DefaultCarousel_5.png" />
+    <Content Include="Default_Picture\DefaultCarousel\DefaultCarousel_6.png" />
     <Content Include="Default_Picture\Inquire.png" />
     <Content Include="Default_Picture\shopping.png" />
     <Content Include="Default_Picture\store.png" />
