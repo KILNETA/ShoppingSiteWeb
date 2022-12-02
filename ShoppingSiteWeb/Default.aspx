@@ -261,97 +261,28 @@
         timer2 = setInterval(CarouselNext.onclick, 6000);
 
         function tab() {
+            clearInterval(timer2);
             for (var i = 0; i < aDiv.length; i++) {
                 aDiv[i].style.background = "#DDDDDD";
             }
             aDiv[now].style.background = '#004469';
-            moveElement(CarouselImg, -1000 * now, 0, 15);
+
+            moveElement(CarouselImg, -1000 * now);
+            timer2 = setInterval(CarouselNext.onclick, 6000);
         }
 
-        function moveElement(ele, x_final, y_final, interval) {//ele為元素物件
+        function moveElement(ele, x_final) {//ele為元素物件
             var x_pos = ele.offsetLeft;
-            var y_pos = ele.offsetTop;
-            var dist = 0;
+
             if (ele.movement) {//防止懸停
                 clearTimeout(ele.movement);
             }
-            if (x_pos == x_final && y_pos == y_final) {//先判斷是否需要移動
-                return;
-            }
-            dist = Math.ceil(Math.abs(x_final - x_pos) / 10);//分10次移動完成
+
+            var dist = Math.ceil(Math.abs(x_final - x_pos));
             x_pos = x_pos < x_final ? x_pos + dist : x_pos - dist;
 
-
-            ele.style.left = x_pos + 'px';
-
-            ele.movement = setTimeout(function () {//分10次移動，自呼叫10次
-                moveElement(ele, x_final, y_final, interval);
-            }, interval)
+            CarouselImg.style.transform = `translateX(${x_pos}px)`;
         }
-
-        /*
-        var oPlay = document.getElementById('play');
-        var aLi = oPlay.getElementsByTagName('li');
-        var oButton = document.getElementById('button');
-        var aDiv = oButton.getElementsByTagName('div');
-        var oFlash = document.getElementById('flash');
-        var now = 0;
-        var timer2 = null;
-        for (var i = 0; i < aDiv.length; i++) {
-            aDiv[i].index = i;
-            aDiv[i].onmouseover = function () {
-                if (now == this.index) return;
-                now = this.index;
-                tab();
-            }
-        }
-        oPrev.onclick = function () {
-            now--;
-            if (now == -1) {
-                now = aDiv.length - 1;
-            }
-            tab();
-        }
-        oNext.onclick = function () {
-            now++;
-            if (now == aDiv.length) {
-                now = 0;
-            }
-            tab();
-        }
-        oFlash.onmouseover = function () {
-            clearInterval(timer2);
-        }
-        oFlash.onmouseout = function () {
-            timer2 = setInterval(oNext.onclick, 4000);
-        }
-        timer2 = setInterval(oNext.onclick, 5000);
-        function tab() {
-            for (var i = 0; i < aLi.length; i++) {
-                aLi[i].style.display = 'none';
-            }
-            for (var i = 0; i < aDiv.length; i++) {
-                aDiv[i].style.background = "#DDDDDD";
-            }
-            aDiv[now].style.background = '#004469';
-            aLi[now].style.display = 'block';
-            aLi[now].style.opacity = 0;
-            aLi[now].style.filter = "alpha(opacity=0)";
-            jianbian(aLi[now]);
-        }
-        function jianbian(obj) {
-            var alpha = 0;
-            clearInterval(timer);
-            var timer = setInterval(function () {
-                alpha++;
-                obj.style.opacity = alpha / 100;
-                obj.style.filter = "alpha(opacity=" + alpha + ")";
-                if (alpha == 100) {
-                    clearInterval(timer);
-                }
-            }, 10);
-        }
-        */
     }
 </script>
 
@@ -423,7 +354,7 @@
             <div style="height:400px; width:1000px; margin:0px auto; display:flex; justify-content: center; position: relative; overflow: hidden;">
                 <div id="CarouselPrev"></div>
 	            <div id="CarouselNext"></div>
-                <ul id="CarouselView" style="display: flex; position: absolute; width:100%; height:100%; padding:0px">
+                <ul id="CarouselView" style="display: flex; position: absolute; width:100%; height:100%; padding:0px; transition: transform 0.5s;">
                     <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_1.png" alt="img1"/></li>
                     <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_2.png" alt="img2"/></li>
                     <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_3.png" alt="img3"/></li>
