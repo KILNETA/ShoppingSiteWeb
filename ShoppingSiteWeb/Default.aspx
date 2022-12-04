@@ -25,8 +25,6 @@
             font-family: 微軟正黑體;
         }
         div.contentBody{
-            height: 700px;
-            background-image: url("picture/login_background.jpg");
             min-width: 1200px;
             background-size: cover;
             background-position: center;
@@ -163,20 +161,6 @@
         }
 
         /*轮播*/
-        #flash {
-            width: 1000px;
-            height: 400px;
-            position: relative;
-        }
-        #flash #play li {
-   
-            /*position: absolute;
-            top: 0px;
-            left: 0px;*/
-        }
-        #play li:not(:first-child) {
-            display: none;
-        }
         #button {
             position: absolute;
             bottom: 20px;
@@ -190,29 +174,77 @@
         #button li div {
             width: 12px;
             height: 12px;
-            background: #DDDDDD;
+            background: #DDDDDDC0;
             border-radius: 6px;
             cursor: pointer;
         }
+
         #CarouselPrev {
-            width: 40px;
-            height: 63px;
+            width: 48px;
+            height: 100%;
             position: absolute;
-            top: 205px;
             left: 10px;
+            cursor: pointer;
+            background-color: #FFFFFFC0;
+            -webkit-mask: url('Default_Picture/previous.svg') no-repeat center;
+            mask: url('Default_Picture/previous.svg') no-repeat center;
         }
         #CarouselNext {
-            width: 40px;
-            height: 63px;
+            width: 48px;
+            height: 100%;
             position: absolute;
-            top: 205px;
             right: 10px;
+            cursor: pointer;
+            background-color: #FFFFFFC0;
+            -webkit-mask: url('Default_Picture/next.svg') no-repeat center;
+            mask: url('Default_Picture/next.svg') no-repeat center;
         }
-        #CarouselPrev:hover {
-
+        #CarouselPrev:hover ,#CarouselNext:hover {
+            background-color: #FFFFFF;
         }
-        #CarouselNext:hover {
 
+        .CommodityPage{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .CommodityList{
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .CommodityItem{
+            width: 193px;
+            height: 300px;
+            margin: 10px 0px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            background: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 0 1px #00000010;
+            border: 1px solid #E0E0E0;
+        }
+        .CommodityIcon{
+            width: 193px;
+            height: 193px;
+            object-fit: scale-down;
+        }
+        .ShoppingCart{
+            width: 40px;
+            height: 40px;
+            background: #E0E0E0;
+            border-radius: 100px;
+            box-shadow: 0 0 2px 1px #00000040;
+        }
+        .ShoppingCart_Icon{
+            width: 100%;
+            height: 100%;
+            background: #004469;
+            -webkit-mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
+            mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
         }
     </style>
 </head>
@@ -236,6 +268,18 @@
                 now = this.index;
                 tab();
             }
+            aDiv[i].addEventListener('mouseover', function () {
+                if (this.index == now)
+                    this.style.background = '#004469'
+                else
+                    this.style.background = '#FFFFFFC0'
+            })
+            aDiv[i].addEventListener('mouseout', function () {
+                if (this.index == now)
+                    this.style.background = '#004469C0'
+                else
+                    this.style.background = '#DDDDDDC0'
+            })
         }
 
         CarouselPrev.onclick = function () {
@@ -263,9 +307,9 @@
         function tab() {
             clearInterval(timer2);
             for (var i = 0; i < aDiv.length; i++) {
-                aDiv[i].style.background = "#DDDDDD";
+                    aDiv[i].style.background = '#DDDDDDC0';
             }
-            aDiv[now].style.background = '#004469';
+            aDiv[now].style.background = '#004469C0';
 
             moveElement(CarouselImg, -1000 * now);
             timer2 = setInterval(CarouselNext.onclick, 6000);
@@ -351,9 +395,7 @@
 
     <div class="contentBody">
         <div class="Body">
-            <div style="height:400px; width:1000px; margin:0px auto; display:flex; justify-content: center; position: relative; overflow: hidden;">
-                <div id="CarouselPrev"></div>
-	            <div id="CarouselNext"></div>
+            <div style="height:250px; width:1000px; margin:25px auto; display:flex; justify-content: center; position: relative; overflow: hidden;">
                 <ul id="CarouselView" style="display: flex; position: absolute; width:100%; height:100%; padding:0px; transition: transform 0.5s;">
                     <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_1.png" alt="img1"/></li>
                     <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_2.png" alt="img2"/></li>
@@ -362,8 +404,10 @@
                     <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_5.png" alt="img5"/></li>
                     <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_6.png" alt="img6"/></li>
 	            </ul>
+                <div id="CarouselNext"></div>
+                <div id="CarouselPrev"></div>
                 <ul id="button">
-			        <li><div style="background: #004469;"></div></li>
+			        <li><div style="background: #004469C0;"></div></li>
 			        <li><div></div></li>
 			        <li><div></div></li>
 			        <li><div></div></li>
@@ -371,6 +415,12 @@
 			        <li><div></div></li>
 	            </ul>
             </div>
+        </div>
+    </div>
+    <div style="background:#E7E7E7; height:1px;"></div>
+    <div class="contentBody" style="background:#F0F0F0; padding: 20px 0px">
+        <div class="Body">
+            <asp:Panel ID="Panel_CommodityPage" runat="server" CssClass="CommodityPage"></asp:Panel>
         </div>
     </div>
 
