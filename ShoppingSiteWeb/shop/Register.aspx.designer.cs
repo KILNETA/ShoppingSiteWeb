@@ -7,48 +7,12 @@
 // </自動產生>
 //------------------------------------------------------------------------------
 
-namespace ShoppingSiteWeb
+namespace ShoppingSiteWeb.shop
 {
 
 
-    public partial class Default
+    public partial class Register
     {
-
-        /// <summary>
-        /// LinkButton5 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton5;
-
-        /// <summary>
-        /// LinkButton1 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
-
-        /// <summary>
-        /// LinkButton2 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton2;
-
-        /// <summary>
-        /// Panel_TitelMenuLogin 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel_TitelMenuLogin;
 
         /// <summary>
         /// LB_Titel 控制項。
@@ -60,66 +24,93 @@ namespace ShoppingSiteWeb
         protected global::System.Web.UI.WebControls.LinkButton LB_Titel;
 
         /// <summary>
-        /// TB_Password 控制項。
+        /// TB_UserName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_Password;
+        protected global::System.Web.UI.WebControls.TextBox TB_UserName;
 
         /// <summary>
-        /// DDL_BirthdayDay 控制項。
+        /// LB_ErrorMessage_UserName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList DDL_BirthdayDay;
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_UserName;
 
         /// <summary>
-        /// LinkButton7 控制項。
+        /// TB_EMail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton7;
+        protected global::System.Web.UI.WebControls.TextBox TB_EMail;
 
         /// <summary>
-        /// LinkButton9 控制項。
+        /// BT_SendCheckCodeEMail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton9;
+        protected global::System.Web.UI.WebControls.Button BT_SendCheckCodeEMail;
 
         /// <summary>
-        /// LinkButton6 控制項。
+        /// TB_EMailCheckCode 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton6;
+        protected global::System.Web.UI.WebControls.TextBox TB_EMailCheckCode;
 
         /// <summary>
-        /// LinkButton8 控制項。
+        /// IMG_EMailCheck 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton8;
+        protected global::System.Web.UI.WebControls.Image IMG_EMailCheck;
 
         /// <summary>
-        /// Panel_CommodityPage 控制項。
+        /// LB_ErrorMessage_EMail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel_CommodityPage;
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_EMail;
+
+        /// <summary>
+        /// LB_SendEMailMessage 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LB_SendEMailMessage;
+
+        /// <summary>
+        /// RegisterButton 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button RegisterButton;
+
+        /// <summary>
+        /// TB_Token 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TB_Token;
     }
 }

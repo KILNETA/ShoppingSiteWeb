@@ -1,0 +1,11 @@
+//創建 shopTable 資料表 欄位格式設定檔
+
+CREATE TABLE [dbo].[shopTable] (
+    [shopId]       INT            IDENTITY (1, 1) NOT NULL,
+    [shopName]     NVARCHAR (24)  NOT NULL,
+    [shopEMail]    NVARCHAR (320) NOT NULL,
+    [shopPhoneNum] NVARCHAR (10)  NOT NULL,
+    [shopAddress]  NVARCHAR (50)  NOT NULL,
+    PRIMARY KEY CLUSTERED ([shopId] ASC)
+);
+

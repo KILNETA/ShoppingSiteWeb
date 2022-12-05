@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 
@@ -9,6 +11,11 @@ namespace ShoppingSiteWeb
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["UserId"] != null)
+                showWelcomeUserInMenu();
+            else
+                showLoginInMenu();
+
             if (IsPostBack)
             {
 
@@ -18,7 +25,71 @@ namespace ShoppingSiteWeb
             }
         }
 
-        private void showCommodityPage()
+        private void showWelcomeUserInMenu()
+        {
+            Label LB_Welcome = new Label();
+            LinkButton LB_UserDashBoard = new LinkButton();
+
+            LB_Welcome.CssClass = "menuWelcome";
+            LB_UserDashBoard.CssClass = "generalLink";
+
+            SqlDataSource SqlDataSource_LoginUser = new SqlDataSource();
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_LoginUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+
+            SqlDataSource_LoginUser.SelectParameters.Add("UserID", Session["UserId"].ToString());
+
+            // SQL指令 ==
+            SqlDataSource_LoginUser.SelectCommand =
+                $"Select [userName] " +
+                $"FROM [userTable] " +
+                $"WHERE( userId = @UserID ) ";
+
+            // 執行SQL指令 .select() ==
+            SqlDataSource_LoginUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            DataView dv = (DataView)SqlDataSource_LoginUser.Select(new DataSourceSelectArguments());
+
+            DetailsView userTable = new DetailsView();
+            userTable.DataSource = dv;
+            userTable.DataBind();
+
+            SqlDataSource_LoginUser.Dispose();
+
+            LB_Welcome.Text = "歡迎您！ ";
+            LB_UserDashBoard.Text = userTable.Rows[0].Cells[1].Text;
+
+            LB_UserDashBoard.PostBackUrl = "~/buyer/DashBoard.aspx";
+
+            Panel_TitelMenuLogin.Controls.Add(LB_Welcome);
+            Panel_TitelMenuLogin.Controls.Add(LB_UserDashBoard);
+        }
+
+        private void showLoginInMenu()
+        {
+            LinkButton LB_Register = new LinkButton();
+            LinkButton LB_Login = new LinkButton();
+            Label LB_Menuseparate = new Label();
+
+
+            LB_Register.CssClass = "generalLink";
+            LB_Login.CssClass = "generalLink";
+            LB_Menuseparate.CssClass = "TitelMenuseparate";
+
+            LB_Register.Text = "會員註冊";
+            LB_Login.Text = "會員登入";
+            LB_Menuseparate.Text = "|";
+
+            LB_Register.PostBackUrl = "~/buyer/Register.aspx";
+            LB_Login.PostBackUrl = "~/buyer/Login.aspx";
+
+            Panel_TitelMenuLogin.Controls.Add(LB_Register);
+            Panel_TitelMenuLogin.Controls.Add(LB_Menuseparate);
+            Panel_TitelMenuLogin.Controls.Add(LB_Login);
+        }
+
+
+            private void showCommodityPage()
         {
             List<Panel> commodityPage = new List<Panel>();
 
@@ -55,7 +126,7 @@ namespace ShoppingSiteWeb
             Panel commodityShoppingCart_Icon = new Panel();
 
             commodityThumbnail.CssClass = "CommodityIcon";
-            commodityThumbnail.ImageUrl = "https://memeprod.ap-south-1.linodeobjects.com/user-template/3e82d6cf0ed82a242e887d73455921d6.png";
+            commodityThumbnail.ImageUrl = "https://lh3.googleusercontent.com/u/3/drive-viewer/AFDK6gMhmaGzT_G4RLZC5mD8yXhhn63LTTxMcchothMGZTst97tuswoUDSTWdk-cluiHqhFWlAgxPC20KnRkMR33dPtHG_Ku=w1920-h937";
             commodityThumbnail_Box.Controls.Add(commodityThumbnail);
 
             commodityName.Text = "好康的";

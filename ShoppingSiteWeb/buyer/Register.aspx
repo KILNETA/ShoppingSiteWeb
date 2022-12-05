@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Einkaufen 愛康福-註冊</title>
+    <title>Einkaufen 愛康福-會員註冊</title>
 
     <style type="text/css">
         html,body,form {
@@ -59,6 +59,7 @@
             font-family: 微軟正黑體;
             font-size: 32px;
             font-weight: bolder;
+            text-decoration:none;
         }
 
         div.RegisterBox {
@@ -171,7 +172,9 @@
     <header class="HeaderBackground-Style">
         <div class="Body">
             <div class="TitelBox-Style">
-                <p class="Titel-Style">Einkaufen 愛康福</p>
+                <asp:LinkButton CssClass="Titel-Style" ID="LB_Titel" runat="server" PostBackUrl="~/Default.aspx">
+                    Einkaufen 愛康福
+                </asp:LinkButton>
             </div>
         </div>
     </header>

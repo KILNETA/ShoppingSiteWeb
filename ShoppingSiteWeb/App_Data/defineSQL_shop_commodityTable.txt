@@ -1,0 +1,8 @@
+//創建 shop_commodityTable 資料表 欄位格式設定檔
+
+CREATE TABLE [dbo].[shop_commodityTable] (
+    [commodityId] INT NOT NULL,
+    [shopId]      INT NOT NULL,
+    PRIMARY KEY CLUSTERED ([commodityId] ASC)
+);
+

@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>Einkaufen 愛康福-登入</title>
+    <title>Einkaufen 愛康福</title>
 
     <style type="text/css">
         html,body,form {
@@ -69,6 +69,12 @@
             font-size: 32px;
             font-weight: bolder;
             margin: auto 0px;
+            flex:1;
+            text-decoration:none;
+        }
+        .menuWelcome{
+            color:#D0D0D0;
+            font-size:14px;
         }
         .generalLink{
             color:#FFFFFF;
@@ -79,7 +85,7 @@
             color:#E0E0E0;
             text-decoration:none;
         }
-        div.TitelMenuseparate{
+        .TitelMenuseparate{
             font-size: 13px; 
             padding:0px 5px; 
             color:#D0D0D0;
@@ -345,16 +351,12 @@
                             <asp:LinkButton CssClass="generalLink" ID="LinkButton2" runat="server">幫助中心</asp:LinkButton>
                         </div>
                         <div style="flex-grow: 1;"></div>
-                        <div class="TitelMenu-Style">
-                            <asp:LinkButton CssClass="generalLink" ID="LinkButton3" runat="server">會員註冊</asp:LinkButton>
-                            <div class="TitelMenuseparate">|</div>
-                            <asp:LinkButton CssClass="generalLink" ID="LinkButton4" runat="server">會員登入</asp:LinkButton>
-                        </div>
+                        <asp:Panel ID="Panel_TitelMenuLogin" runat="server" CssClass="TitelMenu-Style"></asp:Panel>
                     </div>
                     <div class="Titel-Style" style="flex-grow: 1">
-                        <div class="Titel" style="flex: 1;">
+                        <asp:LinkButton CssClass="Titel" ID="LB_Titel" runat="server" PostBackUrl="~/Default.aspx">
                             Einkaufen 愛康福
-                        </div>
+                        </asp:LinkButton>
                         <div class="Titel-Style" style="width: 640px">
                             <div class="InputBox">
                                 <asp:TextBox CssClass="TextBox" ID="TB_Password" placeholder="來愛康福購好物～" runat="server" BorderWidth="0px"/>
@@ -368,19 +370,19 @@
                             </div>
                         </div>
                         <div class="Titel-Style" style="flex: 1; height:100%; align-items: center; justify-content: left;">
-                            <asp:LinkButton CssClass="otherLoginButton" Width="50" ID="LinkButton9" runat="server">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton9" runat="server">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/shoppingBag.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">賣東西</div>
                                 </div>
                             </asp:LinkButton>
-                            <asp:LinkButton CssClass="otherLoginButton" Width="50" ID="LinkButton6" runat="server">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton6" runat="server" PostBackUrl="~/shop/DashBoard.aspx">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/store.png" width="30" style="display: inline-block; margin: 0 10px;"/>
-                                    <div style="display: inline-block; font-size:14px">賣東西</div>
+                                    <div style="display: inline-block; font-size:14px">我的商店</div>
                                 </div>
                             </asp:LinkButton>
-                            <asp:LinkButton CssClass="otherLoginButton" Width="50" ID="LinkButton8" runat="server">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton8" runat="server">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">購物車</div>

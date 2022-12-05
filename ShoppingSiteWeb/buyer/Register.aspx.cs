@@ -144,6 +144,7 @@ namespace ShoppingSiteWeb.buyer
         protected void TB_UserName_TextChanged(object sender, EventArgs e)
         {
             ViewState["isFinish_UserName"] = "false";
+            LB_ErrorMessage_UserName.ForeColor = System.Drawing.Color.Red;
 
             //用戶名包含特殊字元
             if (!new Regex("^[a-zA-Z0-9 ]*$").IsMatch(TB_UserName.Text))
@@ -200,7 +201,6 @@ namespace ShoppingSiteWeb.buyer
             }
             else
             {
-                LB_ErrorMessage_UserName.ForeColor = System.Drawing.Color.Red;
                 LB_ErrorMessage_UserName.Text = "用戶名已被使用";
                 return;
             }
@@ -371,39 +371,84 @@ namespace ShoppingSiteWeb.buyer
         /**
          * 檢測未填寫或有誤的警告訊息
          */
-        private void RegisterWarningMessage()
+        private bool RegisterWarningMessageCheck()
         {
-            //用戶名稱為空
-            if (ViewState["isFinish_UserName"].ToString() != "true")
+
+            bool complete = true;
+
+            //用戶名包含特殊字元
+            if (!new Regex("^[a-zA-Z0-9 ]*$").IsMatch(TB_UserName.Text))
             {
-                LB_ErrorMessage_UserName.ForeColor = System.Drawing.Color.Red;
-                LB_ErrorMessage_UserName.Text = "此欄填寫有誤";
+                complete = false;
+                LB_ErrorMessage_UserName.Text = "用戶名包含特殊字元";
+            }
+            //用戶名過長 >24
+            else if (TB_UserName.Text.Length > 24)
+            {
+                complete = false;
+                LB_ErrorMessage_UserName.Text = "用戶名過長";
+            }
+            //用戶名過短 <4
+            else if (TB_UserName.Text.Length < 4)
+            {
+                complete = false;
+                LB_ErrorMessage_UserName.Text = "用戶名過短";
             }
             else
                 LB_ErrorMessage_UserName.Text = "　";
 
-            //密碼為空
-            if (ViewState["isFinish_Password"].ToString() != "true")
-                LB_ErrorMessage_Password.Text = "此欄填寫有誤";
+            //密碼過長
+            if (TB_Password.Text.Length > 18)
+            {
+                complete = false;
+                LB_ErrorMessage_Password.Text = "密碼過長";
+            }
+            //密碼過短
+            else if (TB_Password.Text.Length < 6)
+            {
+                complete = false;
+                LB_ErrorMessage_Password.Text = "密碼過短";
+            }
+            else if (!new Regex("^[a-zA-Z0-9 ]*$").IsMatch(TB_Password.Text))
+            {
+                complete = false;
+                LB_ErrorMessage_Password.Text = "密碼包含特殊字元";
+            }
+            else if (new Regex("^[0-9]*$").IsMatch(TB_Password.Text))
+            {
+                complete = false;
+                LB_ErrorMessage_Password.Text = "密碼需包含至少一個英文字母";
+            }
             else
                 LB_ErrorMessage_Password.Text = "　";
 
             //確認密碼為空
-            if (ViewState["isFinish_PasswordCheck"].ToString() != "true")
-                LB_ErrorMessage_PasswordCheck.Text = "此欄填寫有誤";
+            if (!TB_Password.Text.Equals(TB_PasswordCheck.Text) &&
+                ViewState["isFinish_PasswordCheck"].ToString() != "true")
+            {
+                complete = false;
+                LB_ErrorMessage_PasswordCheck.Text = "確認密碼不符合";
+                IMG_PasswordCheck.ImageUrl = "picture/verify_fail.png";
+            }
             else
+            {
                 LB_ErrorMessage_PasswordCheck.Text = "　";
+                IMG_PasswordCheck.ImageUrl = "picture/verify_confirm.png";
+                ViewState["isFinish_PasswordCheck"] = "true";
+            }
 
             //電子信箱為空
-            if (ViewState["isFinish_EMail"].ToString() != "true")
+            if (!Regex.IsMatch(TB_EMail.Text, @"^([\w-]+\.)*?[\w-]+@[\w-]+\.([\w-]+\.)*?[\w]+$"))
             {
+                complete = false;
                 LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Red;
-                LB_ErrorMessage_EMail.Text = "此欄填寫有誤";
+                LB_ErrorMessage_EMail.Text = "格式錯誤";
             }
             //電子信箱未驗證
             else if (ViewState["isFinish_CheckEMail"].ToString() != "true" ||
                 ViewState["isSendCheckCodeEMail"].ToString() != "true")
             {
+                complete = false;
                 LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Red;
                 LB_ErrorMessage_EMail.Text = "電子信箱尚未認證";
             }
@@ -412,19 +457,43 @@ namespace ShoppingSiteWeb.buyer
 
             //真實名稱為空
             if (TB_RealName.Text == String.Empty)
+            {
+                complete = false;
                 LB_ErrorMessage_RealName.Text = "此欄不得為空";
+            }
+            else if (TB_Address.Text.Length > 20)
+            {
+                complete = false;
+                LB_ErrorMessage_PhoneNum.Text = "姓名過長";
+            }
             else
                 LB_ErrorMessage_RealName.Text = "　";
 
             //行動電話為空
             if (TB_PhoneNum.Text == String.Empty)
+            {
+                complete = false;
                 LB_ErrorMessage_PhoneNum.Text = "此欄不得為空";
+            }
+            else if(TB_PhoneNum.Text.Length > 10)
+            {
+                complete = false;
+                LB_ErrorMessage_PhoneNum.Text = "電話過長";
+            }
             else
                 LB_ErrorMessage_PhoneNum.Text = "　";
 
             //地址為空
             if (TB_Address.Text == String.Empty)
+            {
+                complete = false;
                 LB_ErrorMessage_Address.Text = "此欄不得為空";
+            }
+            else if (TB_Address.Text.Length > 50)
+            {
+                complete = false;
+                LB_ErrorMessage_PhoneNum.Text = "地址過長";
+            }
             else
                 LB_ErrorMessage_Address.Text = "　";
 
@@ -432,9 +501,14 @@ namespace ShoppingSiteWeb.buyer
             if (DDL_BirthdayYear.SelectedIndex == 0 ||
                 DDL_BirthdayMonth.SelectedIndex == 0 ||
                 DDL_BirthdayDay.SelectedIndex == 0)
+            {
+                complete = false;
                 LB_ErrorMessage_BirthdayDate.Text = "日期填寫有誤";
+            }
             else
                 LB_ErrorMessage_BirthdayDate.Text = "　";
+
+            return complete;
         }
 
         /**
@@ -450,24 +524,8 @@ namespace ShoppingSiteWeb.buyer
             }
 
             //確認表單是否填寫正確
-            if (
-                ViewState["isFinish_UserName"].ToString() != "true" ||
-                ViewState["isFinish_Password"].ToString() != "true" ||
-                ViewState["isFinish_PasswordCheck"].ToString() != "true" ||
-                ViewState["isFinish_EMail"].ToString() != "true" ||
-                ViewState["isFinish_CheckEMail"].ToString() != "true" ||
-                ViewState["isSendCheckCodeEMail"].ToString() != "true" ||
-                TB_RealName.Text == String.Empty ||
-                TB_PhoneNum.Text == String.Empty ||
-                TB_Address.Text == String.Empty ||
-                DDL_BirthdayYear.SelectedIndex == 0 ||
-                DDL_BirthdayMonth.SelectedIndex == 0 ||
-                DDL_BirthdayDay.SelectedIndex == 0
-                )
-            {
-                RegisterWarningMessage();
+            if( !RegisterWarningMessageCheck() )
                 return;
-            }
 
             //新建SqlDataSource元件
             SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();

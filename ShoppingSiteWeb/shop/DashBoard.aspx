@@ -1,11 +1,11 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DashBoard.aspx.cs" Inherits="ShoppingSiteWeb.buyer.DashBoard" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DashBoard.aspx.cs" Inherits="ShoppingSiteWeb.shop.DashBoard" %>
 
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Einkaufen 愛康福-會員儀錶板</title>
+    <title>Einkaufen 愛康福-商店儀錶板</title>
 
     <style type="text/css">
         html,body,form {
@@ -130,10 +130,6 @@
                     <div style=" flex-grow: 1;">
                         <asp:GridView ID="GV_UserData" CssClass="UserDataTable" runat="server" Font-Size="16"></asp:GridView>
                     </div>
-
-                    <div style="display: flex; align-items: flex-end; justify-content:center">
-                        <asp:Button  CssClass="SignOutButton" ID="SignOutButton" runat="server" Width="160" Text="登出" BorderStyle="None" ForeColor="White" OnClick="SignOutButton_Click"/>
-                    </div>
                 </div>
             </div>
         </div>
@@ -147,3 +143,4 @@
 </form>
 </body>
 </html>
+

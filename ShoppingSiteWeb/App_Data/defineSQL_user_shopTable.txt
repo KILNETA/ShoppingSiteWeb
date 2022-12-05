@@ -1,0 +1,8 @@
+//創建 user_shopTable 資料表 欄位格式設定檔
+
+CREATE TABLE [dbo].[user_shopTable] (
+    [userId] INT NOT NULL,
+    [shopId] INT NOT NULL,
+    PRIMARY KEY CLUSTERED ([userId] ASC)
+);
+

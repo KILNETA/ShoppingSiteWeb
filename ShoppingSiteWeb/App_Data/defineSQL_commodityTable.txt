@@ -1,0 +1,11 @@
+//創建 commodityTable 資料表 欄位格式設定檔
+
+CREATE TABLE [dbo].[commodityTable] (
+    [commodityId]           INT            IDENTITY (1, 1) NOT NULL,
+    [commodityName]         NVARCHAR (50)  NOT NULL,
+    [commodityPrice]        MONEY          NOT NULL,
+    [commodityIntroduction] NVARCHAR (200) NOT NULL,
+    [commodityThumbnail]    NVARCHAR (MAX) NOT NULL,
+    PRIMARY KEY CLUSTERED ([commodityId] ASC)
+);
+
