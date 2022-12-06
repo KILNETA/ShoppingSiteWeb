@@ -464,7 +464,7 @@ namespace ShoppingSiteWeb.buyer
             else if (TB_Address.Text.Length > 20)
             {
                 complete = false;
-                LB_ErrorMessage_PhoneNum.Text = "姓名過長";
+                LB_ErrorMessage_RealName.Text = "姓名過長";
             }
             else
                 LB_ErrorMessage_RealName.Text = "　";
@@ -492,7 +492,7 @@ namespace ShoppingSiteWeb.buyer
             else if (TB_Address.Text.Length > 50)
             {
                 complete = false;
-                LB_ErrorMessage_PhoneNum.Text = "地址過長";
+                LB_ErrorMessage_Address.Text = "地址過長";
             }
             else
                 LB_ErrorMessage_Address.Text = "　";

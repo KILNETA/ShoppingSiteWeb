@@ -24,31 +24,31 @@ namespace ShoppingSiteWeb.shop
         protected global::System.Web.UI.WebControls.LinkButton LB_Titel;
 
         /// <summary>
-        /// TB_UserName 控制項。
+        /// TB_ShopName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_UserName;
+        protected global::System.Web.UI.WebControls.TextBox TB_ShopName;
 
         /// <summary>
-        /// LB_ErrorMessage_UserName 控制項。
+        /// LB_ErrorMessage_ShopName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_UserName;
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_ShopName;
 
         /// <summary>
-        /// TB_EMail 控制項。
+        /// TB_ShopEMail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_EMail;
+        protected global::System.Web.UI.WebControls.TextBox TB_ShopEMail;
 
         /// <summary>
         /// BT_SendCheckCodeEMail 控制項。
@@ -96,13 +96,49 @@ namespace ShoppingSiteWeb.shop
         protected global::System.Web.UI.WebControls.Label LB_SendEMailMessage;
 
         /// <summary>
-        /// RegisterButton 控制項。
+        /// TB_ShopPhoneNum 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button RegisterButton;
+        protected global::System.Web.UI.WebControls.TextBox TB_ShopPhoneNum;
+
+        /// <summary>
+        /// LB_ErrorMessage_ShopPhoneNum 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_ShopPhoneNum;
+
+        /// <summary>
+        /// TB_ShopAddress 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TB_ShopAddress;
+
+        /// <summary>
+        /// LB_ErrorMessage_Address 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_Address;
+
+        /// <summary>
+        /// ShopRegisterButton 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ShopRegisterButton;
 
         /// <summary>
         /// TB_Token 控制項。

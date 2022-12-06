@@ -29,9 +29,13 @@ namespace ShoppingSiteWeb
         {
             Label LB_Welcome = new Label();
             LinkButton LB_UserDashBoard = new LinkButton();
+            Label LB_Menuseparate = new Label();
+            LinkButton LB_UserSignOut = new LinkButton();
 
             LB_Welcome.CssClass = "menuWelcome";
             LB_UserDashBoard.CssClass = "generalLink";
+            LB_Menuseparate.CssClass = "TitelMenuseparate";
+            LB_UserSignOut.CssClass = "generalLink";
 
             SqlDataSource SqlDataSource_LoginUser = new SqlDataSource();
             //連結資料庫的連接字串 ConnectionString
@@ -58,11 +62,24 @@ namespace ShoppingSiteWeb
 
             LB_Welcome.Text = "歡迎您！ ";
             LB_UserDashBoard.Text = userTable.Rows[0].Cells[1].Text;
+            LB_Menuseparate.Text = "|";
+            LB_UserSignOut.Text = "登出";
 
             LB_UserDashBoard.PostBackUrl = "~/buyer/DashBoard.aspx";
 
             Panel_TitelMenuLogin.Controls.Add(LB_Welcome);
             Panel_TitelMenuLogin.Controls.Add(LB_UserDashBoard);
+            Panel_TitelMenuLogin.Controls.Add(LB_Menuseparate);
+            Panel_TitelMenuLogin.Controls.Add(LB_UserSignOut);
+
+            LB_UserSignOut.Click += new EventHandler(this.SignOutButton_Click);
+
+        }
+
+        protected void SignOutButton_Click(object sender, EventArgs e)
+        {
+            Session["UserId"] = null;
+            Response.Write("<script>alert('成功登出！');window.location='Default.aspx';</script>");
         }
 
         private void showLoginInMenu()
