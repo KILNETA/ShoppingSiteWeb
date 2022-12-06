@@ -186,6 +186,7 @@
     <Content Include="shop\DashBoard.aspx" />
     <Content Include="shop\OnShelves.aspx" />
     <Content Include="shop\picture\login_background.jpg" />
+    <Content Include="shop\picture\no_image.png" />
     <Content Include="shop\picture\verify_confirm.png" />
     <Content Include="shop\picture\verify_fail.png" />
     <Content Include="shop\Register.aspx" />

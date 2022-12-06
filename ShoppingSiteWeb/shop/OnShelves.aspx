@@ -139,6 +139,11 @@
             text-align:center;
             width: 82px;
         }
+        .CommodityThumbnailView{
+            width: 400px;
+            height: 400px;
+            object-fit: scale-down;
+        }
     </style>
 </head>
 
@@ -165,56 +170,69 @@
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">商品名稱</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_ShopName" placeholder="最短4個，最長50個字元" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="24" AutoPostBack="True"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityName" placeholder="最短4個，最長50個字元" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="24" AutoPostBack="True" OnTextChanged="TB_CommodityName_TextChanged"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">
-                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_ShopName" runat="server" Text="　"/>
+                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_CommodityName" runat="server" Text="　"/>
                         </div>
                     </div>
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">商品價格</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_ShopEMail" placeholder="最多$9,999" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" AutoPostBack="True" MaxLength="4"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityPrice" placeholder="最多$9,999" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" AutoPostBack="True" MaxLength="4" OnTextChanged="TB_CommodityPrice_TextChanged"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px; display: flex;">
-                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_EMail" runat="server" Text="　" style="flex-grow: 1"/>
-                            <asp:Label CssClass="NoticeMessage" ID="LB_SendEMailMessage" runat="server" Text="　" style="margin-right: 30px"/>
+                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_CommodityPrice" runat="server" Text="　" style="flex-grow: 1"/>
                         </div>
                     </div>
                      <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">商品數量</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_ShopPhoneNum" placeholder="最多99個" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="2"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityNum" placeholder="最多99個" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="2" OnTextChanged="TB_CommodityNum_TextChanged"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">
-                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_ShopPhoneNum" runat="server" Text="　"/>
+                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_CommodityNum" runat="server" Text="　"/>
                         </div>
                     </div>
                     <div class="InputBox">
                         <div  class="FieldText">商品簡述</div>
                         <div class="InputField">
-                            <asp:TextBox CssClass="TextBox" ID="TB_ShopAddress" placeholder="最長200個字" Height="200px" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="200" TextMode="MultiLine" />
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityIntroduction" placeholder="最長200個字" Height="200px" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="200" TextMode="MultiLine"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div>
-                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_Address" runat="server" Text="　"/>
+                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_CommodityIntroduction" runat="server" Text="　"/>
                         </div>
                     </div>
                     <div class="InputBox">
                         <div  class="FieldText">商品圖片</div>
                         <div class="InputField">
-                            <asp:TextBox CssClass="TextBox" ID="TextBox1" placeholder="請填寫有效圖片連結" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" TextMode="Url" />
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityThumbnail" placeholder="請填寫有效圖片連結，建議大小 800x800px" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" TextMode="Url" />
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div>
-                            <asp:Label CssClass="ErrorMessage" ID="Label1" runat="server" Text="　"/>
+                            <asp:Label CssClass="ErrorMessage" ID="LB_CommodityThumbnail" runat="server" Text="　"/>
+                        </div>
+                    </div>
+                    <div class="InputBox">
+                        <div class="InputField">
+                            <div  class="FieldText">商品圖片預覽</div>
+                            <div class="Button" style="margin: 0px 10px">
+                                <asp:Button  CssClass="RegisterButton" ID="CommodityThumbnailViewButton" runat="server" Text="預覽圖示" BorderStyle="None" ForeColor="White" OnClick="CommodityThumbnailViewButton_Click"/>
+                            </div>
+                        </div>
+                        <div class="InputField" style="justify-content: center;">
+                            <asp:Image CssClass="CommodityThumbnailView" ImageUrl="~/shop/picture/no_image.png" ID="CommodityThumbnailView" runat="server" />
+                        </div>
+                        <div>
+                            <asp:Label CssClass="ErrorMessage" ID="LB_ErrorMessage_CommodityThumbnail" runat="server" Text="　"/>
                         </div>
                     </div>
                     <div class="Button" style="margin: 0px 60px">
-                        <asp:Button  CssClass="RegisterButton" ID="ShopRegisterButton" runat="server" Text="上架商品" BorderStyle="None" ForeColor="White"/>
+                        <asp:Button  CssClass="RegisterButton" ID="OnShelvesButton" runat="server" Text="上架商品" BorderStyle="None" ForeColor="White" OnClick="OnShelvesButton_Click"/>
                     </div>
                 </div>
             </div>

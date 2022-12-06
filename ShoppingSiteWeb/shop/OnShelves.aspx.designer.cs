@@ -24,112 +24,130 @@ namespace ShoppingSiteWeb.shop
         protected global::System.Web.UI.WebControls.LinkButton LB_Titel;
 
         /// <summary>
-        /// TB_ShopName 控制項。
+        /// TB_CommodityName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_ShopName;
+        protected global::System.Web.UI.WebControls.TextBox TB_CommodityName;
 
         /// <summary>
-        /// LB_ErrorMessage_ShopName 控制項。
+        /// LB_ErrorMessage_CommodityName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_ShopName;
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_CommodityName;
 
         /// <summary>
-        /// TB_ShopEMail 控制項。
+        /// TB_CommodityPrice 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_ShopEMail;
+        protected global::System.Web.UI.WebControls.TextBox TB_CommodityPrice;
 
         /// <summary>
-        /// LB_ErrorMessage_EMail 控制項。
+        /// LB_ErrorMessage_CommodityPrice 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_EMail;
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_CommodityPrice;
 
         /// <summary>
-        /// LB_SendEMailMessage 控制項。
+        /// TB_CommodityNum 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_SendEMailMessage;
+        protected global::System.Web.UI.WebControls.TextBox TB_CommodityNum;
 
         /// <summary>
-        /// TB_ShopPhoneNum 控制項。
+        /// LB_ErrorMessage_CommodityNum 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_ShopPhoneNum;
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_CommodityNum;
 
         /// <summary>
-        /// LB_ErrorMessage_ShopPhoneNum 控制項。
+        /// TB_CommodityIntroduction 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_ShopPhoneNum;
+        protected global::System.Web.UI.WebControls.TextBox TB_CommodityIntroduction;
 
         /// <summary>
-        /// TB_ShopAddress 控制項。
+        /// LB_ErrorMessage_CommodityIntroduction 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_ShopAddress;
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_CommodityIntroduction;
 
         /// <summary>
-        /// LB_ErrorMessage_Address 控制項。
+        /// TB_CommodityThumbnail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_Address;
+        protected global::System.Web.UI.WebControls.TextBox TB_CommodityThumbnail;
 
         /// <summary>
-        /// TextBox1 控制項。
+        /// LB_CommodityThumbnail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBox1;
+        protected global::System.Web.UI.WebControls.Label LB_CommodityThumbnail;
 
         /// <summary>
-        /// Label1 控制項。
+        /// CommodityThumbnailViewButton 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.Button CommodityThumbnailViewButton;
 
         /// <summary>
-        /// ShopRegisterButton 控制項。
+        /// CommodityThumbnailView 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ShopRegisterButton;
+        protected global::System.Web.UI.WebControls.Image CommodityThumbnailView;
+
+        /// <summary>
+        /// LB_ErrorMessage_CommodityThumbnail 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LB_ErrorMessage_CommodityThumbnail;
+
+        /// <summary>
+        /// OnShelvesButton 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button OnShelvesButton;
 
         /// <summary>
         /// TB_Token 控制項。

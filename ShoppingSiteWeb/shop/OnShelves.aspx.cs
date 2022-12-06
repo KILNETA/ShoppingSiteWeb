@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -93,6 +94,85 @@ namespace ShoppingSiteWeb.shop
                 return true;
             else
                 return false;
+        }
+
+        protected void CommodityThumbnailViewButton_Click(object sender, EventArgs e)
+        {
+            if (TB_CommodityThumbnail.Text == String.Empty) 
+            {
+                LB_ErrorMessage_CommodityThumbnail.Text = "此欄不可為空";
+            }
+            else
+            {
+                CommodityThumbnailView.ImageUrl = TB_CommodityThumbnail.Text;
+            }
+
+        }
+
+        protected void TB_CommodityName_TextChanged(object sender, EventArgs e)
+        {
+            //用戶名過長 >50
+            if (TB_CommodityName.Text.Length > 50)
+            {
+                LB_ErrorMessage_CommodityName.Text = "商品名過長";
+                return;
+            }
+            //用戶名過短 <4
+            else if (TB_CommodityName.Text.Length < 4)
+            {
+                LB_ErrorMessage_CommodityName.Text = "商品名過短";
+                return;
+            }
+        }
+
+        protected void TB_CommodityPrice_TextChanged(object sender, EventArgs e)
+        {
+            //金額不可高於 > 9999
+            if ( Int32.Parse(TB_CommodityPrice.Text) > 9999)
+            {
+                LB_ErrorMessage_CommodityPrice.Text = "金額不可高於 9999";
+                return;
+            }
+            //金額不可低於 < 1
+            else if (Int32.Parse(TB_CommodityPrice.Text) < 1)
+            {
+                LB_ErrorMessage_CommodityPrice.Text = "金額不可低於 1";
+                return;
+            }
+        }
+
+        protected void TB_CommodityNum_TextChanged(object sender, EventArgs e)
+        {
+            //金額不可高於 > 99
+            if (Int32.Parse(TB_CommodityNum.Text) > 99)
+            {
+                LB_ErrorMessage_CommodityNum.Text = "數量不可高於 99";
+                return;
+            }
+            //金額不可低於 < 1
+            else if (Int32.Parse(TB_CommodityNum.Text) < 1)
+            {
+                LB_ErrorMessage_CommodityNum.Text = "數量不可低於 1";
+                return;
+            }
+        }
+
+        /**
+         * 檢測未填寫或有誤的警告訊息
+         */
+        private bool RegisterWarningMessageCheck()
+        {
+
+            bool complete = true;
+
+            
+
+            return complete;
+        }
+
+        protected void OnShelvesButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
