@@ -370,7 +370,7 @@
                             </div>
                         </div>
                         <div class="Titel-Style" style="flex: 1; height:100%; align-items: center; justify-content: left;">
-                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton9" runat="server">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton9" runat="server" PostBackUrl="~/shop/OnShelves.aspx">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/shoppingBag.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">賣東西</div>

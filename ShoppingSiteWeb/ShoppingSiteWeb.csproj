@@ -110,7 +110,11 @@
     <Content Include="App_Data\Database_Main_log.ldf">
       <DependentUpon>Database_Main.mdf</DependentUpon>
     </Content>
+    <Content Include="App_Data\defineSQL_commodityTable.txt" />
+    <Content Include="App_Data\defineSQL_shopTable.txt" />
+    <Content Include="App_Data\defineSQL_shop_commodityTable.txt" />
     <Content Include="App_Data\defineSQL_userTable.txt" />
+    <Content Include="App_Data\defineSQL_user_shopTable.txt" />
     <Content Include="buyer\DashBoard.aspx" />
     <Content Include="buyer\Login.aspx" />
     <Content Include="buyer\picture\facebook_logo.png" />
@@ -180,6 +184,7 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="shop\DashBoard.aspx" />
+    <Content Include="shop\OnShelves.aspx" />
     <Content Include="shop\picture\login_background.jpg" />
     <Content Include="shop\picture\verify_confirm.png" />
     <Content Include="shop\picture\verify_fail.png" />
@@ -231,6 +236,13 @@
     </Compile>
     <Compile Include="shop\DashBoard.aspx.designer.cs">
       <DependentUpon>DashBoard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="shop\OnShelves.aspx.cs">
+      <DependentUpon>OnShelves.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="shop\OnShelves.aspx.designer.cs">
+      <DependentUpon>OnShelves.aspx</DependentUpon>
     </Compile>
     <Compile Include="shop\Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
