@@ -3,7 +3,8 @@
 CREATE TABLE [dbo].[commodityTable] (
     [commodityId]           INT            IDENTITY (1, 1) NOT NULL,
     [commodityName]         NVARCHAR (50)  NOT NULL,
-    [commodityPrice]        MONEY          NOT NULL,
+    [commodityPrice]        INT            NOT NULL,
+    [commodityNum]          INT            NOT NULL,
     [commodityIntroduction] NVARCHAR (200) NOT NULL,
     [commodityThumbnail]    NVARCHAR (MAX) NOT NULL,
     PRIMARY KEY CLUSTERED ([commodityId] ASC)

@@ -412,13 +412,11 @@ namespace ShoppingSiteWeb.shop
             //會員註冊失敗，用戶名或信箱已被使用
             else if (dvTable.Rows[0].Cells[1].Text == "0")
             {
-                Session["UserId"] = null;
                 Response.Write("<script>alert('商店註冊失敗，商店名或信箱已被使用！');window.location='Register.aspx';</script>");
             }
             //表單已失效，創建新註冊表單
             else
             {
-                Session["UserId"] = null;
                 Response.Write("<script>alert('表單已失效，創建新商店註冊表單！');window.location='Register.aspx';</script>");
             }
         }

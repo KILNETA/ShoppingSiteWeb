@@ -170,7 +170,7 @@
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">商品名稱</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityName" placeholder="最短4個，最長50個字元" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="24" AutoPostBack="True" OnTextChanged="TB_CommodityName_TextChanged"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityName" placeholder="最短4個，最長50個字元" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="50" AutoPostBack="True" OnTextChanged="TB_CommodityName_TextChanged"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">
@@ -190,7 +190,7 @@
                      <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">商品數量</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityNum" placeholder="最多99個" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" MaxLength="2" OnTextChanged="TB_CommodityNum_TextChanged"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityNum" placeholder="最多99個" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" AutoPostBack="True"  MaxLength="2" OnTextChanged="TB_CommodityNum_TextChanged"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px">
