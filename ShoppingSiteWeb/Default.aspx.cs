@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
@@ -9,6 +10,17 @@ namespace ShoppingSiteWeb
 {
     public partial class Default : System.Web.UI.Page
     {
+        /* C->commodity S->shop */
+        private static readonly String[] dataNames =  {
+            "CId",
+            "CName",
+            "CPrice",
+            "CNum",
+            "CThumbnail",
+            "SId",
+            "SName"
+        };
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["UserId"] != null)
@@ -21,7 +33,59 @@ namespace ShoppingSiteWeb
 
             }
             else {
-                showCommodityPage();
+                selectRecommendCommoditys();
+            }
+            showCommodityPage();
+        }
+
+        private void selectRecommendCommoditys()
+        {
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_RegisterUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+
+            //SQL指令
+            SqlDataSource_RegisterUser.SelectCommand =
+                $"SELECT TOP(60)" +
+                    $"CT.commodityId, " +
+                    $"CT.commodityName, " +
+                    $"CT.commodityPrice, " +
+                    $"CT.commodityNum, " +
+                    $"CT.commodityThumbnail, " +
+                    $"ST.shopId, " +
+                    $"ST.shopName " +
+                $"FROM commodityTable CT " +
+                $"INNER JOIN shop_commodityTable SCT " +
+                $"ON SCT.commodityId = CT.commodityId " +
+                $"INNER JOIN shopTable ST " +
+                $"ON ST.shopId = SCT.shopId " +
+                $"ORDER BY NEWID()";
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            GridView gv = new GridView();
+            //資料匯入表格
+            gv.DataSource = dv;
+            //更新表格
+            gv.DataBind();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_RegisterUser.Dispose();
+
+            saveRecommendCommoditys(gv);
+        }
+
+        private void saveRecommendCommoditys(GridView gv)
+        {
+            for (int cell = 0; cell < dataNames.Length ; cell++) {
+                for (int row = 1; row <= 12; row++) {
+                    // ViewState[dataNames_Index]
+                    ViewState[$"{dataNames[cell]}_{row}"] = gv.Rows[row].Cells[cell].Text;
+                }
             }
         }
 
@@ -112,27 +176,31 @@ namespace ShoppingSiteWeb
 
             for (int i = 0 ; i < 10 ; i++)
             {
-                commodityPage.Add(showCommodityList());
+                commodityPage.Add(showCommodityList( i ));
                 commodityPage[i].CssClass = "CommodityList"; 
                 Panel_CommodityPage.Controls.Add(commodityPage[i]);
             }
         }
 
-        private Panel showCommodityList()
+        private Panel showCommodityList(int index)
         {
             Panel commodityList = new Panel();
 
             for (int i = 0; i < 6; i++)
             {
-                commodityList.Controls.Add(showCommodityItem());
+                commodityList.Controls.Add(showCommodityItem(index*6 + i));
             }
 
             return commodityList;
         }
 
-        private Panel showCommodityItem()
+        private Panel showCommodityItem(int index)
         {
-            Panel commodityItem = new Panel();
+            //測試用的
+            if (++index>12)
+                return new Panel();
+            //測試用的
+             Panel commodityItem = new Panel();
             commodityItem.CssClass = "CommodityItem";
 
             LinkButton commodityThumbnail_Box = new LinkButton();
@@ -143,12 +211,12 @@ namespace ShoppingSiteWeb
             Panel commodityShoppingCart_Icon = new Panel();
 
             commodityThumbnail.CssClass = "CommodityIcon";
-            commodityThumbnail.ImageUrl = "https://lh3.googleusercontent.com/u/3/drive-viewer/AFDK6gMhmaGzT_G4RLZC5mD8yXhhn63LTTxMcchothMGZTst97tuswoUDSTWdk-cluiHqhFWlAgxPC20KnRkMR33dPtHG_Ku=w1920-h937";
+            commodityThumbnail.ImageUrl = ViewState[$"CThumbnail_{index}"].ToString();
             commodityThumbnail_Box.Controls.Add(commodityThumbnail);
 
-            commodityName.Text = "好康的";
+            commodityName.Text = ViewState[$"CName_{index}"].ToString();
             commodityName.Font.Size = 12;
-            commodityPrice.Text = "1,200";
+            commodityPrice.Text = ViewState[$"CPrice_{index}"].ToString();
             commodityPrice.Font.Size = 12;
 
             commodityShoppingCart.CssClass = "ShoppingCart";
