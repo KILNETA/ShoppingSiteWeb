@@ -100,8 +100,24 @@
             background: #3d474d;
         }
         .UserDataTable{
+            min-height:100px;
             height:100%;
             width:100%;
+        }
+        .CenterButton{
+            font-family: 微軟正黑體;
+            font-size: 16px;
+            width: 100%;
+            height: 40px;
+            cursor: pointer;
+            background: #004469;
+            margin: 0px 10px;
+        }
+        .CenterButton:hover {
+            background: #0d5982;
+        }
+        .CenterButton:active{
+            background: #3d474d;
         }
 
     </style>
@@ -129,6 +145,18 @@
                     </div>
                     <div style=" flex-grow: 1;">
                         <asp:GridView ID="GV_UserData" CssClass="UserDataTable" runat="server" Font-Size="16"></asp:GridView>
+                        <div style="display: flex; align-items: flex-end; justify-content: center; margin: 10px 0px">
+                            <asp:Button  CssClass="CenterButton" ID="Button4" runat="server" Width="160" Text="購物車" BorderStyle="None" ForeColor="White"/>
+                            <asp:Button  CssClass="CenterButton" ID="Button5" runat="server" Width="160" Text="交易明細" BorderStyle="None" ForeColor="White"/>
+                        </div>
+                    </div>
+                    <div style=" flex-grow: 1;">
+                        <asp:GridView ID="GV_ShopData" CssClass="UserDataTable" runat="server" Font-Size="16" EmptyDataText="尚未註冊商鋪"></asp:GridView>
+                        <div style="display: flex; align-items: flex-end; justify-content: center; margin: 10px 0px">
+                            <asp:Button  CssClass="CenterButton" ID="Button3" runat="server" Width="160" Text="註冊商鋪" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/Register.aspx"/>
+                            <asp:Button  CssClass="CenterButton" ID="Button2" runat="server" Width="160" Text="上架新商品" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/OnShelves.aspx"/>
+                            <asp:Button  CssClass="CenterButton" ID="Button1" runat="server" Width="160" Text="商鋪儀表板" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/DashBoard.aspx"/>
+                        </div>
                     </div>
 
                     <div style="display: flex; align-items: flex-end; justify-content:center">

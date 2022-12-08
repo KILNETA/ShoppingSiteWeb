@@ -82,7 +82,7 @@ namespace ShoppingSiteWeb
         private void saveRecommendCommoditys(GridView gv)
         {
             for (int cell = 0; cell < dataNames.Length ; cell++) {
-                for (int row = 1; row <= 12; row++) {
+                for (int row = 0; row < 36; row++) {
                     // ViewState[dataNames_Index]
                     ViewState[$"{dataNames[cell]}_{row}"] = gv.Rows[row].Cells[cell].Text;
                 }
@@ -197,7 +197,7 @@ namespace ShoppingSiteWeb
         private Panel showCommodityItem(int index)
         {
             //測試用的
-            if (++index>12)
+            if (index>=36)
                 return new Panel();
             //測試用的
              Panel commodityItem = new Panel();

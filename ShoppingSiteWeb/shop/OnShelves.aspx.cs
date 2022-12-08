@@ -149,10 +149,10 @@ namespace ShoppingSiteWeb.shop
                 LB_ErrorMessage_CommodityPrice.Text = "請輸入數字";
                 return;
             }
-            //金額不可高於 > 9999
-            else if ( Int32.Parse(TB_CommodityPrice.Text) > 9999)
+            //金額不可高於 > 99999
+            else if ( Int32.Parse(TB_CommodityPrice.Text) > 99999)
             {
-                LB_ErrorMessage_CommodityPrice.Text = "金額不可高於 9999";
+                LB_ErrorMessage_CommodityPrice.Text = "金額不可高於 99999";
                 return;
             }
             //金額不可低於 < 1
@@ -236,11 +236,11 @@ namespace ShoppingSiteWeb.shop
                 complete = false;
                 LB_ErrorMessage_CommodityPrice.Text = "請輸入數字";
             }
-            //金額不可高於 > 9999
-            else if (Int32.Parse(TB_CommodityPrice.Text) > 9999)
+            //金額不可高於 > 99999
+            else if (Int32.Parse(TB_CommodityPrice.Text) > 99999)
             {
                 complete = false;
-                LB_ErrorMessage_CommodityPrice.Text = "金額不可高於 9999";
+                LB_ErrorMessage_CommodityPrice.Text = "金額不可高於 99999";
             }
             //金額不可低於 < 1
             else if (Int32.Parse(TB_CommodityPrice.Text) < 1)

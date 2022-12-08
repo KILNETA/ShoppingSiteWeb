@@ -180,7 +180,7 @@
                     <div class="InputBox">
                         <div class="InputField">
                             <div  class="FieldText">商品價格</div>
-                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityPrice" placeholder="最多$9,999" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" AutoPostBack="True" MaxLength="4" OnTextChanged="TB_CommodityPrice_TextChanged"/>
+                            <asp:TextBox CssClass="TextBox" ID="TB_CommodityPrice" placeholder="最多$99,999" runat="server" BorderWidth="1px" onBlur="UserBoxHasError(this)" AutoPostBack="True" MaxLength="5" OnTextChanged="TB_CommodityPrice_TextChanged"/>
                             <div style="margin-right: 30px"></div>
                         </div>
                         <div style="margin-left:74px; display: flex;">
