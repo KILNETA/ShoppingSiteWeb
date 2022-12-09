@@ -200,12 +200,21 @@ namespace ShoppingSiteWeb
             if (index>=36)
                 return new Panel();
             //測試用的
+
              Panel commodityItem = new Panel();
             commodityItem.CssClass = "CommodityItem";
 
+            String PriceNum = ViewState[$"CPrice_{index}"].ToString();
+            if (PriceNum.Length > 3)
+                PriceNum = PriceNum.Insert(PriceNum.Length - 3, ",");
+
             LinkButton commodityThumbnail_Box = new LinkButton();
             Image commodityThumbnail = new Image();
+            Panel commodityContent = new Panel();
+            LinkButton commodityName_Box = new LinkButton();
             Label commodityName = new Label();
+            Panel commodityPriceContent = new Panel();
+            Label commodityPriceSymbol = new Label();
             Label commodityPrice = new Label();
             LinkButton commodityShoppingCart = new LinkButton();
             Panel commodityShoppingCart_Icon = new Panel();
@@ -214,19 +223,33 @@ namespace ShoppingSiteWeb
             commodityThumbnail.ImageUrl = ViewState[$"CThumbnail_{index}"].ToString();
             commodityThumbnail_Box.Controls.Add(commodityThumbnail);
 
+            commodityContent.CssClass = "CommodityContent";
+
+            commodityName_Box.CssClass = "CommodityNameText";
             commodityName.Text = ViewState[$"CName_{index}"].ToString();
-            commodityName.Font.Size = 12;
-            commodityPrice.Text = ViewState[$"CPrice_{index}"].ToString();
-            commodityPrice.Font.Size = 12;
+            commodityName_Box.Controls.Add(commodityName);
+
+            commodityPriceContent.CssClass = "CommodityPriceBox";
+            commodityPriceSymbol.CssClass = "CommodityPriceSymbol";
+            commodityPriceSymbol.Text = "$";
+            commodityPrice.CssClass = "CommodityPriceText";
+            commodityPrice.Text = PriceNum;
+            commodityPriceContent.Controls.Add(commodityPriceSymbol);
+            commodityPriceContent.Controls.Add(commodityPrice);
 
             commodityShoppingCart.CssClass = "ShoppingCart";
             commodityShoppingCart_Icon.CssClass = "ShoppingCart_Icon";
             commodityShoppingCart.Controls.Add(commodityShoppingCart_Icon);
 
+            commodityThumbnail_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"CId_{index}"]}";
+            commodityName_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"CId_{index}"]}";
+
+            commodityContent.Controls.Add(commodityName_Box);
+            commodityContent.Controls.Add(commodityPriceContent);
+
             commodityItem.Controls.Add(commodityThumbnail_Box);
-            commodityItem.Controls.Add(commodityName);
-            commodityItem.Controls.Add(commodityPrice);
             commodityItem.Controls.Add(commodityShoppingCart);
+            commodityItem.Controls.Add(commodityContent);
 
             return commodityItem;
         }

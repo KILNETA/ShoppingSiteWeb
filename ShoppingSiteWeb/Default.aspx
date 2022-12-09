@@ -147,7 +147,7 @@
         .SearchDropDownList{
             outline: none;
             margin : 10px 0px;
-            padding 0px 5px;
+            padding: 0px 5px;
         }
 
         .otherLoginButton{
@@ -222,7 +222,7 @@
         }
         .CommodityItem{
             width: 193px;
-            height: 300px;
+            height: 320px;
             margin: 10px 0px;
             display: flex;
             flex-direction: column;
@@ -232,23 +232,63 @@
             border-radius: 5px;
             box-shadow: 0 0 0 1px #00000010;
             border: 1px solid #E0E0E0;
+            position: relative;
         }
         .CommodityIcon{
             width: 193px;
             height: 193px;
             object-fit: scale-down;
         }
+        .CommodityContent{
+            flex: 1;
+            padding: 12px 12px 8px 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        .CommodityNameText{
+            font-size: 16px;
+            letter-spacing: .6px;
+            font-family: 微軟正黑體;
+            color: #444444;
+            text-decoration:none;
+            
+            height: 44px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+        .CommodityPriceBox{
+            margin-top: 5px;
+        }
+        .CommodityPriceSymbol{
+            font-size: 14px;
+            font-family: 微軟正黑體;
+            color: #ff5d0e;
+            font-weight: bolder;
+            margin-right: 4px;
+        }
+        .CommodityPriceText{
+            font-size: 18px;
+            font-family: 微軟正黑體;
+            color: #ff5d0e;
+            font-weight: bolder;
+        }
         .ShoppingCart{
             width: 40px;
             height: 40px;
-            background: #E0E0E0;
+            background: #F0F0F0;
             border-radius: 100px;
-            box-shadow: 0 0 2px 1px #00000040;
+            box-shadow: 0 0 2px 1px #00000020;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            cursor: pointer;
         }
         .ShoppingCart_Icon{
             width: 100%;
             height: 100%;
-            background: #004469;
+            background: #495e69;
             -webkit-mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
             mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
         }
