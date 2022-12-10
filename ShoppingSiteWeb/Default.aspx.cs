@@ -256,5 +256,14 @@ namespace ShoppingSiteWeb
 
             return commodityItem;
         }
+
+        protected void LB_runSearch_Click(object sender, EventArgs e)
+        {
+            if (DDL_SearchMode.SelectedIndex == 0)
+            {
+                Response.Redirect($"~/search/Search.aspx?commoditySearch={TB_Search.Text}");
+            }
+            
+        }
     }
 }

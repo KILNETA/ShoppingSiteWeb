@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ShoppingSiteWeb.Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Search.aspx.cs" Inherits="ShoppingSiteWeb.search.Search" %>
 
 <!DOCTYPE html>
 
@@ -25,6 +25,7 @@
             font-family: 微軟正黑體;
         }
         div.contentBody{
+            min-height: 500px;
             min-width: 1200px;
             background-size: cover;
             background-position: center;
@@ -233,6 +234,12 @@
             border: 1px solid #E0E0E0;
             position: relative;
         }
+        .CommodityItem_none{
+            width: 193px;
+            height: 320px;
+            margin: 10px 0px;
+            background: #FFFFFF00;
+        }
         .CommodityIcon{
             width: 193px;
             height: 193px;
@@ -288,8 +295,8 @@
             width: 100%;
             height: 100%;
             background: #495e69;
-            -webkit-mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
-            mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
+            -webkit-mask: url('picture/shoppingCart.svg') no-repeat center;
+            mask: url('picture/shoppingCart.svg') no-repeat center;
         }
 
         .commodityAllTitle{
@@ -298,8 +305,6 @@
             color: #444444;
             font-weight: bolder;
         }
-
-
     </style>
 </head>
 
@@ -413,26 +418,26 @@
                                     <asp:ListItem>查商店</asp:ListItem>
                                 </asp:DropDownList>
                                 <asp:LinkButton CssClass="otherSearchButton" ID="LB_runSearch" runat="server" OnClick="LB_runSearch_Click">
-                                    <img src="Default_Picture/Inquire.png" width="20" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/Inquire.png" width="20" style="display: inline-block; margin: 0 10px;"/>
                                 </asp:LinkButton>
                             </div>
                         </div>
                         <div class="Titel-Style" style="flex: 1; height:100%; align-items: center; justify-content: left;">
                             <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton9" runat="server" PostBackUrl="~/shop/OnShelves.aspx">
                                 <div class="otherLoginButtonContent">
-                                    <img src="Default_Picture/shoppingBag.png" width="30" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/shoppingBag.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">賣東西</div>
                                 </div>
                             </asp:LinkButton>
                             <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton6" runat="server" PostBackUrl="~/shop/DashBoard.aspx">
                                 <div class="otherLoginButtonContent">
-                                    <img src="Default_Picture/store.png" width="30" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/store.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">我的商店</div>
                                 </div>
                             </asp:LinkButton>
                             <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton8" runat="server">
                                 <div class="otherLoginButtonContent">
-                                    <img src="Default_Picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">購物車</div>
                                 </div>
                            </asp:LinkButton>
@@ -443,36 +448,10 @@
         </div>
     </header>
 
-    <div class="contentBody">
-        <div class="Body">
-            <div style="height:250px; width:1000px; margin:25px auto; display:flex; justify-content: center; position: relative; overflow: hidden;">
-                <ul id="CarouselView" style="display: flex; position: absolute; width:100%; height:100%; padding:0px; transition: transform 0.5s;">
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_1.png" alt="img1"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_2.png" alt="img2"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_3.png" alt="img3"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_4.png" alt="img4"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_5.png" alt="img5"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_6.png" alt="img6"/></li>
-	            </ul>
-                <div id="CarouselNext"></div>
-                <div id="CarouselPrev"></div>
-                <ul id="button">
-			        <li><div style="background: #004469C0;"></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-	            </ul>
-            </div>
-        </div>
-    </div>
     <div style="background:#E7E7E7; height:1px;"></div>
     <div class="contentBody" style="background:#F0F0F0; padding: 20px 0px">
         <div class="Body" style="display: flex; flex-direction: column;">
-            <div class="commodityAllTitle">
-                向您推薦
-            </div>
+            <asp:Label CssClass="commodityAllTitle" ID="searchNum" runat="server" Text=""></asp:Label>
             <asp:Panel ID="Panel_CommodityPage" runat="server" CssClass="CommodityPage"></asp:Panel>
         </div>
     </div>

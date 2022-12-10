@@ -190,6 +190,12 @@
     <Content Include="Scripts\WebForms\WebForms.js" />
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
+    <Content Include="search\picture\Inquire.png" />
+    <Content Include="search\picture\shopping.png" />
+    <Content Include="search\picture\shoppingBag.png" />
+    <Content Include="search\picture\shoppingCart.svg" />
+    <Content Include="search\picture\store.png" />
+    <Content Include="search\Search.aspx" />
     <Content Include="shop\DashBoard.aspx" />
     <Content Include="shop\OnShelves.aspx" />
     <Content Include="shop\picture\Inquire.png" />
@@ -251,6 +257,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="search\Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="search\Search.aspx.designer.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+    </Compile>
     <Compile Include="shop\DashBoard.aspx.cs">
       <DependentUpon>DashBoard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -6,9 +6,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ShoppingSiteWeb.shop
+namespace ShoppingSiteWeb.search
 {
-    public partial class Shop : System.Web.UI.Page
+    public partial class Search : System.Web.UI.Page
     {
         /* C->commodity S->shop */
         private static readonly String[] dataNames =  {
@@ -35,46 +35,6 @@ namespace ShoppingSiteWeb.shop
                 selectRecommendCommoditys();
             }
             showCommodityPage();
-            showShopData();
-        }
-
-        private void showShopData()
-        {
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
-
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("ShopId", Context.Request.QueryString["shopId"].ToString());
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"SELECT " +
-                    $"shopName, " +
-                    $"shopEMail, " +
-                    $"shopPhoneNum, " +
-                    $"shopAddress " +
-                $"FROM shopTable " +
-                $"WHERE shopId = @ShopId";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            GridView gv = new GridView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
-
-            LB_shopName.Text = gv.Rows[0].Cells[0].Text;
-            LB_shopEMail.Text += gv.Rows[0].Cells[1].Text;
-            LB_shopPhone.Text += gv.Rows[0].Cells[2].Text;
-            LB_shopAddress.Text += gv.Rows[0].Cells[3].Text;
         }
 
         private void selectRecommendCommoditys()
@@ -86,7 +46,7 @@ namespace ShoppingSiteWeb.shop
             SqlDataSource_RegisterUser.ConnectionString =
                 "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
 
-            SqlDataSource_RegisterUser.SelectParameters.Add("ShopId", Context.Request.QueryString["shopId"].ToString());
+            SqlDataSource_RegisterUser.SelectParameters.Add("CommoditySearch", $"%{Context.Request.QueryString["commoditySearch"]}%");
 
             //SQL指令
             SqlDataSource_RegisterUser.SelectCommand =
@@ -97,9 +57,7 @@ namespace ShoppingSiteWeb.shop
                     $"CT.commodityNum, " +
                     $"CT.commodityThumbnail " +
                 $"FROM commodityTable CT " +
-                $"INNER JOIN shop_commodityTable SCT " +
-                $"ON SCT.commodityId = CT.commodityId " +
-                $"WHERE SCT.shopId = @ShopId";
+                $"WHERE CT.commodityName LIKE @CommoditySearch ";
 
             //執行SQL指令 .select() ==
             SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
@@ -114,6 +72,9 @@ namespace ShoppingSiteWeb.shop
             SqlDataSource_RegisterUser.Dispose();
 
             ViewState["commodityNum"] = gv.Rows.Count;
+
+            TB_Search.Text = Context.Request.QueryString["commoditySearch"];
+            searchNum.Text = $"搜索到 {ViewState["commodityNum"]} 樣商品";
 
             saveRecommendCommoditys(gv);
         }
@@ -245,7 +206,7 @@ namespace ShoppingSiteWeb.shop
             Panel commodityItem = new Panel();
             commodityItem.CssClass = "CommodityItem";
 
-            if(index >= Int32.Parse(ViewState["commodityNum"].ToString()))
+            if (index >= Int32.Parse(ViewState["commodityNum"].ToString()))
             {
                 commodityItem.CssClass = "CommodityItem_none";
                 return commodityItem;

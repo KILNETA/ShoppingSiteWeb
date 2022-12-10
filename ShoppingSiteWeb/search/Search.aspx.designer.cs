@@ -7,11 +7,11 @@
 // </自動產生>
 //------------------------------------------------------------------------------
 
-namespace ShoppingSiteWeb.shop
+namespace ShoppingSiteWeb.search
 {
 
 
-    public partial class Shop
+    public partial class Search
     {
 
         /// <summary>
@@ -114,40 +114,13 @@ namespace ShoppingSiteWeb.shop
         protected global::System.Web.UI.WebControls.LinkButton LinkButton8;
 
         /// <summary>
-        /// LB_shopName 控制項。
+        /// searchNum 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_shopName;
-
-        /// <summary>
-        /// LB_shopEMail 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_shopEMail;
-
-        /// <summary>
-        /// LB_shopPhone 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_shopPhone;
-
-        /// <summary>
-        /// LB_shopAddress 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LB_shopAddress;
+        protected global::System.Web.UI.WebControls.Label searchNum;
 
         /// <summary>
         /// Panel_CommodityPage 控制項。

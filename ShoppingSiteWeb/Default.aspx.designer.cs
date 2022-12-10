@@ -60,31 +60,31 @@ namespace ShoppingSiteWeb
         protected global::System.Web.UI.WebControls.LinkButton LB_Titel;
 
         /// <summary>
-        /// TB_Password 控制項。
+        /// TB_Search 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TB_Password;
+        protected global::System.Web.UI.WebControls.TextBox TB_Search;
 
         /// <summary>
-        /// DDL_BirthdayDay 控制項。
+        /// DDL_SearchMode 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList DDL_BirthdayDay;
+        protected global::System.Web.UI.WebControls.DropDownList DDL_SearchMode;
 
         /// <summary>
-        /// LinkButton7 控制項。
+        /// LB_runSearch 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton7;
+        protected global::System.Web.UI.WebControls.LinkButton LB_runSearch;
 
         /// <summary>
         /// LinkButton9 控制項。

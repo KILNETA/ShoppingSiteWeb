@@ -357,12 +357,12 @@
                         </asp:LinkButton>
                         <div class="Titel-Style" style="width: 640px">
                             <div class="InputBox">
-                                <asp:TextBox CssClass="TextBox" ID="TextBox1" placeholder="來愛康福購好物～" runat="server" BorderWidth="0px"/>
-                                <asp:DropDownList ID="DropDownList1" CssClass="SearchDropDownList" runat="server" BorderWidth="0px">
+                                <asp:TextBox CssClass="TextBox" ID="TB_Search" placeholder="來愛康福購好物～" runat="server" BorderWidth="0px"/>
+                                <asp:DropDownList ID="DDL_SearchMode" CssClass="SearchDropDownList" runat="server" BorderWidth="0px">
                                     <asp:ListItem>查商品</asp:ListItem>
                                     <asp:ListItem>查商店</asp:ListItem>
                                 </asp:DropDownList>
-                                <asp:LinkButton CssClass="otherSearchButton" ID="LinkButton12" runat="server">
+                                <asp:LinkButton CssClass="otherSearchButton" ID="LB_runSearch" runat="server" OnClick="LB_runSearch_Click">
                                     <img src="picture/Inquire.png" width="20" style="display: inline-block; margin: 0 10px;"/>
                                 </asp:LinkButton>
                             </div>
