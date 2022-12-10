@@ -246,9 +246,9 @@
                     </div>
 
                     <div class="Button" style="width: 100%; display:flex; flex-direction: row; margin-top: 5px;">
-                        <hr style="height: 0.1px; background:#000000; flex-grow: 1;"/>
+                        <hr style="height: 1px; border:0; background:#9f9f9f; flex-grow: 1;"/>
                          <div style="margin: 0px 10px">或</div>
-                        <hr style="height: 0.1px; background:#000000; flex-grow: 1;"/>
+                        <hr style="height: 1px; border:0; background:#9f9f9f; flex-grow: 1;"/>
                     </div>
 
                     <div style="width: 100%; flex-grow: 1; margin-top: 10px; display:flex; flex-direction: row; font-size:0">

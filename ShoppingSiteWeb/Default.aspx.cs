@@ -170,7 +170,7 @@ namespace ShoppingSiteWeb
         }
 
 
-            private void showCommodityPage()
+        private void showCommodityPage()
         {
             List<Panel> commodityPage = new List<Panel>();
 

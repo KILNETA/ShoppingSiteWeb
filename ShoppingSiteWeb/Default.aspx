@@ -143,7 +143,6 @@
             background: #f8f8f8;
             color:#004469;
         }
-
         .SearchDropDownList{
             outline: none;
             margin : 10px 0px;

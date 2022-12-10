@@ -126,7 +126,12 @@
     <Content Include="buyer\picture\verify_fail.png" />
     <Content Include="buyer\Register.aspx" />
     <Content Include="commodity\Item.aspx" />
+    <Content Include="commodity\picture\Inquire.png" />
     <Content Include="commodity\picture\login_background.jpg" />
+    <Content Include="commodity\picture\shopping.png" />
+    <Content Include="commodity\picture\shoppingBag.png" />
+    <Content Include="commodity\picture\shoppingCart.svg" />
+    <Content Include="commodity\picture\store.png" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
