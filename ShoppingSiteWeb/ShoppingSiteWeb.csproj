@@ -192,11 +192,17 @@
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="shop\DashBoard.aspx" />
     <Content Include="shop\OnShelves.aspx" />
+    <Content Include="shop\picture\Inquire.png" />
     <Content Include="shop\picture\login_background.jpg" />
     <Content Include="shop\picture\no_image.png" />
+    <Content Include="shop\picture\shopping.png" />
+    <Content Include="shop\picture\shoppingBag.png" />
+    <Content Include="shop\picture\shoppingCart.svg" />
+    <Content Include="shop\picture\store.png" />
     <Content Include="shop\picture\verify_confirm.png" />
     <Content Include="shop\picture\verify_fail.png" />
     <Content Include="shop\Register.aspx" />
+    <Content Include="shop\Shop.aspx" />
     <Content Include="Site.Master" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
@@ -265,6 +271,13 @@
     </Compile>
     <Compile Include="shop\Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="shop\Shop.aspx.cs">
+      <DependentUpon>Shop.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="shop\Shop.aspx.designer.cs">
+      <DependentUpon>Shop.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ShoppingSiteWeb.Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Shop.aspx.cs" Inherits="ShoppingSiteWeb.shop.Shop" %>
 
 <!DOCTYPE html>
 
@@ -165,49 +165,6 @@
             color:#004469;
         }
 
-        /*轮播*/
-        #button {
-            position: absolute;
-            bottom: 20px;
-            list-style: none;
-        }
-        #button li {
-            margin-left: 10px;
-            float: left;
-        }
-
-        #button li div {
-            width: 12px;
-            height: 12px;
-            background: #DDDDDDC0;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        #CarouselPrev {
-            width: 48px;
-            height: 100%;
-            position: absolute;
-            left: 10px;
-            cursor: pointer;
-            background-color: #FFFFFFC0;
-            -webkit-mask: url('Default_Picture/previous.svg') no-repeat center;
-            mask: url('Default_Picture/previous.svg') no-repeat center;
-        }
-        #CarouselNext {
-            width: 48px;
-            height: 100%;
-            position: absolute;
-            right: 10px;
-            cursor: pointer;
-            background-color: #FFFFFFC0;
-            -webkit-mask: url('Default_Picture/next.svg') no-repeat center;
-            mask: url('Default_Picture/next.svg') no-repeat center;
-        }
-        #CarouselPrev:hover ,#CarouselNext:hover {
-            background-color: #FFFFFF;
-        }
-
         .CommodityPage{
             width: 100%;
             display: flex;
@@ -232,6 +189,12 @@
             box-shadow: 0 0 0 1px #00000010;
             border: 1px solid #E0E0E0;
             position: relative;
+        }
+        .CommodityItem_none{
+            width: 193px;
+            height: 320px;
+            margin: 10px 0px;
+            background: #FFFFFF00;
         }
         .CommodityIcon{
             width: 193px;
@@ -288,8 +251,44 @@
             width: 100%;
             height: 100%;
             background: #495e69;
-            -webkit-mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
-            mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
+            -webkit-mask: url('picture/shoppingCart.svg') no-repeat center;
+            mask: url('picture/shoppingCart.svg') no-repeat center;
+        }
+
+        .shopDataContext{
+            padding: 20px 20px;
+            height:250px; 
+            width:1000px; 
+            margin:25px auto; 
+            display:flex; 
+            flex-direction:column; 
+            position: relative; 
+            overflow: hidden;
+            background: #FFFFFFE0;
+            border-radius: 6px;
+            box-shadow: 0 0 5px 3px #00000030;
+        }
+        .shopBuyText{
+            font-size: 22px;
+            color: #444444;
+            letter-spacing: .7px;
+            padding-bottom: 10px;
+        }
+        .shopBuyName{
+            font-size: 28px;
+            color: #004469;
+            font-weight: bolder;
+            letter-spacing: .7px;
+        }
+        .WelcomeText{
+            font-size: 22px;
+            color: #444444;
+        }
+
+        .shopContentBody {
+            background-image: url("picture/login_background.jpg");
+            background-size: cover;
+            background-position: center;
         }
 
         .commodityAllTitle{
@@ -300,87 +299,6 @@
         }
     </style>
 </head>
-
-<script language="JavaScript" type="text/JavaScript">
-    window.onload = function () {
-        var aDiv = document.getElementById('button').getElementsByTagName('div');
-
-        var CarouselPrev = document.getElementById('CarouselPrev');
-        var CarouselNext = document.getElementById('CarouselNext');
-
-        var CarouselImg = document.getElementById('CarouselView')
-
-        var now = 0;
-        var timer2 = null;
-
-        for (var i = 0; i < aDiv.length; i++) {
-            aDiv[i].index = i;
-            aDiv[i].onclick = function () {
-                if (now == this.index) return;
-                now = this.index;
-                tab();
-            }
-            aDiv[i].addEventListener('mouseover', function () {
-                if (this.index == now)
-                    this.style.background = '#004469'
-                else
-                    this.style.background = '#FFFFFFC0'
-            })
-            aDiv[i].addEventListener('mouseout', function () {
-                if (this.index == now)
-                    this.style.background = '#004469C0'
-                else
-                    this.style.background = '#DDDDDDC0'
-            })
-        }
-
-        CarouselPrev.onclick = function () {
-            now--;
-            if (now == -1) {
-                now = aDiv.length - 1;
-            }
-            tab();
-        }
-        CarouselNext.onclick = function () {
-            now++;
-            if (now == aDiv.length) {
-                now = 0;
-            }
-            tab();
-        }
-        CarouselImg.onmouseover = function () {
-            clearInterval(timer2);
-        }
-        CarouselImg.onmouseout = function () {
-            timer2 = setInterval(CarouselNext.onclick, 6000);
-        }
-        timer2 = setInterval(CarouselNext.onclick, 6000);
-
-        function tab() {
-            clearInterval(timer2);
-            for (var i = 0; i < aDiv.length; i++) {
-                    aDiv[i].style.background = '#DDDDDDC0';
-            }
-            aDiv[now].style.background = '#004469C0';
-
-            moveElement(CarouselImg, -1000 * now);
-            timer2 = setInterval(CarouselNext.onclick, 6000);
-        }
-
-        function moveElement(ele, x_final) {//ele為元素物件
-            var x_pos = ele.offsetLeft;
-
-            if (ele.movement) {//防止懸停
-                clearTimeout(ele.movement);
-            }
-
-            var dist = Math.ceil(Math.abs(x_final - x_pos));
-            x_pos = x_pos < x_final ? x_pos + dist : x_pos - dist;
-
-            CarouselImg.style.transform = `translateX(${x_pos}px)`;
-        }
-    }
-</script>
 
 <body>
     <form runat="server">
@@ -411,26 +329,26 @@
                                     <asp:ListItem>查商店</asp:ListItem>
                                 </asp:DropDownList>
                                 <asp:LinkButton CssClass="otherSearchButton" ID="LinkButton7" runat="server">
-                                    <img src="Default_Picture/Inquire.png" width="20" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/Inquire.png" width="20" style="display: inline-block; margin: 0 10px;"/>
                                 </asp:LinkButton>
                             </div>
                         </div>
                         <div class="Titel-Style" style="flex: 1; height:100%; align-items: center; justify-content: left;">
                             <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton9" runat="server" PostBackUrl="~/shop/OnShelves.aspx">
                                 <div class="otherLoginButtonContent">
-                                    <img src="Default_Picture/shoppingBag.png" width="30" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/shoppingBag.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">賣東西</div>
                                 </div>
                             </asp:LinkButton>
                             <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton6" runat="server" PostBackUrl="~/shop/DashBoard.aspx">
                                 <div class="otherLoginButtonContent">
-                                    <img src="Default_Picture/store.png" width="30" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/store.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">我的商店</div>
                                 </div>
                             </asp:LinkButton>
                             <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton8" runat="server">
                                 <div class="otherLoginButtonContent">
-                                    <img src="Default_Picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
+                                    <img src="picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">購物車</div>
                                 </div>
                            </asp:LinkButton>
@@ -441,27 +359,16 @@
         </div>
     </header>
 
-    <div class="contentBody">
+    <div class="shopContentBody">
         <div class="Body">
-            <div style="height:250px; width:1000px; margin:25px auto; display:flex; justify-content: center; position: relative; overflow: hidden;">
-                <ul id="CarouselView" style="display: flex; position: absolute; width:100%; height:100%; padding:0px; transition: transform 0.5s;">
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_1.png" alt="img1"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_2.png" alt="img2"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_3.png" alt="img3"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_4.png" alt="img4"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_5.png" alt="img5"/></li>
-                    <li><img src="Default_Picture/DefaultCarousel/DefaultCarousel_6.png" alt="img6"/></li>
-	            </ul>
-                <div id="CarouselNext"></div>
-                <div id="CarouselPrev"></div>
-                <ul id="button">
-			        <li><div style="background: #004469C0;"></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-			        <li><div></div></li>
-	            </ul>
+            <div class="shopDataContext">
+                <div style="padding-bottom: 20px;">
+                    <span class="WelcomeText" >歡迎來到 </span>
+                    <asp:Label ID="LB_shopName" CssClass="shopBuyName" runat="server" Text=""></asp:Label>
+                </div>
+                <asp:Label ID="LB_shopEMail" CssClass="shopBuyText" runat="server" Text="聯絡信箱："></asp:Label>
+                <asp:Label ID="LB_shopPhone" CssClass="shopBuyText" runat="server" Text="聯絡電話："></asp:Label>
+                <asp:Label ID="LB_shopAddress" CssClass="shopBuyText" runat="server" Text="商家地址："></asp:Label>
             </div>
         </div>
     </div>
@@ -469,7 +376,7 @@
     <div class="contentBody" style="background:#F0F0F0; padding: 20px 0px">
         <div class="Body" style="display: flex; flex-direction: column;">
             <div class="commodityAllTitle">
-                向您推薦
+                所有商品
             </div>
             <asp:Panel ID="Panel_CommodityPage" runat="server" CssClass="CommodityPage"></asp:Panel>
         </div>

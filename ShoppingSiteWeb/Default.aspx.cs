@@ -196,13 +196,16 @@ namespace ShoppingSiteWeb
 
         private Panel showCommodityItem(int index)
         {
-            //測試用的
-            if (index>=36)
-                return new Panel();
-            //測試用的
-
-             Panel commodityItem = new Panel();
+            Panel commodityItem = new Panel();
             commodityItem.CssClass = "CommodityItem";
+
+            //測試用的
+            if (index >= 36)
+            {
+                commodityItem.CssClass = "CommodityItem_none";
+                return commodityItem;
+            }
+            //測試用的
 
             String PriceNum = ViewState[$"CPrice_{index}"].ToString();
             if (PriceNum.Length > 3)
