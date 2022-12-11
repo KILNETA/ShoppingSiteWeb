@@ -430,7 +430,7 @@
                                     <div style="display: inline-block; font-size:14px">我的商店</div>
                                 </div>
                             </asp:LinkButton>
-                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton8" runat="server">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton8" runat="server" PostBackUrl="~/buyer/ShoppingCart.aspx">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">購物車</div>

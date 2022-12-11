@@ -74,13 +74,13 @@ namespace ShoppingSiteWeb.buyer
                 if (Int32.Parse(ViewState["commodityNum"].ToString()) != 0)
                 {
                     showShoppingCartList();
-                    BT_Buy.CssClass = "SignOutButton";
-                    BT_Buy.Enabled = true;
+                    LB_ToShopping.CssClass = "SignOutButton";
+                    LB_ToShopping.Enabled = true;
                 }
                 else
                 {
-                    BT_Buy.CssClass = "SignOutButton_Lack";
-                    BT_Buy.Enabled = false;
+                    LB_ToShopping.CssClass = "SignOutButton_Lack";
+                    LB_ToShopping.Enabled = false;
                     Label ShoppingCartIsEmpty = new Label();
                     ShoppingCartIsEmpty.CssClass = "SC_ShoppingCartIsEmpty";
                     ShoppingCartIsEmpty.Text = "購物車內暫無商品！";
@@ -313,6 +313,8 @@ namespace ShoppingSiteWeb.buyer
                 commodityHasNumLack.Text = "缺貨中";
                 commodityNum.Enabled = false;
                 commoditySubPrice.CssClass = "SC_SubPrice_Lack";
+                commodityCheck.Enabled = false;
+                ViewState[$"commodityBuyCheck_{index}"] = "false";
             }
             else
             {
@@ -320,6 +322,7 @@ namespace ShoppingSiteWeb.buyer
                 commodityHasNumLack.Text = "";
                 commodityNum.Enabled = true;
                 commoditySubPrice.CssClass = "SC_SubPrice";
+                commodityCheck.Enabled = true;
             }
             commodityNum_Box.Controls.Add(commodityNum);
             commodityNum_Box.Controls.Add(commodityNum_Text);
@@ -502,5 +505,143 @@ namespace ShoppingSiteWeb.buyer
                 Response.Write("<script>alert('從購物車移除，失敗！');window.location='ShoppingCart.aspx';</script>\"");
         }
 
+        protected void LB_ToShopping_Click(object sender, EventArgs e)
+        {
+            Boolean RealToBuy = false;
+
+            if (Session["UserId"] == null)
+            {
+                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
+                return;
+            }
+            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
+            {
+                Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>\"");
+                return;
+            }
+            //驗證Token
+            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
+            {
+                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
+                return;
+            }
+
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_RegisterUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+
+            SqlDataSource_RegisterUser.SelectParameters.Add($"userId", Session["UserId"].ToString());
+
+            String SQLcmd = 
+                $"DECLARE @transactionId INT = 0 " +
+                $"DECLARE @transactionError BIT = 0 " +
+
+                $"BEGIN TRANSACTION ";
+
+            for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
+            {
+                if (ViewState[$"commodityBuyCheck_{i}"].ToString() == "true") {
+                    RealToBuy = true;
+                    SqlDataSource_RegisterUser.SelectParameters.Add($"shoppingCart_commodityId{i}", ViewState[$"ACTcommodityId_{i}"].ToString());
+                    SqlDataSource_RegisterUser.SelectParameters.Add($"shoppingCartNum{i}", ViewState[$"ACTcommodityNum_{i}"].ToString());
+
+                    SQLcmd +=
+                        $"DECLARE @commodityNum{i} INT " +
+                        $"DECLARE @commodityName{i} NVARCHAR(50) " +
+                        $"SELECT @commodityNum{i} = commodityNum , @commodityName{i} = commodityName " +
+                        $"FROM commodityTable " +
+                        $"WHERE commodityId = @shoppingCart_commodityId{i} " +
+                        $"IF(@shoppingCartNum{i} > @commodityNum{i}) " +
+                        $"BEGIN " +
+                            $"SELECT @commodityName{i} +N'數量缺少', -1 " +
+                            $"SET @transactionError = 1 " +
+                        $"END ";
+                }
+            }
+
+            if (!RealToBuy)
+                return;
+
+            SQLcmd +=
+                $"IF(@transactionError = 0) " +
+                $"BEGIN " +
+
+                    $"INSERT INTO transactionTable([userId]) " +
+                    $"VALUES (@userId) " +
+                    $"SELECT @transactionId = ISNULL(successful.transactionId,0) from (SELECT SCOPE_IDENTITY() AS transactionId) successful " +
+
+                    $"IF(@transactionId !=0) " +
+                    $"BEGIN ";
+
+            for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
+            {
+                if (ViewState[$"commodityBuyCheck_{i}"].ToString() == "true")
+                {
+                    SQLcmd +=
+                        $"INSERT INTO transaction_recordsTable([transactionId],[commodityId],[commodityNum]) " +
+                        $"VALUES (@transactionId,@shoppingCart_commodityId{i},@shoppingCartNum{i}) " +
+                        $"IF(@@ROWCOUNT = 0) " +
+                            $"SET @transactionError = 1 " +
+                        $"UPDATE commodityTable " +
+                        $"SET commodityNum = @commodityNum{i} - @shoppingCartNum{i} " +
+                        $"WHERE commodityId = @shoppingCart_commodityId{i} " +
+                        $"IF(@@ROWCOUNT = 0) " +
+                            $"SET @transactionError = 1 " +
+                        $"DELETE FROM shoppingCartTable " +
+                        $"WHERE userId = @UserId " +
+                            $"AND commodityId = @shoppingCart_commodityId{i} "+
+                        $"IF(@@ROWCOUNT = 0) " +
+                            $"SET @transactionError = 1 ";
+                }
+            }
+
+            SQLcmd +=
+                    $"END " +
+                $"ELSE " +
+                    $"SET @transactionError = 1 " +
+                $"END " +
+
+                $"IF(@transactionError = 0) " +
+                $"BEGIN " +
+                    $"SELECT N'訂單成立！', 1 " +
+                    $"COMMIT TRANSACTION " +
+                $"END " +
+                $"ELSE " +
+                $"BEGIN " +
+                    $"SELECT N'訂單失敗！', 0 " +
+                    $"ROLLBACK TRANSACTION " +
+                $"END ";
+
+            //SQL指令
+            SqlDataSource_RegisterUser.SelectCommand = SQLcmd;
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            DetailsView gv = new DetailsView();
+            //資料匯入表格
+            gv.DataSource = dv;
+            //更新表格
+            gv.DataBind();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_RegisterUser.Dispose();
+
+            switch (gv.Rows[1].Cells[1].Text)
+            {
+                case "1":
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    break;
+                case "-1":
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    break;
+                default:
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    break;
+            }
+        }
     }
 }

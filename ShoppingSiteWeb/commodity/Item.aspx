@@ -380,7 +380,7 @@
                                     <div style="display: inline-block; font-size:14px">我的商店</div>
                                 </div>
                             </asp:LinkButton>
-                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton15" runat="server">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton15" runat="server" PostBackUrl="~/buyer/ShoppingCart.aspx">
                                 <div class="otherLoginButtonContent">
                                     <img src="picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">購物車</div>
@@ -425,14 +425,14 @@
                                 <asp:Label ID="commodityNumLack" CssClass="commodityNum_Lack" runat="server" Text=""></asp:Label>
                             </div>
                             <div class ="commodityBuyButton_Box">
-                                <asp:LinkButton CssClass="commodityBuyButton" ID="LB_JoinShoppingCart" runat="server">
+                                <asp:LinkButton CssClass="commodityBuyButton" ID="LB_JoinShoppingCart" runat="server" OnClick="LB_JoinShoppingCart_Click">
                                     <div class="commodityBuyButtonContext">
                                         <div class="commodityBuyButtonIcon" width="30" style="margin-right: 5px;"></div>
                                         <span style="font-size:16px">加入購物車</span>
                                     </div>
                                 </asp:LinkButton>
                                 <div style="width:10px;"></div>
-                                <asp:LinkButton CssClass="commodityBuyButton" ID="LB_ToShopping" runat="server">
+                                <asp:LinkButton CssClass="commodityBuyButton" ID="LB_ToShopping" runat="server" OnClick="LB_ToShopping_Click">
                                     <span style= "font-size:16px">直接購買</span>
                                 </asp:LinkButton>
                             </div>

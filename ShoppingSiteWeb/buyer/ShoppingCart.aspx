@@ -341,7 +341,7 @@
                             <span class="sutTotalTitle" style="margin-right:auto">商品小計：</span>
                             <asp:Label ID="sutTotal" CssClass="sutTotal" runat="server" Text="$0"></asp:Label>
                         </div>
-                        <asp:Button ID="BT_Buy" CssClass="SignOutButton" runat="server" BorderStyle="None" ForeColor="White" Text="購買" />
+                        <asp:Button ID="LB_ToShopping" CssClass="SignOutButton" runat="server" BorderStyle="None" ForeColor="White" Text="購買" OnClick="LB_ToShopping_Click" />
                     </div>
                 </div>
             </div>

@@ -248,5 +248,203 @@ namespace ShoppingSiteWeb.commodity
             }
 
         }
+
+        protected void LB_JoinShoppingCart_Click(object sender, EventArgs e)
+        {
+            if (Session["UserId"] == null)
+            {
+                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
+                return;
+            }
+
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_RegisterUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+
+
+            if (    TB_commodityNum.Text == String.Empty 
+                ||  !new Regex("^[0-9]*$").IsMatch(TB_commodityNum.Text)
+                ||  Int32.Parse(TB_commodityNum.Text) < 1
+                ||  Int32.Parse(TB_commodityNum.Text) > Int32.Parse(ViewState[$"commodityNum"].ToString()) )
+            {
+                Response.Write("<script>alert('輸入數量有誤！')</script>");
+                return;
+            }
+
+            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
+            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityId", Context.Request.QueryString["commodityId"].ToString());
+            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityNum", TB_commodityNum.Text);
+
+            //SQL指令
+            SqlDataSource_RegisterUser.SelectCommand =
+                $"DECLARE @hasInCart INT " +
+
+                $"IF EXISTS( " +
+                    $"SELECT 1 " +
+                    $"From shoppingCartTable " +
+                    $"Where  userId = @UserId " +
+                    $"AND commodityId = @CommodityId " +
+                $") " +
+                    $"SET @hasInCart = 1 " +
+                $"ELSE " +
+                    $"SET @hasInCart = 0 " +
+
+                $"IF(@hasInCart = 0) " +
+                    $"BEGIN " +
+                        $"DECLARE @successful INT " +
+
+                        $"INSERT INTO shoppingCartTable([joinDate],[userId],[commodityId],[commodityNum]) " +
+                        $"Select " +
+                            $"GETDATE(), " +
+                            $"@UserId, " +
+                            $"@CommodityId, " +
+                            $"@CommodityNum " +
+                        $"Where Not Exists( " +
+                            $"Select userId,commodityId " +
+                            $"From shoppingCartTable " +
+                            $"Where userId = @UserId " +
+                                $"AND commodityId = @CommodityId " +
+                        $") " +
+                            $"Select @@ROWCOUNT " +
+                    $"END " +
+                $"ELSE " +
+                    $"Select '-1' ";
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            DetailsView gv = new DetailsView();
+            //資料匯入表格
+            gv.DataSource = dv;
+            //更新表格
+            gv.DataBind();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_RegisterUser.Dispose();
+
+            switch (gv.Rows[0].Cells[1].Text)
+            {
+                case "1":
+                    Response.Write("<script>alert('已加入購物車！')</script>");
+                    break;
+                case "-1":
+                    Response.Write("<script>alert('已存在購物車中！')</script>");
+                    break;
+                default:
+                    Response.Write("<script>alert('加入購物車失敗！')</script>");
+                    break;
+            }
+        }
+
+        protected void LB_ToShopping_Click(object sender, EventArgs e)
+        {
+            if (Session["UserId"] == null)
+            {
+                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
+                return;
+            }
+
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_RegisterUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+
+
+            if (TB_commodityNum.Text == String.Empty
+                || !new Regex("^[0-9]*$").IsMatch(TB_commodityNum.Text)
+                || Int32.Parse(TB_commodityNum.Text) < 1
+                || Int32.Parse(TB_commodityNum.Text) > Int32.Parse(ViewState[$"commodityNum"].ToString()))
+            {
+                Response.Write("<script>alert('輸入數量有誤！')</script>");
+                return;
+            }
+
+            SqlDataSource_RegisterUser.SelectParameters.Add("userId", Session["UserId"].ToString());
+            SqlDataSource_RegisterUser.SelectParameters.Add("shoppingCart_commodityId", Context.Request.QueryString["commodityId"].ToString());
+            SqlDataSource_RegisterUser.SelectParameters.Add("shoppingCartNum", TB_commodityNum.Text);
+
+            //SQL指令
+            SqlDataSource_RegisterUser.SelectCommand =
+                $"DECLARE @transactionId INT = 0 " +
+                $"DECLARE @transactionError BIT = 0 " +
+
+                $"BEGIN TRANSACTION " +
+
+                $"DECLARE @commodityNum INT " +
+                $"DECLARE @commodityName NVARCHAR(50) " +
+                $"SELECT @commodityNum = commodityNum , @commodityName = commodityName " +
+                $"FROM commodityTable " +
+                $"WHERE commodityId = @shoppingCart_commodityId " +
+                $"IF(@shoppingCartNum > @commodityNum) " +
+                $"BEGIN " +
+                    $"SELECT @commodityName +N'數量缺少', -1 " +
+                    $"SET @transactionError = 1 " +
+                $"END " +
+
+                $"IF(@transactionError = 0) " +
+                $"BEGIN " +
+
+                    $"INSERT INTO transactionTable([userId]) " +
+                    $"VALUES (@userId) " +
+                    $"SELECT @transactionId = ISNULL(successful.transactionId,0) from (SELECT SCOPE_IDENTITY() AS transactionId) successful " +
+
+                    $"IF(@transactionId !=0) " +
+                    $"BEGIN " +
+
+                        $"INSERT INTO transaction_recordsTable([transactionId],[commodityId],[commodityNum]) " +
+                        $"VALUES (@transactionId,@shoppingCart_commodityId,@shoppingCartNum) " +
+                        $"IF(@@ROWCOUNT = 0) " +
+                            $"SET @transactionError = 1 " +
+                        $"UPDATE commodityTable " +
+                        $"SET commodityNum = @commodityNum - @shoppingCartNum " +
+                        $"WHERE commodityId = @shoppingCart_commodityId " +
+                        $"IF(@@ROWCOUNT = 0) " +
+                            $"SET @transactionError = 1 " +
+                    $"END " +
+                $"ELSE " +
+                    $"SET @transactionError = 1 " +
+                $"END " +
+
+                $"IF(@transactionError = 0) " +
+                $"BEGIN " +
+                    $"SELECT N'訂單成立！', 1 " +
+                    $"COMMIT TRANSACTION " +
+                $"END " +
+                $"ELSE " +
+                $"BEGIN " +
+                    $"SELECT N'訂單失敗！', 0 " +
+                    $"ROLLBACK TRANSACTION " +
+                $"END ";
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            DetailsView gv = new DetailsView();
+            //資料匯入表格
+            gv.DataSource = dv;
+            //更新表格
+            gv.DataBind();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_RegisterUser.Dispose();
+
+            switch (gv.Rows[1].Cells[1].Text)
+            {
+                case "1":
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    break;
+                case "-1":
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    break;
+                default:
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    break;
+            }
+        }
     }
 }

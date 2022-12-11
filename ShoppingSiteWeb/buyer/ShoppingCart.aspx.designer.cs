@@ -51,13 +51,13 @@ namespace ShoppingSiteWeb.buyer
         protected global::System.Web.UI.WebControls.Label sutTotal;
 
         /// <summary>
-        /// BT_Buy 控制項。
+        /// LB_ToShopping 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BT_Buy;
+        protected global::System.Web.UI.WebControls.Button LB_ToShopping;
 
         /// <summary>
         /// TB_CheckUser 控制項。
