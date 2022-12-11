@@ -118,6 +118,7 @@
     <Content Include="buyer\DashBoard.aspx" />
     <Content Include="buyer\Login.aspx" />
     <Content Include="buyer\picture\facebook_logo.png" />
+    <Content Include="buyer\picture\garbage.svg" />
     <Content Include="buyer\picture\google_logo.png" />
     <Content Include="buyer\picture\line_logo.png" />
     <Content Include="buyer\picture\login_background.jpg" />
@@ -125,6 +126,7 @@
     <Content Include="buyer\picture\verify_confirm.png" />
     <Content Include="buyer\picture\verify_fail.png" />
     <Content Include="buyer\Register.aspx" />
+    <Content Include="buyer\ShoppingCart.aspx" />
     <Content Include="commodity\Item.aspx" />
     <Content Include="commodity\picture\Inquire.png" />
     <Content Include="commodity\picture\login_background.jpg" />
@@ -238,6 +240,13 @@
     </Compile>
     <Compile Include="buyer\Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="buyer\ShoppingCart.aspx.cs">
+      <DependentUpon>ShoppingCart.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="buyer\ShoppingCart.aspx.designer.cs">
+      <DependentUpon>ShoppingCart.aspx</DependentUpon>
     </Compile>
     <Compile Include="commodity\Item.aspx.cs">
       <DependentUpon>Item.aspx</DependentUpon>

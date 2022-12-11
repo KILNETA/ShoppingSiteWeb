@@ -146,7 +146,7 @@
                     <div style=" flex-grow: 1;">
                         <asp:GridView ID="GV_UserData" CssClass="UserDataTable" runat="server" Font-Size="16"></asp:GridView>
                         <div style="display: flex; align-items: flex-end; justify-content: center; margin: 10px 0px">
-                            <asp:Button  CssClass="CenterButton" ID="Button4" runat="server" Width="160" Text="購物車" BorderStyle="None" ForeColor="White"/>
+                            <asp:Button  CssClass="CenterButton" ID="Button4" runat="server" Width="160" Text="購物車" BorderStyle="None" ForeColor="White" PostBackUrl="~/buyer/ShoppingCart.aspx" />
                             <asp:Button  CssClass="CenterButton" ID="Button5" runat="server" Width="160" Text="交易明細" BorderStyle="None" ForeColor="White"/>
                         </div>
                     </div>

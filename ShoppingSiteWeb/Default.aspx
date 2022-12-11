@@ -482,6 +482,7 @@
             <p>&copy; <%: DateTime.Now.Year %> - Einkaufen 愛康福</p>
         </div>
     </footer>
+    <asp:TextBox ID="TB_Token" runat="server" Enabled="False" Visible="False"></asp:TextBox>
 </form>
 </body>
 </html>

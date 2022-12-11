@@ -293,6 +293,14 @@ namespace ShoppingSiteWeb.shop
             commodityShoppingCart.CssClass = "ShoppingCart";
             commodityShoppingCart_Icon.CssClass = "ShoppingCart_Icon";
             commodityShoppingCart.Controls.Add(commodityShoppingCart_Icon);
+            commodityShoppingCart.Click +=
+                delegate (object sender1, EventArgs e1) {
+                    VBT_ShoppingCart(
+                        new object(),
+                        new EventArgs(),
+                        ViewState[$"CId_{index}"].ToString()
+                    );
+                };
 
             commodityThumbnail_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"CId_{index}"]}";
             commodityName_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"CId_{index}"]}";
@@ -305,6 +313,87 @@ namespace ShoppingSiteWeb.shop
             commodityItem.Controls.Add(commodityContent);
 
             return commodityItem;
+        }
+
+        protected void VBT_ShoppingCart(object sender, EventArgs e, String commodityId)
+        {
+
+            if (Session["UserId"] == null)
+            {
+                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
+                return;
+            }
+
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_RegisterUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+
+            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
+            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityId", commodityId);
+            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityNum", "1");
+
+            //SQL指令
+            SqlDataSource_RegisterUser.SelectCommand =
+                $"DECLARE @hasInCart INT " +
+
+                $"IF EXISTS( " +
+                    $"SELECT 1 " +
+                    $"From shoppingCartTable " +
+                    $"Where  userId = @UserId " +
+                    $"AND commodityId = @CommodityId " +
+                $") " +
+                    $"SET @hasInCart = 1 " +
+                $"ELSE " +
+                    $"SET @hasInCart = 0 " +
+
+                $"IF(@hasInCart = 0) " +
+                    $"BEGIN " +
+                        $"DECLARE @successful INT " +
+
+                        $"INSERT INTO shoppingCartTable([joinDate],[userId],[commodityId],[commodityNum]) " +
+                        $"Select " +
+                            $"GETDATE(), " +
+                            $"@UserId, " +
+                            $"@CommodityId, " +
+                            $"@CommodityNum " +
+                        $"Where Not Exists( " +
+                            $"Select userId,commodityId " +
+                            $"From shoppingCartTable " +
+                            $"Where userId = @UserId " +
+                                $"AND commodityId = @CommodityId " +
+                        $") " +
+                            $"Select @@ROWCOUNT " +
+                    $"END " +
+                $"ELSE " +
+                    $"Select '-1' ";
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            DetailsView gv = new DetailsView();
+            //資料匯入表格
+            gv.DataSource = dv;
+            //更新表格
+            gv.DataBind();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_RegisterUser.Dispose();
+
+            switch (gv.Rows[0].Cells[1].Text)
+            {
+                case "1":
+                    Response.Write("<script>alert('已加入購物車！')</script>");
+                    break;
+                case "-1":
+                    Response.Write("<script>alert('已存在購物車中！')</script>");
+                    break;
+                default:
+                    Response.Write("<script>alert('加入購物車失敗！')</script>");
+                    break;
+            }
         }
 
         protected void LB_runSearch_Click(object sender, EventArgs e)
