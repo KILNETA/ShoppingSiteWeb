@@ -100,8 +100,24 @@
             background: #3d474d;
         }
         .UserDataTable{
+            min-height:100px;
             height:100%;
             width:100%;
+        }
+        .CenterButton{
+            font-family: 微軟正黑體;
+            font-size: 16px;
+            width: 100%;
+            height: 40px;
+            cursor: pointer;
+            background: #004469;
+            margin: 0px 10px;
+        }
+        .CenterButton:hover {
+            background: #0d5982;
+        }
+        .CenterButton:active{
+            background: #3d474d;
         }
 
     </style>
@@ -129,6 +145,14 @@
                     </div>
                     <div style=" flex-grow: 1;">
                         <asp:GridView ID="GV_UserData" CssClass="UserDataTable" runat="server" Font-Size="16"></asp:GridView>
+                        <div style="display: flex; align-items: flex-end; justify-content: center; margin: 10px 0px">
+                            <asp:Button  CssClass="CenterButton" ID="BT_OnShelves" runat="server" Width="160" Text="上架新商品" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/OnShelves.aspx"/>
+                            <asp:Button  CssClass="CenterButton" ID="BT_GoShop" runat="server" Width="160" Text="前往商鋪" BorderStyle="None" ForeColor="White"/>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-end; justify-content:center">
+                        <asp:Button  CssClass="SignOutButton" ID="SignOutButton" runat="server" Width="160" Text="登出" BorderStyle="None" ForeColor="White" OnClick="SignOutButton_Click"/>
                     </div>
                 </div>
             </div>

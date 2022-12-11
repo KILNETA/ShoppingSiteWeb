@@ -50,14 +50,22 @@ namespace ShoppingSiteWeb.shop
 
                     SqlDataSource_LoginUser.Dispose();
 
-                    if(GV_UserData.Rows.Count == 0)
+                    if (GV_UserData.Rows.Count == 0)
                         Response.Write("<script>alert('尚未註冊商店！進入商店註冊頁面！');window.location='Register.aspx';</script>");
+                    else
+                        BT_GoShop.PostBackUrl = $"Shop.aspx?shopId={GV_UserData.Rows[0].Cells[0].Text}";
                 }
                 else
                 {
                     Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
                 }
             }
+        }
+
+        protected void SignOutButton_Click(object sender, EventArgs e)
+        {
+            Session["UserId"] = null;
+            Response.Write("<script>alert('成功登出！返回登入頁面！');window.location='../buyer/Login.aspx';</script>");
         }
     }
 }
