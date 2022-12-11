@@ -145,7 +145,7 @@ namespace ShoppingSiteWeb.search
         protected void SignOutButton_Click(object sender, EventArgs e)
         {
             Session["UserId"] = null;
-            Response.Write("<script>alert('成功登出！');window.location='Default.aspx';</script>");
+            Response.Write("<script>alert('成功登出！');window.location='../Default.aspx';</script>");
         }
 
         private void showLoginInMenu()

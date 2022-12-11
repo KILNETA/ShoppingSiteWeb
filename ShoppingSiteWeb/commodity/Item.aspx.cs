@@ -66,6 +66,12 @@ namespace ShoppingSiteWeb.commodity
             //SqlDataSource元件釋放資源
             SqlDataSource_RegisterUser.Dispose();
 
+            if (gv.Rows.Count == 0)
+            {
+                Response.Redirect("../Default.aspx");
+                return;
+            }
+
             String PriceNum = gv.Rows[0].Cells[2].Text;
             if (PriceNum.Length > 3)
                 PriceNum = PriceNum.Insert(PriceNum.Length - 3, ",");
@@ -189,7 +195,7 @@ namespace ShoppingSiteWeb.commodity
         protected void SignOutButton_Click(object sender, EventArgs e)
         {
             Session["UserId"] = null;
-            Response.Write("<script>alert('成功登出！');window.location='Default.aspx';</script>");
+            Response.Write("<script>alert('成功登出！');window.location='../Default.aspx';</script>");
         }
 
         private void showLoginInMenu()

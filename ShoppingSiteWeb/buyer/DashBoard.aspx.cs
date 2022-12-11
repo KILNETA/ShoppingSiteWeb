@@ -83,6 +83,16 @@ namespace ShoppingSiteWeb.buyer
             GV_ShopData.DataBind();
 
             SqlDataSource_LoginUser.Dispose();
+
+            if (GV_ShopData.Rows.Count != 0)
+            {
+                BT_ShopRegister.Visible = false;
+            }
+            else
+            {
+                BT_OnShelves.Visible = false;
+                BT_ShopDashBoard.Visible = false;
+            }
         }
     }
 }

@@ -34,8 +34,8 @@ namespace ShoppingSiteWeb.shop
             {
                 selectRecommendCommoditys();
             }
-            showCommodityPage();
             showShopData();
+            showCommodityPage();
         }
 
         private void showShopData()
@@ -71,10 +71,16 @@ namespace ShoppingSiteWeb.shop
             //SqlDataSource元件釋放資源
             SqlDataSource_RegisterUser.Dispose();
 
-            LB_shopName.Text = gv.Rows[0].Cells[0].Text;
-            LB_shopEMail.Text += gv.Rows[0].Cells[1].Text;
-            LB_shopPhone.Text += gv.Rows[0].Cells[2].Text;
-            LB_shopAddress.Text += gv.Rows[0].Cells[3].Text;
+            if (gv.Rows.Count != 0) {
+                LB_shopName.Text = gv.Rows[0].Cells[0].Text;
+                LB_shopEMail.Text += gv.Rows[0].Cells[1].Text;
+                LB_shopPhone.Text += gv.Rows[0].Cells[2].Text;
+                LB_shopAddress.Text += gv.Rows[0].Cells[3].Text;
+            }
+            else
+            {
+                Response.Redirect("../Default.aspx");
+            }
         }
 
         private void selectRecommendCommoditys()
@@ -184,7 +190,7 @@ namespace ShoppingSiteWeb.shop
         protected void SignOutButton_Click(object sender, EventArgs e)
         {
             Session["UserId"] = null;
-            Response.Write("<script>alert('成功登出！');window.location='Default.aspx';</script>");
+            Response.Write("<script>alert('成功登出！');window.location='../Default.aspx';</script>");
         }
 
         private void showLoginInMenu()

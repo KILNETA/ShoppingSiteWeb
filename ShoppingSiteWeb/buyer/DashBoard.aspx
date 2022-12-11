@@ -153,9 +153,9 @@
                     <div style=" flex-grow: 1;">
                         <asp:GridView ID="GV_ShopData" CssClass="UserDataTable" runat="server" Font-Size="16" EmptyDataText="尚未註冊商鋪"></asp:GridView>
                         <div style="display: flex; align-items: flex-end; justify-content: center; margin: 10px 0px">
-                            <asp:Button  CssClass="CenterButton" ID="Button3" runat="server" Width="160" Text="註冊商鋪" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/Register.aspx"/>
-                            <asp:Button  CssClass="CenterButton" ID="Button2" runat="server" Width="160" Text="上架新商品" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/OnShelves.aspx"/>
-                            <asp:Button  CssClass="CenterButton" ID="Button1" runat="server" Width="160" Text="商鋪儀表板" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/DashBoard.aspx"/>
+                            <asp:Button  CssClass="CenterButton" ID="BT_ShopRegister" runat="server" Width="160" Text="註冊商鋪" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/Register.aspx"/>
+                            <asp:Button  CssClass="CenterButton" ID="BT_OnShelves" runat="server" Width="160" Text="上架新商品" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/OnShelves.aspx"/>
+                            <asp:Button  CssClass="CenterButton" ID="BT_ShopDashBoard" runat="server" Width="160" Text="商鋪儀表板" BorderStyle="None" ForeColor="White" PostBackUrl="~/shop/DashBoard.aspx"/>
                         </div>
                     </div>
 
