@@ -6,6 +6,9 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Text.RegularExpressions;
+using System.Reflection;
+using System.IO;
 
 namespace ShoppingSiteWeb.buyer
 {
@@ -30,25 +33,70 @@ namespace ShoppingSiteWeb.buyer
                 if (Session["UserId"] == null)
                 {
                     Response.Write("<script>alert('已登出！返回登入頁面！');window.location='Login.aspx';</script>");
+                    return;
                 }
+                //驗證Token
+                else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
+                {
+                    Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
+                    return;
+                }
+                calculateSubTotal();
             }
             else
             {
                 if (Session["UserId"] != null)
                 {
-                    ViewState["UserId"] = Session["UserId"];
+                    //創建Token許可證
+                    String Token = Path.GetRandomFileName().Replace(".", "");
+                    //用於判斷表單是否被認證(存儲用戶與server互動的數據) 
+                    Session["Token"] = Token;
+                    //在表單存入Token許可證
+                    TB_Token.Text = Token;
+
+                    ViewState["UserId"] = Session["UserId"].ToString();
+
                     LoadUserData();
+                    selectShoppingCartData();
+                    for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
+                    {
+                        ViewState[$"commodityBuyCheck_{i}"] = "false";
+                    }
                 }
                 else
                 {
                     Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='Login.aspx';</script>");
+                    return;
                 }
             }
             if (Session["UserId"] != null)
             {
-                selectShoppingCartData();
-                showShoppingCartList();
+                if (Int32.Parse(ViewState["commodityNum"].ToString()) != 0)
+                {
+                    showShoppingCartList();
+                    BT_Buy.CssClass = "SignOutButton";
+                    BT_Buy.Enabled = true;
+                }
+                else
+                {
+                    BT_Buy.CssClass = "SignOutButton_Lack";
+                    BT_Buy.Enabled = false;
+                    Label ShoppingCartIsEmpty = new Label();
+                    ShoppingCartIsEmpty.CssClass = "SC_ShoppingCartIsEmpty";
+                    ShoppingCartIsEmpty.Text = "購物車內暫無商品！";
+                    Panel_ShoppingCartBox.Controls.Add(ShoppingCartIsEmpty);
+                }
             }
+        }
+        private void calculateSubTotal()
+        {
+            long subTotal = 0;
+            for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
+            {
+                if(ViewState[$"commodityBuyCheck_{i}"].ToString() == "true")
+                    subTotal += Int32.Parse(ViewState[$"CTcommodityPrice_{i}"].ToString()) * Int32.Parse(ViewState[$"ACTcommodityNum_{i}"].ToString());
+            }
+            sutTotal.Text = subTotal.ToString("N0");
         }
 
         private void LoadUserData()
@@ -149,6 +197,9 @@ namespace ShoppingSiteWeb.buyer
         {
             Panel commodityItem = new Panel();
 
+            Panel commodityCheck_Box = new Panel();
+            CheckBox commodityCheck = new CheckBox();
+
             LinkButton commodityThumbnail_Box = new LinkButton();
             Image commodityThumbnail = new Image();
             Label commodityId = new Label();
@@ -180,6 +231,22 @@ namespace ShoppingSiteWeb.buyer
                 SubPriceNum = SubPriceNum.Insert(SubPriceNum.Length - 6, ",");
             if (SubPriceNum.Length > 3)
                 SubPriceNum = SubPriceNum.Insert(SubPriceNum.Length - 3, ",");
+
+            commodityCheck_Box.CssClass = "SC_Check_Box";
+            commodityCheck.BorderStyle = BorderStyle.None;
+            commodityCheck.CssClass = "SC_Check";
+            commodityCheck_Box.Controls.Add(commodityCheck);
+            commodityCheck.AutoPostBack = true;
+            commodityCheck.CheckedChanged +=
+                delegate (object sender1, EventArgs e1) {
+                    VBT_ShoppingCartCommodityCheckChanged(
+                        new object(),
+                        new EventArgs(),
+                        index,
+                        ViewState[$"ACTcommodityId_{index}"].ToString(),
+                        commodityCheck.Checked
+                    );
+                };
 
             commodityItem.CssClass = "SC_commodityItem";
             commodityThumbnail_Box.CssClass = "SC_Thumbnail_Box";
@@ -227,11 +294,13 @@ namespace ShoppingSiteWeb.buyer
             commodityHasNumLack.CssClass = "SC_HasNum_Lack";
             commodityNum_Text.Controls.Add(commodityHasNum);
             commodityNum_Text.Controls.Add(commodityHasNumLack);
+            commodityNum.AutoPostBack = true;
             commodityNum.TextChanged +=
                 delegate (object sender1, EventArgs e1) {
                     VBT_ShoppingCartCommodityNumChanged(
                         new object(),
                         new EventArgs(),
+                        index,
                         ViewState[$"ACTcommodityId_{index}"].ToString(),
                         commodityNum
                     );
@@ -273,6 +342,7 @@ namespace ShoppingSiteWeb.buyer
             commodityThumbnail_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"ACTcommodityId_{index}"]}";
             commodityName.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"ACTcommodityId_{index}"]}";
 
+            commodityItem.Controls.Add(commodityCheck_Box);
             commodityItem.Controls.Add(commodityThumbnail_Box);
             commodityItem.Controls.Add(hr_1);
             commodityItem.Controls.Add(commodityContext_Box);
@@ -283,9 +353,97 @@ namespace ShoppingSiteWeb.buyer
             return commodityItem;
         }
 
-        protected void VBT_ShoppingCartCommodityNumChanged(object sender, EventArgs e, String commodityId, TextBox commodityNum)
+        protected void VBT_ShoppingCartCommodityCheckChanged(object sender, EventArgs e,int index, String commodityId, bool isCheck)
         {
+            if (Session["UserId"] == null)
+            {
+                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
+                return;
+            }
+            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
+            {
+                Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>");
+                return;
+            }
+            //驗證Token
+            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
+            {
+                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
+                return;
+            }
 
+            if (isCheck == true)
+            {
+                ViewState[$"commodityBuyCheck_{index}"] = "true";
+            }
+            else
+            {
+                ViewState[$"commodityBuyCheck_{index}"] = "false";
+            }
+            calculateSubTotal();
+        }
+
+            protected void VBT_ShoppingCartCommodityNumChanged(object sender, EventArgs e, int index , String commodityId, TextBox TB_commodityNum)
+        {
+            if (Session["UserId"] == null)
+            {
+                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
+                return;
+            }
+            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
+            {
+                Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>");
+                return;
+            }
+            //驗證Token
+            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
+            {
+                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
+                return;
+            }
+            else if (
+                    TB_commodityNum.Text == String.Empty
+                ||  !new Regex("^[0-9]*$").IsMatch(TB_commodityNum.Text)
+                ||  Int32.Parse(TB_commodityNum.Text) > Int32.Parse(ViewState[$"CTcommodityNum_{index}"].ToString())
+                ||  Int32.Parse(TB_commodityNum.Text) < 1)
+            {
+                TB_commodityNum.Text = ViewState[$"ACTcommodityNum_{index}"].ToString();
+                return;
+            }
+
+            //新建SqlDataSource元件
+            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+
+            //連結資料庫的連接字串 ConnectionString
+            SqlDataSource_RegisterUser.ConnectionString =
+                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+
+            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
+            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityId", commodityId);
+            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityNum", TB_commodityNum.Text);
+
+            //SQL指令
+            SqlDataSource_RegisterUser.SelectCommand =
+                $"UPDATE shoppingCartTable " +
+                $"SET commodityNum = @CommodityNum " +
+                $"WHERE userId = @UserId " +
+                    $"AND commodityId = @CommodityId " +
+
+                $"SELECT @@ROWCOUNT ";
+
+            //執行SQL指令 .select() ==
+            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
+            //取得查找資料
+            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            DetailsView gv = new DetailsView();
+            //資料匯入表格
+            gv.DataSource = dv;
+            //更新表格
+            gv.DataBind();
+            //SqlDataSource元件釋放資源
+            SqlDataSource_RegisterUser.Dispose();
+
+            Response.Write("<script>window.location='ShoppingCart.aspx';</script>");
         }
 
         protected void VBT_ShoppingCartRemove(object sender, EventArgs e, String commodityId)
@@ -296,9 +454,15 @@ namespace ShoppingSiteWeb.buyer
                 Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
                 return;
             }
-            else if( ViewState["UserId"] != Session["UserId"] )
+            else if( ViewState["UserId"].ToString() != Session["UserId"].ToString() )
             {
                 Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>\"");
+                return;
+            }
+            //驗證Token
+            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
+            {
+                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
                 return;
             }
 

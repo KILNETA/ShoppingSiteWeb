@@ -91,16 +91,26 @@
         .SignOutButton{
             font-family: 微軟正黑體;
             font-size: 16px;
-            width: 100%;
             height: 40px;
+            width:100%;
             cursor: pointer;
             background: #004469;
+            color:#FFFFFF;
         }
         .SignOutButton:hover {
             background: #0d5982;
         }
         .SignOutButton:active{
             background: #3d474d;
+        }
+        .SignOutButton_Lack{
+            font-family: 微軟正黑體;
+            font-size: 16px;
+            height: 40px;
+            width:100%;
+            cursor: pointer;
+            background: #777777;
+            color:#FFFFFF;
         }
         .UserDataTable{
             min-height:100px;
@@ -115,6 +125,16 @@
             display: flex;
 	        flex-direction: row;
             position: relative;
+        }
+        .SC_Check_Box{
+            display: flex;
+            text-align: center;
+            justify-content: center;
+
+        }
+        .SC_Check{
+            margin: auto;
+            padding-right: 4px;
         }
         .SC_Thumbnail_Box{
             padding: 1px;
@@ -267,6 +287,27 @@
         .SC_RemoveIcon:active{
             background: #ff2b2b;
         }
+        .SC_ShoppingCartIsEmpty{
+            font-size: 28px;
+            font-family: 微軟正黑體;
+            color: #444444;
+            margin: auto;
+        }
+        .Panel_ShoppingCartBox{
+            display: flex;
+            flex-direction: column;
+            flex:1;
+        }
+        .sutTotalTitle{
+            font-size: 28px;
+            color: #444444;
+            font-weight: bolder;
+        }
+        .sutTotal{
+            font-size: 28px;
+            color: #ff5d0e;
+            font-weight: bolder;
+        }
     </style>
 </head>
 
@@ -293,7 +334,15 @@
                     <div style="font-size: 24px; margin-bottom:10px">
                         購物車清單：
                     </div>
-                    <asp:Panel ID="Panel_ShoppingCartBox" runat="server"></asp:Panel>
+                    <asp:Panel ID="Panel_ShoppingCartBox" CssClass="Panel_ShoppingCartBox" runat="server"></asp:Panel>
+                    <hr class="SC_hr" style=" width:100%; height:1px; ">
+                    <div style="display:flex; flex-direction: column; width:400px; margin:auto;">
+                        <div style="width: 100%; display:flex; flex-direction: row; padding:10px 0px">
+                            <span class="sutTotalTitle" style="margin-right:auto">商品小計：</span>
+                            <asp:Label ID="sutTotal" CssClass="sutTotal" runat="server" Text="$0"></asp:Label>
+                        </div>
+                        <asp:Button ID="BT_Buy" CssClass="SignOutButton" runat="server" BorderStyle="None" ForeColor="White" Text="購買" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -304,6 +353,8 @@
             <p>&copy; <%: DateTime.Now.Year %> - Einkaufen 愛康福</p>
         </div>
     </footer>
+    <asp:TextBox ID="TB_CheckUser" runat="server" Enabled="False" Visible="False"></asp:TextBox>
+    <asp:TextBox ID="TB_Token" runat="server" Enabled="False" Visible="False"></asp:TextBox>
 </form>
 </body>
 </html>
