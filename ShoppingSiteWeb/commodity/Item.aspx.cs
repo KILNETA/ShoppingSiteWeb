@@ -25,6 +25,11 @@ namespace ShoppingSiteWeb.commodity
             }
             else
             {
+                if (Session["UserId"] != null)
+                    ViewState["UserId"] = Session["UserId"].ToString();
+                else
+                    ViewState["UserId"] = "null";
+
                 LoadCommodityData();
                 LoadShopData();
             }
@@ -341,9 +346,15 @@ namespace ShoppingSiteWeb.commodity
 
         protected void LB_ToShopping_Click(object sender, EventArgs e)
         {
+
             if (Session["UserId"] == null)
             {
                 Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
+                return;
+            }
+            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
+            {
+                Response.Write($"<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='../commodity/Item.aspx?commodityId={Context.Request.QueryString["commodityId"].ToString()}';</script>");
                 return;
             }
 
@@ -389,8 +400,8 @@ namespace ShoppingSiteWeb.commodity
                 $"IF(@transactionError = 0) " +
                 $"BEGIN " +
 
-                    $"INSERT INTO transactionTable([userId]) " +
-                    $"VALUES (@userId) " +
+                    $"INSERT INTO transactionTable([userId],[transactionDate]) " +
+                    $"VALUES (@userId,GETDATE()) " +
                     $"SELECT @transactionId = ISNULL(successful.transactionId,0) from (SELECT SCOPE_IDENTITY() AS transactionId) successful " +
 
                     $"IF(@transactionId !=0) " +
@@ -436,13 +447,13 @@ namespace ShoppingSiteWeb.commodity
             switch (gv.Rows[1].Cells[1].Text)
             {
                 case "1":
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='../buyer/TransactionList.aspx';</script>");
                     break;
                 case "-1":
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='../commodity/Item.aspx?commodityId={Context.Request.QueryString["commodityId"].ToString()}';</script>");
                     break;
                 default:
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='../commodity/Item.aspx?commodityId={Context.Request.QueryString["commodityId"].ToString()}';</script>\"");
                     break;
             }
         }

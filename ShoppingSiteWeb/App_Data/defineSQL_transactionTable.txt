@@ -1,0 +1,8 @@
+//創建 transactionTable 資料表 欄位格式設定檔
+
+CREATE TABLE [dbo].[transactionTable] (
+    [transactionId]   INT           IDENTITY (1, 1) NOT NULL,
+    [userId]          INT           NOT NULL,
+    [transactionDate] SMALLDATETIME NOT NULL,
+    PRIMARY KEY CLUSTERED ([transactionId] ASC)
+);

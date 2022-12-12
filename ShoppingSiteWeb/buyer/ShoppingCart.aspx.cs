@@ -569,9 +569,9 @@ namespace ShoppingSiteWeb.buyer
                 $"IF(@transactionError = 0) " +
                 $"BEGIN " +
 
-                    $"INSERT INTO transactionTable([userId]) " +
-                    $"VALUES (@userId) " +
-                    $"SELECT @transactionId = ISNULL(successful.transactionId,0) from (SELECT SCOPE_IDENTITY() AS transactionId) successful " +
+                    $"INSERT INTO transactionTable([userId],[transactionDate]) " +
+                    $"VALUES (@userId,GETDATE()) " +
+                    $"SELECT @transactionId = ISNULL(successful.transactionId,0) From (SELECT SCOPE_IDENTITY() AS transactionId) successful " +
 
                     $"IF(@transactionId !=0) " +
                     $"BEGIN ";
@@ -633,13 +633,13 @@ namespace ShoppingSiteWeb.buyer
             switch (gv.Rows[1].Cells[1].Text)
             {
                 case "1":
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='TransactionList.aspx';</script>");
                     break;
                 case "-1":
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='ShoppingCart.aspx';</script>");
                     break;
                 default:
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}')</script>");
+                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='ShoppingCart.aspx';</script>\"");
                     break;
             }
         }

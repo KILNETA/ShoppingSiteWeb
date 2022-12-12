@@ -113,6 +113,8 @@
     <Content Include="App_Data\defineSQL_commodityTable.txt" />
     <Content Include="App_Data\defineSQL_shopTable.txt" />
     <Content Include="App_Data\defineSQL_shop_commodityTable.txt" />
+    <Content Include="App_Data\defineSQL_transactionTable.txt" />
+    <Content Include="App_Data\defineSQL_transaction_recordsTable.txt" />
     <Content Include="App_Data\defineSQL_userTable.txt" />
     <Content Include="App_Data\defineSQL_user_shopTable.txt" />
     <Content Include="buyer\DashBoard.aspx" />
@@ -127,6 +129,7 @@
     <Content Include="buyer\picture\verify_fail.png" />
     <Content Include="buyer\Register.aspx" />
     <Content Include="buyer\ShoppingCart.aspx" />
+    <Content Include="buyer\TransactionList.aspx" />
     <Content Include="commodity\Item.aspx" />
     <Content Include="commodity\picture\Inquire.png" />
     <Content Include="commodity\picture\login_background.jpg" />
@@ -247,6 +250,13 @@
     </Compile>
     <Compile Include="buyer\ShoppingCart.aspx.designer.cs">
       <DependentUpon>ShoppingCart.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="buyer\TransactionList.aspx.cs">
+      <DependentUpon>TransactionList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="buyer\TransactionList.aspx.designer.cs">
+      <DependentUpon>TransactionList.aspx</DependentUpon>
     </Compile>
     <Compile Include="commodity\Item.aspx.cs">
       <DependentUpon>Item.aspx</DependentUpon>

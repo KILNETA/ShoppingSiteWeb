@@ -1,0 +1,7 @@
+//創建 transaction_recordsTable 資料表 欄位格式設定檔
+
+CREATE TABLE [dbo].[transaction_recordsTable] (
+    [transactionId] INT NOT NULL,
+    [commodityId]   INT NOT NULL,
+    [commodityNum]  INT NOT NULL
+);
