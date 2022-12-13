@@ -14,6 +14,12 @@ namespace ShoppingSiteWeb.commodity
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if(!new Regex("^[0-9]*$").IsMatch(Context.Request.QueryString["commodityId"].ToString())){
+                Response.Redirect("../Default.aspx");
+                return;
+            }
+
+
             if (Session["UserId"] != null)
                 showWelcomeUserInMenu();
             else

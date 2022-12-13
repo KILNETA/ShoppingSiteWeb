@@ -132,7 +132,7 @@
 	        flex-direction: row;
         }
         .TT_TextId_Box{
-            width: 40px;
+            width: 80px;
             margin-right: 5px;
             display: flex;
             align-items: center;

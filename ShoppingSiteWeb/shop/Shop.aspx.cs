@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -21,6 +22,12 @@ namespace ShoppingSiteWeb.shop
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!new Regex("^[0-9]*$").IsMatch(Context.Request.QueryString["shopId"].ToString()))
+            {
+                Response.Redirect("../Default.aspx");
+                return;
+            }
+
             if (Session["UserId"] != null)
                 showWelcomeUserInMenu();
             else
