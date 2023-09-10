@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8" />
     <title>Einkaufen 愛康福</title>
-    <link rel="stylesheet" type="text/css" href="Default.css">
-    <script type="text/javascript" src="Default.js"></script>
+    <link rel="stylesheet" type="text/css" href="Style/Default.css">
+    <script type="text/javascript" src="Scripts/WebFuns/Default.js"></script>
 </head>
 
 <body>
