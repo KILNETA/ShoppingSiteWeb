@@ -1,0 +1,153 @@
+html,body,form {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+div.Body{
+    margin: auto;
+    width: 1200px;
+    height: 100%;
+    background-position: center;
+    display: flex;
+}
+p,div{
+    font-family: 微軟正黑體;
+}
+
+div.contentBody{
+    height: 700px;
+    background-image: url("../Default_Picture/login_background.jpg");
+    min-width: 1200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.HeaderBackground-Style {
+    background-color: #004469;
+    width: 100%;
+    min-width: 1200px;
+    height: 90px;
+    float: left;
+}
+
+.FooterBackground-Style {
+    background-color: #c3c8c9;
+    width: 100%;
+    min-width: 1200px;
+    height: 320px;
+    float: left;
+}
+
+.TitelBox-Style {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    padding-left: 5%;
+}
+
+.Titel-Style {
+    color: #FFF4E1;
+    font-family: 微軟正黑體;
+    font-size: 32px;
+    font-weight: bolder;
+    text-decoration:none;
+}
+
+div.LoginBox {
+    margin: auto;
+    margin-left: 0;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-position: center;
+}
+div.LoginBoxContent {
+    width: 350px;
+    height: 500px;
+    background-position: center;
+    background: #ffffff;
+    padding: 30px;
+    box-shadow: 0 0 5px 3px #003b3b3b;
+    display: flex;
+    flex-direction: column;
+}
+div.InputBox{
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+div.Button{
+    text-align: center;
+    flex-shrink: 0;
+}
+.TextBox{
+    border: 1px solid #AAAAAA;
+    border-radius: 3px;
+    padding: 15px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box; 
+    font-size: 12px;
+}
+.TextBox:hover,.TextBox:active{
+    border: 1px solid #004469;
+}
+.TextBox:focus{
+    border: 1px solid #004469;
+    box-shadow: 0 0 3px 2px #003b3b3b;
+}
+.ErrorMessage{
+    font-size: 12px; 
+    margin-top:0px; 
+    color:red
+}
+.LoginButton{
+    font-family: 微軟正黑體;
+    font-size: 16px;
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    background: #004469;
+}
+.LoginButton:hover {
+    background: #0d5982;
+}
+.LoginButton:active{
+    background: #3d474d;
+}
+.otherLoginBox{
+    width: 144px;
+    background: #ffffff;
+    box-shadow: 0 0 3px 2px #003b3b3b;
+    border-radius: 5px;
+    padding: 10px;
+}
+.otherLoginButton{
+    width: 144px;
+    background: #ffffff;
+    box-shadow: 0 0 3px 2px #003b3b3b;
+    border-radius: 5px;
+    padding: 10px;
+    color:#000000;
+    text-decoration:none;
+}
+.otherLoginButton:hover {
+    background: #fdfdfd;
+    box-shadow: 0 0 3px 2px #00004469;
+}
+.otherLoginButton:active{
+    background: #f8f8f8;
+    box-shadow: 0 0 3px 2px #00004469;
+    color:#000000;
+}
+.otherLoginButtonContent {
+    display: flex;
+    align-items: center;
+}
+.generalLink{
+    color:#1871a1;
+    text-decoration:none;
+    font-size:12px;
+}
+.generalLink:active{
+    color:#004469;
+    text-decoration:none;
+}

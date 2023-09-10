@@ -181,8 +181,8 @@ div.InputBox{
     left: 10px;
     cursor: pointer;
     background-color: #FFFFFFC0;
-    -webkit-mask: url('Default_Picture/previous.svg') no-repeat center;
-    mask: url('Default_Picture/previous.svg') no-repeat center;
+    -webkit-mask: url('Icons/previous.svg') no-repeat center;
+    mask: url('Icons/previous.svg') no-repeat center;
 }
 #CarouselNext {
     width: 48px;
@@ -191,8 +191,8 @@ div.InputBox{
     right: 10px;
     cursor: pointer;
     background-color: #FFFFFFC0;
-    -webkit-mask: url('Default_Picture/next.svg') no-repeat center;
-    mask: url('Default_Picture/next.svg') no-repeat center;
+    -webkit-mask: url('Icons/next.svg') no-repeat center;
+    mask: url('Icons/next.svg') no-repeat center;
 }
 #CarouselPrev:hover ,#CarouselNext:hover {
     background-color: #FFFFFF;
@@ -278,8 +278,8 @@ div.InputBox{
     width: 100%;
     height: 100%;
     background: #495e69;
-    -webkit-mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
-    mask: url('Default_Picture/shoppingCart.svg') no-repeat center;
+    -webkit-mask: url('Icons/shoppingCart.svg') no-repeat center;
+    mask: url('Icons/shoppingCart.svg') no-repeat center;
 }
 
 .commodityAllTitle{
