@@ -1,17 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace ShoppingSiteWeb.buyer
 {
+    /// <summary>
+    /// 登入頁面
+    /// </summary>
     public partial class Login : System.Web.UI.Page
     {
+
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
@@ -30,65 +34,67 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
+        /// <summary>
+        /// 登入按鈕 事件
+        /// </summary>
         protected void LoginButton_Click(object sender, EventArgs e)
         {
+            //如果帳號、密碼欄位不為空
             if(String.IsNullOrEmpty(TB_User.Text) || String.IsNullOrEmpty(TB_Password.Text))
             {
-                if (String.IsNullOrEmpty(TB_User.Text))
-                    ErrorLB_1.Text = "請輸入此欄";
-                else
-                    ErrorLB_1.Text = "　";
-
-                if (String.IsNullOrEmpty(TB_Password.Text))
-                    ErrorLB_2.Text = "請輸入此欄";
-                else
-                    ErrorLB_2.Text = "　";
+                //啟用js判斷式 (未填入資料的欄位 亮起提醒)
+                //帳號、用戶名欄位
+                ScriptManager.RegisterStartupScript(
+                    Page, GetType(),
+                    "inputIsEmpty_1", 
+                    "inputBoxIsNullOrEmpty(TB_User, ErrorLB_1);", 
+                    true);
+                //密碼欄位
+                ScriptManager.RegisterStartupScript(
+                    Page, GetType(),
+                    "inputIsEmpty_2",
+                    "inputBoxIsNullOrEmpty(TB_Password, ErrorLB_2);", 
+                    true);
             }
+            //已填入帳密 ()
             else
             {
-                SqlDataSource SqlDataSource_LoginUser = new SqlDataSource();
+                /// <summary>
+                /// SQL Server 數據暫存
+                /// </summary>
+                DetailsView dv = new DetailsView();
 
-                //連結資料庫的連接字串 ConnectionString
-                SqlDataSource_LoginUser.ConnectionString =
-                    "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-                //判斷用戶是使用 Email 或 UserName 登入
-                String SwitchField = (TB_User.Text.ToLower().Contains("@".ToLower())) ? "userEMail" : "userName";
+                //調用DB 隨機取出商品 作為推薦
+                DB.connectionReader(
+                    "login.sql",
+                    new ArrayList {
+                    new DB.Parameter("SwitchField", SqlDbType.NVarChar,
+                        (TB_User.Text.ToLower().Contains("@".ToLower())) ?
+                        "userEMail" :
+                        "userName"
+                    ),
+                    new DB.Parameter("TB_User", SqlDbType.NVarChar, TB_User.Text),
+                    new DB.Parameter("TB_Password", SqlDbType.NVarChar, TB_Password.Text)
+                    },
+                    (SqlDataReader ts) => {
+                        dv.DataSource = ts;
+                        dv.DataBind();
+                    }
+                );
                 
-                SqlDataSource_LoginUser.SelectParameters.Add("TB_User", TB_User.Text);
-                SqlDataSource_LoginUser.SelectParameters.Add("TB_Password", TB_Password.Text);
-
-                // SQL指令 ==
-                SqlDataSource_LoginUser.SelectCommand =
-                    $"Select [userId] " +
-                    $"FROM [userTable] " +
-                    $"WHERE( [{SwitchField}] = @TB_User COLLATE SQL_Latin1_General_CP1_CS_AS ) " +
-                    $"AND ( [userPassword] = @TB_Password COLLATE SQL_Latin1_General_CP1_CS_AS ) ";
-
-                // 執行SQL指令 .select() ==
-                SqlDataSource_LoginUser.DataSourceMode = SqlDataSourceMode.DataSet;
-                DataView dv = (DataView)SqlDataSource_LoginUser.Select(new DataSourceSelectArguments());
-
-                useCheckLoginTable.DataSource = dv;
-                useCheckLoginTable.DataBind();
-
-                SqlDataSource_LoginUser.Dispose();
-                
-                if(1 == useCheckLoginTable.DataItemCount)
+                //如果回傳數為1 (為登入成功)
+                if(1 == dv.DataItemCount)
                 {
                     ErrorLB_1.Text = "　";
-                    Session["UserId"] = useCheckLoginTable.Rows[0].Cells[1].Text;
+                    Session["UserId"] = dv.Rows[0].Cells[1].Text;
                     Response.Redirect("DashBoard.aspx");
                 }
+                //否則為登入失敗
                 else
                 {
                     ErrorLB_1.Text = "登入失敗，帳號或密碼有誤！！";
                 }
             }
-        }
-
-        protected void RegisterButton_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("Register.aspx");
         }
     }
 }
