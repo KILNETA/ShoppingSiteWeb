@@ -3,6 +3,7 @@ using System.Data;
 using System.IO;
 using System;
 using System.Collections;
+using Newtonsoft.Json;
 
 /// <summary>
 /// 網頁配置資料
@@ -68,6 +69,16 @@ class DB
         returnFunc(readerCmd.ExecuteReader());
 
         connection.Close(); // 資料庫 關閉連線  -----
+    }
+
+    /// <summary>
+    /// ArrayList參數陣列打包Json格式，供SQL Script參數輸入。
+    /// </summary>
+    /// <param name="parms">參數列表</param>
+    /// <returns>Json格式參數</returns>
+    public static string parmsToJson(ArrayList parms)
+    {
+        return JsonConvert.SerializeObject(parms);
     }
 
     /// <summary>
