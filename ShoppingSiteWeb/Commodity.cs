@@ -67,8 +67,9 @@ namespace Web.Commodity
         public static string priceToDecimalSeparator(int price)
         {
             String Price = price.ToString();
-            if (Price.Length > 3)
-                Price = Price.Insert(Price.Length - 3, ",");
+            for (int i = Price.Length - 1, total = Price.Length; i > 0; i--)
+                if ((total - i) % 3 == 0)
+                    Price = Price.Insert(i, ",");
             return Price;
         }
 
@@ -80,8 +81,9 @@ namespace Web.Commodity
         public string priceToDecimalSeparator()
         {
             String Price = this.price.ToString();
-            if (Price.Length > 3)
-                Price = Price.Insert(Price.Length - 3, ",");
+            for (int i = Price.Length - 1, total = Price.Length; i > 0; i--)
+                if ((total - i) % 3 == 0)
+                    Price = Price.Insert(i, ",");
             return Price;
         }
     }
