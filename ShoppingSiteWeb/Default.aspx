@@ -28,7 +28,7 @@
                         <asp:Panel ID="Panel_TitelMenuLogin" runat="server" CssClass="TitelMenu-Style"></asp:Panel>
                     </div>
                     <div class="Titel-Style" style="flex-grow: 1">
-                        <asp:LinkButton CssClass="Titel" ID="LB_Titel" runat="server" PostBackUrl="~/Default.aspx">
+                        <asp:LinkButton CssClass="Titel" ID="LB_Titel" runat="server" href="../Default.aspx">
                             Einkaufen 愛康福
                         </asp:LinkButton>
                         <div class="Titel-Style" style="width: 640px">
@@ -44,19 +44,19 @@
                             </div>
                         </div>
                         <div class="Titel-Style" style="flex: 1; height:100%; align-items: center; justify-content: left;">
-                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton9" runat="server" PostBackUrl="~/shop/OnShelves.aspx">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton9" runat="server" href="../shop/OnShelves.aspx">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/shoppingBag.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">賣東西</div>
                                 </div>
                             </asp:LinkButton>
-                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton6" runat="server" PostBackUrl="~/shop/DashBoard.aspx">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton6" runat="server" href="../shop/DashBoard.aspx">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/store.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">我的商店</div>
                                 </div>
                             </asp:LinkButton>
-                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton8" runat="server" PostBackUrl="~/buyer/ShoppingCart.aspx">
+                            <asp:LinkButton CssClass="otherLoginButton" Width="60" ID="LinkButton8" runat="server" href="../buyer/ShoppingCart.aspx">
                                 <div class="otherLoginButtonContent">
                                     <img src="Default_Picture/shopping.png" width="30" style="display: inline-block; margin: 0 10px;"/>
                                     <div style="display: inline-block; font-size:14px">購物車</div>

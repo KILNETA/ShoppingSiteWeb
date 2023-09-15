@@ -26,11 +26,11 @@ namespace ShoppingSiteWeb
                 showLoginInMenu();
 
             if (IsPostBack)
-            {   //first load
+            {   //next load
 
             }
             else
-            {   //next load
+            {   //first load
                 selectRecommendCommoditys();
             }
 
