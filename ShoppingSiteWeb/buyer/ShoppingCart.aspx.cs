@@ -1,50 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Text.RegularExpressions;
-using System.Reflection;
 using System.IO;
+using System.Collections;
+using Web.ShoppingCart;
+using System.Web.UI;
 
 namespace ShoppingSiteWeb.buyer
 {
+
+    /// <summary>
+    /// 購物車頁面
+    /// </summary>
     public partial class ShoppingCart : System.Web.UI.Page
     {
+        /// <summary>
+        /// 購物車列表
+        /// </summary>
+        ArrayList shoppingCartList = new ArrayList();
 
-        /* C->commodity S->shop */
-        private static readonly String[] dataNames =  {
-            "ACTcommodityId",
-            "ACTcommodityNum",
-            "CTcommodityName",
-            "CTcommodityPrice",
-            "CTcommodityIntroduction",
-            "CTcommodityThumbnail",
-            "CTcommodityNum"
-        };
-
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
-            {
-                if (Session["UserId"] == null)
-                {
-                    Response.Write("<script>alert('已登出！返回登入頁面！');window.location='Login.aspx';</script>");
+            {   //next load
+                if (!checkUserStateUsable())
                     return;
-                }
-                //驗證Token
-                else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
-                {
-                    Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
-                    return;
-                }
+                //取出緩存資料
+                shoppingCartList = (ArrayList)ViewState["shoppingCartList"];
+
                 calculateSubTotal();
             }
             else
-            {
+            {   //first load
+                //已登入
                 if (Session["UserId"] != null)
                 {
                     //創建Token許可證
@@ -53,15 +45,11 @@ namespace ShoppingSiteWeb.buyer
                     Session["Token"] = Token;
                     //在表單存入Token許可證
                     TB_Token.Text = Token;
-
+                    //紀錄User (驗證身分使用)
                     ViewState["UserId"] = Session["UserId"].ToString();
 
                     LoadUserData();
                     selectShoppingCartData();
-                    for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
-                    {
-                        ViewState[$"commodityBuyCheck_{i}"] = "false";
-                    }
                 }
                 else
                 {
@@ -71,576 +59,239 @@ namespace ShoppingSiteWeb.buyer
             }
             if (Session["UserId"] != null)
             {
-                if (Int32.Parse(ViewState["commodityNum"].ToString()) != 0)
-                {
-                    showShoppingCartList();
+                if (shoppingCartList.Count > 0)
+                {   //購物車不為空
                     LB_ToShopping.CssClass = "SignOutButton";
                     LB_ToShopping.Enabled = true;
+                    showShoppingCartList();
                 }
                 else
-                {
+                {   //購物車為空
                     LB_ToShopping.CssClass = "SignOutButton_Lack";
                     LB_ToShopping.Enabled = false;
-                    Label ShoppingCartIsEmpty = new Label();
-                    ShoppingCartIsEmpty.CssClass = "SC_ShoppingCartIsEmpty";
-                    ShoppingCartIsEmpty.Text = "購物車內暫無商品！";
-                    Panel_ShoppingCartBox.Controls.Add(ShoppingCartIsEmpty);
+                    Panel_ShoppingCartBox.ContentTemplateContainer.Controls.Add(
+                        shoppingCartIsEmptyUI());
                 }
             }
         }
-        private void calculateSubTotal()
+
+        /// <summary>
+        /// 確認用戶狀態
+        /// </summary>
+        /// <returns>用戶狀態是否正常</returns>
+        private bool checkUserStateUsable()
         {
-            long subTotal = 0;
-            for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
+            //檢驗用戶狀態
+            if (Session["UserId"] == null)
             {
-                if(ViewState[$"commodityBuyCheck_{i}"].ToString() == "true")
-                    subTotal += Int32.Parse(ViewState[$"CTcommodityPrice_{i}"].ToString()) * Int32.Parse(ViewState[$"ACTcommodityNum_{i}"].ToString());
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('尚未登入！進入登入頁面！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
+                return false;
             }
-            sutTotal.Text = subTotal.ToString("N0");
+            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
+            {
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('頁面內容與帳號不符，重新入頁面！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
+                return false;
+            }
+            //驗證Token
+            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
+            {
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('頁面閒置過久，重新載入！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
+                return false;
+            }
+            else
+                return true;
         }
 
+        /// <summary>
+        /// 購物車是空的UI布局
+        /// </summary>
+        /// <returns>Label UI布局</returns>
+        private Label shoppingCartIsEmptyUI()
+        {
+            Label ShoppingCartIsEmpty = new Label();
+            ShoppingCartIsEmpty.CssClass = "SC_ShoppingCartIsEmpty";
+            ShoppingCartIsEmpty.Text = "購物車內暫無商品！";
+            return ShoppingCartIsEmpty;
+        }
+
+        /// <summary>
+        /// 計算總計
+        /// </summary>
+        public void calculateSubTotal()
+        {
+            ///小計金額
+            long subTotalNum = 0;
+
+            foreach (ShoppingCartCommodity item in shoppingCartList)
+            {
+                if (item.isBuyCheck)
+                    subTotalNum += item.CT_price * item.SCT_selectNum;
+            }
+            subTotal.Text = $"${subTotalNum.ToString("N0")}";
+        }
+
+        /// <summary>
+        /// 載入用戶資料
+        /// </summary>
         private void LoadUserData()
         {
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
+            DetailsView userTable = new DetailsView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"SELECT " +
-                    $"userRealName " +
-                $"FROM userTable " +
-                $"WHERE userId = @UserId";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            DetailsView gv = new DetailsView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
-
-            userRealName.Text = gv.Rows[0].Cells[1].Text;
+            //調用DB 取得用戶名稱
+            DB.connectionReader(
+                "selectUserName.sql",
+                new ArrayList {
+                    new DB.Parameter("UserId", SqlDbType.Int, Session["UserId"])
+                },
+                (SqlDataReader ts) => {
+                    userTable.DataSource = ts;
+                    userTable.DataBind();
+                }
+            );
+            //輸出歡迎語的用戶名稱
+            userRealName.Text = userTable.Rows[0].Cells[1].Text;
         }
 
+        /// <summary>
+        /// 取得購物車資料
+        /// </summary>
         private void selectShoppingCartData()
         {
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"SELECT DISTINCT " +
-                    $"ACT.commodityId, " +
-                    $"ACT.commodityNum, " +
-                    $"CT.commodityName, " +
-                    $"CT.commodityPrice, " +
-                    $"CT.commodityIntroduction, " +
-                    $"CT.commodityThumbnail, " +
-                    $"CT.commodityNum "+
-                $"FROM shoppingCartTable ACT " +
-                $"INNER JOIN commodityTable CT " +
-                    $"ON ACT.commodityId = CT.commodityId " +
-                $"WHERE ACT.userId = @UserId ";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
             GridView gv = new GridView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
 
-            ViewState["commodityNum"] = gv.Rows.Count;
-
-            saveRecommendCommoditys(gv);
-        }
-
-        private void saveRecommendCommoditys(GridView gv)
-        {
-            for (int cell = 0; cell < dataNames.Length; cell++)
-            {
-                for (int row = 0; row < Int32.Parse(ViewState["commodityNum"].ToString()) ; row++)
-                {
-                    ViewState[$"{dataNames[cell]}_{row}"] = gv.Rows[row].Cells[cell].Text;
+            //調用DB 取得購物車資料
+            DB.connectionReader(
+                "selectShoppingCartData.sql",
+                new ArrayList {
+                    new DB.Parameter("UserId", SqlDbType.Int, Session["UserId"])
+                },
+                (SqlDataReader ts) => {
+                    gv.DataSource = ts;
+                    gv.DataBind();
                 }
+            );
+
+            //暫存購物車資料
+            foreach (TableRow item in gv.Rows)
+            {
+                shoppingCartList.Add(
+                    new ShoppingCartCommodity(
+                        item.Cells[0].Text,
+                        item.Cells[1].Text,
+                        item.Cells[2].Text,
+                        item.Cells[3].Text,
+                        item.Cells[4].Text,
+                        item.Cells[5].Text,
+                        item.Cells[6].Text
+                        )
+                    );
             }
+            ViewState["shoppingCartList"] = shoppingCartList;
         }
 
+        /// <summary>
+        /// 顯示購物車內容
+        /// </summary>
         private void showShoppingCartList()
         {
-            for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
+            ///統一暫存 Token
+            string Token = TB_Token.Text;
+            ///統一暫存 UserId
+            string UserId = ViewState["UserId"].ToString();
+            foreach (ShoppingCartCommodity item in shoppingCartList)
             {
-                Panel_ShoppingCartBox.Controls.Add(showShoppingCartItem(i));
+                Panel_ShoppingCartBox.ContentTemplateContainer.Controls.Add(
+                    new ShoppingCartCommodityUI(item, this, UserId, Token)
+                );
             }
         }
-        private Panel showShoppingCartItem(int index)
-        {
-            Panel commodityItem = new Panel();
 
-            Panel commodityCheck_Box = new Panel();
-            CheckBox commodityCheck = new CheckBox();
-
-            LinkButton commodityThumbnail_Box = new LinkButton();
-            Image commodityThumbnail = new Image();
-            Label commodityId = new Label();
-            Panel hr_1 = new Panel();
-            Panel hr_2 = new Panel();
-            Panel commodityContext_Box = new Panel();
-            LinkButton commodityName = new LinkButton();
-            Label commodityPrice = new Label();
-            Label commodityIntroduction = new Label();
-            Panel commodityNumSubPrice_Box = new Panel();
-            Panel commodityNum_Box = new Panel();
-            TextBox commodityNum = new TextBox();
-            Panel commoditySubPrice_Box = new Panel();
-            Panel commoditySubPrice_Context = new Panel();
-            Label commoditySubPriceTitle = new Label();
-            Label commoditySubPrice = new Label();
-            Panel commodityNum_Text = new Panel();
-            Label commodityHasNum = new Label();
-            Label commodityHasNumLack = new Label();
-            LinkButton ShoppingCart_remove = new LinkButton();
-            Panel ShoppingCart_remove_Icon = new Panel();
-
-            String PriceNum = ViewState[$"CTcommodityPrice_{index}"].ToString();
-            if (PriceNum.Length > 3)
-                PriceNum = PriceNum.Insert(PriceNum.Length - 3, ",");
-
-            String SubPriceNum = (Int32.Parse(ViewState[$"CTcommodityPrice_{index}"].ToString())* Int32.Parse(ViewState[$"ACTcommodityNum_{index}"].ToString())).ToString();
-            if (SubPriceNum.Length > 6)
-                SubPriceNum = SubPriceNum.Insert(SubPriceNum.Length - 6, ",");
-            if (SubPriceNum.Length > 3)
-                SubPriceNum = SubPriceNum.Insert(SubPriceNum.Length - 3, ",");
-
-            commodityCheck_Box.CssClass = "SC_Check_Box";
-            commodityCheck.BorderStyle = BorderStyle.None;
-            commodityCheck.CssClass = "SC_Check";
-            commodityCheck_Box.Controls.Add(commodityCheck);
-            commodityCheck.AutoPostBack = true;
-            commodityCheck.CheckedChanged +=
-                delegate (object sender1, EventArgs e1) {
-                    VBT_ShoppingCartCommodityCheckChanged(
-                        new object(),
-                        new EventArgs(),
-                        index,
-                        ViewState[$"ACTcommodityId_{index}"].ToString(),
-                        commodityCheck.Checked
-                    );
-                };
-
-            commodityItem.CssClass = "SC_commodityItem";
-            commodityThumbnail_Box.CssClass = "SC_Thumbnail_Box";
-            commodityThumbnail.CssClass = "SC_Thumbnail";
-            commodityThumbnail.ImageUrl = ViewState[$"CTcommodityThumbnail_{index}"].ToString();
-            commodityId.CssClass = "SC_Id";
-            commodityId.Text = $"商品編號：{ViewState[$"ACTcommodityId_{index}"]}";
-
-            commodityThumbnail_Box.Controls.Add(commodityThumbnail);
-            commodityThumbnail_Box.Controls.Add(commodityId);
-
-            hr_1.CssClass = "SC_hr";
-            hr_2.CssClass = "SC_hr";
-
-            commodityContext_Box.CssClass = "SC_Context_Box";
-            commodityName.CssClass = "SC_Name";
-            commodityName.Text = ViewState[$"CTcommodityName_{index}"].ToString();
-            commodityPrice.CssClass = "SC_Price";
-            commodityPrice.Text = $"${PriceNum}";
-            commodityIntroduction.CssClass = "SC_Introduction";
-            commodityIntroduction.Text = ViewState[$"CTcommodityIntroduction_{index}"].ToString();
-
-
-            commodityContext_Box.Controls.Add(commodityName);
-            commodityContext_Box.Controls.Add(commodityPrice);
-            commodityContext_Box.Controls.Add(commodityIntroduction);
-
-            commodityNumSubPrice_Box.CssClass = "SC_NumSubPrice_Box";
-            commoditySubPrice_Box.CssClass = "SC_SubPrice_Box";
-            commoditySubPrice_Context.CssClass = "SC_SubPrice_Context";
-            commoditySubPriceTitle.CssClass = "SC_SubPriceTitle";
-            commoditySubPriceTitle.Text = "小計：";
-            commoditySubPrice.CssClass = "SC_SubPrice";
-            commoditySubPrice.Text = $"${SubPriceNum}";
-
-            commoditySubPrice_Context.Controls.Add(commoditySubPriceTitle);
-            commoditySubPrice_Context.Controls.Add(commoditySubPrice);
-            commoditySubPrice_Box.Controls.Add(commoditySubPrice_Context);
-
-            commodityNum_Box.CssClass = "SC_Num_Box";
-            commodityNum.CssClass = "SC_Input";
-            commodityNum.Text = ViewState[$"ACTcommodityNum_{index}"].ToString();
-            commodityNum_Text.CssClass = "SC_Num_Text";
-            commodityHasNum.CssClass = "SC_HasNum";
-            commodityHasNumLack.CssClass = "SC_HasNum_Lack";
-            commodityNum_Text.Controls.Add(commodityHasNum);
-            commodityNum_Text.Controls.Add(commodityHasNumLack);
-            commodityNum.AutoPostBack = true;
-            commodityNum.TextChanged +=
-                delegate (object sender1, EventArgs e1) {
-                    VBT_ShoppingCartCommodityNumChanged(
-                        new object(),
-                        new EventArgs(),
-                        index,
-                        ViewState[$"ACTcommodityId_{index}"].ToString(),
-                        commodityNum
-                    );
-                };
-
-            //缺貨
-            if (Int32.Parse(ViewState[$"CTcommodityNum_{index}"].ToString()) < 1)
-            {
-                commodityHasNum.Text = "";
-                commodityHasNumLack.Text = "缺貨中";
-                commodityNum.Enabled = false;
-                commoditySubPrice.CssClass = "SC_SubPrice_Lack";
-                commodityCheck.Enabled = false;
-                ViewState[$"commodityBuyCheck_{index}"] = "false";
-            }
-            else
-            {
-                commodityHasNum.Text = $"庫存 {ViewState[$"CTcommodityNum_{index}"]} 件";
-                commodityHasNumLack.Text = "";
-                commodityNum.Enabled = true;
-                commoditySubPrice.CssClass = "SC_SubPrice";
-                commodityCheck.Enabled = true;
-            }
-            commodityNum_Box.Controls.Add(commodityNum);
-            commodityNum_Box.Controls.Add(commodityNum_Text);
-
-            commodityNumSubPrice_Box.Controls.Add(commoditySubPrice_Box);
-            commodityNumSubPrice_Box.Controls.Add(commodityNum_Box);
-
-            ShoppingCart_remove.CssClass = "SC_Remove";
-            ShoppingCart_remove_Icon.CssClass = "SC_RemoveIcon";
-            ShoppingCart_remove.Controls.Add(ShoppingCart_remove_Icon);
-            ShoppingCart_remove.Click +=
-                delegate (object sender1, EventArgs e1) {
-                    VBT_ShoppingCartRemove(
-                        new object(),
-                        new EventArgs(),
-                        ViewState[$"ACTcommodityId_{index}"].ToString()
-                    );
-                };
-
-            commodityThumbnail_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"ACTcommodityId_{index}"]}";
-            commodityName.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"ACTcommodityId_{index}"]}";
-
-            commodityItem.Controls.Add(commodityCheck_Box);
-            commodityItem.Controls.Add(commodityThumbnail_Box);
-            commodityItem.Controls.Add(hr_1);
-            commodityItem.Controls.Add(commodityContext_Box);
-            commodityItem.Controls.Add(hr_2);
-            commodityItem.Controls.Add(commodityNumSubPrice_Box);
-            commodityItem.Controls.Add(ShoppingCart_remove);
-
-            return commodityItem;
-        }
-
-        protected void VBT_ShoppingCartCommodityCheckChanged(object sender, EventArgs e,int index, String commodityId, bool isCheck)
-        {
-            if (Session["UserId"] == null)
-            {
-                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
-                return;
-            }
-            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
-            {
-                Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>");
-                return;
-            }
-            //驗證Token
-            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
-            {
-                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
-                return;
-            }
-
-            if (isCheck == true)
-            {
-                ViewState[$"commodityBuyCheck_{index}"] = "true";
-            }
-            else
-            {
-                ViewState[$"commodityBuyCheck_{index}"] = "false";
-            }
-            calculateSubTotal();
-        }
-
-            protected void VBT_ShoppingCartCommodityNumChanged(object sender, EventArgs e, int index , String commodityId, TextBox TB_commodityNum)
-        {
-            if (Session["UserId"] == null)
-            {
-                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
-                return;
-            }
-            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
-            {
-                Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>");
-                return;
-            }
-            //驗證Token
-            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
-            {
-                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
-                return;
-            }
-            else if (
-                    TB_commodityNum.Text == String.Empty
-                ||  !new Regex("^[0-9]*$").IsMatch(TB_commodityNum.Text)
-                ||  Int32.Parse(TB_commodityNum.Text) > Int32.Parse(ViewState[$"CTcommodityNum_{index}"].ToString())
-                ||  Int32.Parse(TB_commodityNum.Text) < 1)
-            {
-                TB_commodityNum.Text = ViewState[$"ACTcommodityNum_{index}"].ToString();
-                return;
-            }
-
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
-
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
-            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityId", commodityId);
-            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityNum", TB_commodityNum.Text);
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"UPDATE shoppingCartTable " +
-                $"SET commodityNum = @CommodityNum " +
-                $"WHERE userId = @UserId " +
-                    $"AND commodityId = @CommodityId " +
-
-                $"SELECT @@ROWCOUNT ";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            DetailsView gv = new DetailsView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
-
-            Response.Write("<script>window.location='ShoppingCart.aspx';</script>");
-        }
-
-        protected void VBT_ShoppingCartRemove(object sender, EventArgs e, String commodityId)
-        {
-
-            if (Session["UserId"] == null )
-            {
-                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
-                return;
-            }
-            else if( ViewState["UserId"].ToString() != Session["UserId"].ToString() )
-            {
-                Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>\"");
-                return;
-            }
-            //驗證Token
-            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
-            {
-                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
-                return;
-            }
-
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
-
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
-            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityId", commodityId);
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"DELETE FROM shoppingCartTable " +
-                $"WHERE userId = @UserId " +
-                    $"AND commodityId = @CommodityId " +
-
-                $"SELECT @@ROWCOUNT ";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            DetailsView gv = new DetailsView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
-
-            if(gv.Rows[0].Cells[1].Text != "0")
-                Response.Write("<script>alert('已從購物車移除！');window.location='ShoppingCart.aspx';</script>\"");
-            else
-                Response.Write("<script>alert('從購物車移除，失敗！');window.location='ShoppingCart.aspx';</script>\"");
-        }
-
+        /// <summary>
+        /// 購物按鈕 事件
+        /// </summary>
         protected void LB_ToShopping_Click(object sender, EventArgs e)
         {
-            Boolean RealToBuy = false;
-
-            if (Session["UserId"] == null)
-            {
-                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
-                return;
-            }
-            else if (ViewState["UserId"].ToString() != Session["UserId"].ToString())
-            {
-                Response.Write("<script>alert('頁面內容與帳號不符，重新入頁面！');window.location='ShoppingCart.aspx';</script>\"");
-                return;
-            }
-            //驗證Token
-            else if (Session["Token"] == null || TB_Token.Text != Session["Token"].ToString())
-            {
-                Response.Write("<script>alert('頁面閒置過久，重新載入！');window.location='ShoppingCart.aspx';</script>");
-                return;
-            }
-
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
-
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add($"userId", Session["UserId"].ToString());
-
-            String SQLcmd = 
-                $"DECLARE @transactionId INT = 0 " +
-                $"DECLARE @transactionError BIT = 0 " +
-
-                $"BEGIN TRANSACTION ";
-
-            for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
-            {
-                if (ViewState[$"commodityBuyCheck_{i}"].ToString() == "true") {
-                    RealToBuy = true;
-                    SqlDataSource_RegisterUser.SelectParameters.Add($"shoppingCart_commodityId{i}", ViewState[$"ACTcommodityId_{i}"].ToString());
-                    SqlDataSource_RegisterUser.SelectParameters.Add($"shoppingCartNum{i}", ViewState[$"ACTcommodityNum_{i}"].ToString());
-
-                    SQLcmd +=
-                        $"DECLARE @commodityNum{i} INT " +
-                        $"DECLARE @commodityName{i} NVARCHAR(50) " +
-                        $"SELECT @commodityNum{i} = commodityNum , @commodityName{i} = commodityName " +
-                        $"FROM commodityTable " +
-                        $"WHERE commodityId = @shoppingCart_commodityId{i} " +
-                        $"IF(@shoppingCartNum{i} > @commodityNum{i}) " +
-                        $"BEGIN " +
-                            $"SELECT @commodityName{i} +N'數量缺少', -1 " +
-                            $"SET @transactionError = 1 " +
-                        $"END ";
-                }
-            }
-
-            if (!RealToBuy)
+            if (!checkUserStateUsable())
                 return;
 
-            SQLcmd +=
-                $"IF(@transactionError = 0) " +
-                $"BEGIN " +
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
+            DetailsView dv = new DetailsView();
 
-                    $"INSERT INTO transactionTable([userId],[transactionDate]) " +
-                    $"VALUES (@userId,GETDATE()) " +
-                    $"SELECT @transactionId = ISNULL(successful.transactionId,0) From (SELECT SCOPE_IDENTITY() AS transactionId) successful " +
-
-                    $"IF(@transactionId !=0) " +
-                    $"BEGIN ";
-
-            for (int i = 0; i < Int32.Parse(ViewState["commodityNum"].ToString()); i++)
+            /// <summary>
+            /// SQL 參數陣列
+            /// </summary>
+            ArrayList Parameter = new ArrayList();
+            foreach (ShoppingCartCommodity item in shoppingCartList)
             {
-                if (ViewState[$"commodityBuyCheck_{i}"].ToString() == "true")
+                if (item.isBuyCheck)
                 {
-                    SQLcmd +=
-                        $"INSERT INTO transaction_recordsTable([transactionId],[commodityId],[commodityNum]) " +
-                        $"VALUES (@transactionId,@shoppingCart_commodityId{i},@shoppingCartNum{i}) " +
-                        $"IF(@@ROWCOUNT = 0) " +
-                            $"SET @transactionError = 1 " +
-                        $"UPDATE commodityTable " +
-                        $"SET commodityNum = @commodityNum{i} - @shoppingCartNum{i} " +
-                        $"WHERE commodityId = @shoppingCart_commodityId{i} " +
-                        $"IF(@@ROWCOUNT = 0) " +
-                            $"SET @transactionError = 1 " +
-                        $"DELETE FROM shoppingCartTable " +
-                        $"WHERE userId = @UserId " +
-                            $"AND commodityId = @shoppingCart_commodityId{i} "+
-                        $"IF(@@ROWCOUNT = 0) " +
-                            $"SET @transactionError = 1 ";
+                    Parameter.Add(new parms(item.SCT_id, item.SCT_selectNum));
                 }
             }
+            
+            //調用DB 購買選取的商品，並建構訂單紀錄
+            DB.connectionReader(
+                "shopping.sql",
+                new ArrayList {
+                    new DB.Parameter("json_str", SqlDbType.NVarChar, DB.parmsToJson(Parameter)),
+                    new DB.Parameter("UserId", SqlDbType.Int, Session["UserId"])
+                },
+                (SqlDataReader ts) => {
+                    dv.DataSource = ts;
+                    dv.DataBind();
+                }
+            );
 
-            SQLcmd +=
-                    $"END " +
-                $"ELSE " +
-                    $"SET @transactionError = 1 " +
-                $"END " +
-
-                $"IF(@transactionError = 0) " +
-                $"BEGIN " +
-                    $"SELECT N'訂單成立！', 1 " +
-                    $"COMMIT TRANSACTION " +
-                $"END " +
-                $"ELSE " +
-                $"BEGIN " +
-                    $"SELECT N'訂單失敗！', 0 " +
-                    $"ROLLBACK TRANSACTION " +
-                $"END ";
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand = SQLcmd;
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            DetailsView gv = new DetailsView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
-
-            switch (gv.Rows[1].Cells[1].Text)
+            //狀態回報
+            switch (dv.Rows[1].Cells[1].Text)
             {
                 case "1":
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='TransactionList.aspx';</script>");
+                    Response.Write($"<script>alert('{dv.Rows[0].Cells[1].Text}');window.location='TransactionList.aspx';</script>");
                     break;
                 case "-1":
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='ShoppingCart.aspx';</script>");
+                    Response.Write($"<script>alert('{dv.Rows[0].Cells[1].Text}');window.location='ShoppingCart.aspx';</script>");
                     break;
                 default:
-                    Response.Write($"<script>alert('{gv.Rows[0].Cells[1].Text}');window.location='ShoppingCart.aspx';</script>\"");
+                    Response.Write($"<script>alert('{dv.Rows[0].Cells[1].Text}');window.location='ShoppingCart.aspx';</script>\"");
                     break;
+            }
+        }
+
+        /// <summary>
+        /// SQL Server 參數陣列 數據結構
+        /// </summary>
+        struct parms
+        {
+            public int Id;
+            public int Num;
+            public parms(int Id, int Num)
+            {
+                this.Id = Id;
+                this.Num = Num;
             }
         }
     }

@@ -15,6 +15,15 @@ namespace ShoppingSiteWeb.buyer
     {
 
         /// <summary>
+        /// ScriptManager1 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager ScriptManager1;
+
+        /// <summary>
         /// LB_Titel 控制項。
         /// </summary>
         /// <remarks>
@@ -39,7 +48,7 @@ namespace ShoppingSiteWeb.buyer
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel_ShoppingCartBox;
+        protected global::System.Web.UI.UpdatePanel Panel_ShoppingCartBox;
 
         /// <summary>
         /// sutTotal 控制項。
@@ -48,7 +57,16 @@ namespace ShoppingSiteWeb.buyer
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label sutTotal;
+        protected global::System.Web.UI.UpdatePanel sutTotal;
+
+        /// <summary>
+        /// subTotal 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label subTotal;
 
         /// <summary>
         /// LB_ToShopping 控制項。
