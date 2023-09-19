@@ -1,26 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace ShoppingSiteWeb.buyer
 {
+
+    /// <summary>
+    /// 個人儀錶板頁面
+    /// </summary>
     public partial class DashBoard : System.Web.UI.Page
     {
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
-            {
+            {   //next load
+                //檢驗用戶狀態
                 if (Session["UserId"] == null)
                 {
                     Response.Write("<script>alert('已登出！返回登入頁面！');window.location='Login.aspx';</script>");
                 }
             }
-            else {
+            else
+            {   //first load
+                //已登入
                 if (Session["UserId"] != null)
                 {
                     LoadUserData();
@@ -33,63 +39,61 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
+        /// <summary>
+        /// 登出按鈕 事件
+        /// </summary>
         protected void SignOutButton_Click(object sender, EventArgs e)
         {
             Session["UserId"] = null;
             Response.Write("<script>alert('成功登出！返回登入頁面！');window.location='Login.aspx';</script>");
         }
 
+        /// <summary>
+        /// 加載用戶資料
+        /// </summary>
         private void LoadUserData()
         {
-            String DB_addressStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-            SqlConnection dataConnection = new SqlConnection(DB_addressStr);
-
-            String cmdStr = $"Select * FROM userTable WHERE( userId = {Session["UserId"]} )";
-            SqlCommand cmd = new SqlCommand(cmdStr, dataConnection);
-
-            dataConnection.Open();
-            SqlDataReader dr_CheckUserName = cmd.ExecuteReader();
-            GV_UserData.DataSource = dr_CheckUserName;
-            GV_UserData.DataBind();
-            dataConnection.Close();
-
-            userRealName.Text = GV_UserData.Rows[0].Cells[4].Text;
+            //調用DB 取得用戶資料
+            DB.connectionReader(
+                "selectUserData.sql",
+                new ArrayList {
+                    new DB.Parameter("UserId", SqlDbType.Int, Session["UserId"])
+                },
+                (SqlDataReader ts) => {
+                    GV_UserData.DataSource = ts;
+                    GV_UserData.DataBind();
+                }
+            );
+            //輸出歡迎語的用戶名稱
+            userRealName.Text = GV_UserData.Rows[0].Cells[1].Text;
         }
 
+        /// <summary>
+        /// 取得用戶商店資料
+        /// </summary>
         private void LoadShopData()
         {
-            SqlDataSource SqlDataSource_LoginUser = new SqlDataSource();
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_LoginUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+            //調用DB 取得用戶商店資料
+            DB.connectionReader(
+                "selectShopData.sql",
+                new ArrayList {
+                    new DB.Parameter("UserId", SqlDbType.Int, Session["UserId"])
+                },
+                (SqlDataReader ts) => {
+                    GV_ShopData.DataSource = ts;
+                    GV_ShopData.DataBind();
+                }
+            );
 
-            SqlDataSource_LoginUser.SelectParameters.Add("UserID", Session["UserId"].ToString());
-
-            // SQL指令 ==
-            SqlDataSource_LoginUser.SelectCommand =
-                $"Select shopTable.* " +
-                $"FROM [shopTable] " +
-                $"Inner join [user_shopTable] " +
-                $"On shopTable.shopId = user_shopTable.shopId " +
-                $"Inner join [userTable] " +
-                $"On user_shopTable.userId = userTable.userId " +
-                $"WHERE( userTable.userId = @UserID ) ";
-
-            // 執行SQL指令 .select() ==
-            SqlDataSource_LoginUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            DataView dv = (DataView)SqlDataSource_LoginUser.Select(new DataSourceSelectArguments());
-
-            GV_ShopData.DataSource = dv;
-            GV_ShopData.DataBind();
-
-            SqlDataSource_LoginUser.Dispose();
-
+            //確認用戶存在商店
             if (GV_ShopData.Rows.Count != 0)
             {
+                //隱藏註冊商店按鈕
                 BT_ShopRegister.Visible = false;
             }
             else
             {
+                //隱藏商店功能按鈕
                 BT_OnShelves.Visible = false;
                 BT_ShopDashBoard.Visible = false;
             }

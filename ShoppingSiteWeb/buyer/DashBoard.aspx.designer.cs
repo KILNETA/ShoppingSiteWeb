@@ -42,24 +42,6 @@ namespace ShoppingSiteWeb.buyer
         protected global::System.Web.UI.WebControls.GridView GV_UserData;
 
         /// <summary>
-        /// Button4 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button4;
-
-        /// <summary>
-        /// Button5 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button5;
-
-        /// <summary>
         /// GV_ShopData 控制項。
         /// </summary>
         /// <remarks>
@@ -75,7 +57,7 @@ namespace ShoppingSiteWeb.buyer
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BT_ShopRegister;
+        protected global::System.Web.UI.WebControls.LinkButton BT_ShopRegister;
 
         /// <summary>
         /// BT_OnShelves 控制項。
@@ -84,7 +66,7 @@ namespace ShoppingSiteWeb.buyer
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BT_OnShelves;
+        protected global::System.Web.UI.WebControls.LinkButton BT_OnShelves;
 
         /// <summary>
         /// BT_ShopDashBoard 控制項。
@@ -93,7 +75,7 @@ namespace ShoppingSiteWeb.buyer
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BT_ShopDashBoard;
+        protected global::System.Web.UI.WebControls.LinkButton BT_ShopDashBoard;
 
         /// <summary>
         /// SignOutButton 控制項。

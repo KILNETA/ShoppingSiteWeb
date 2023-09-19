@@ -1,0 +1,117 @@
+html,body,form {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+div.Body{
+    margin: auto;
+    width: 1200px;
+    height: 100%;
+    background-position: center;
+    display: flex;
+}
+p,div{
+    font-family: 微軟正黑體;
+}
+
+div.contentBody{
+    background-image: url("../Default_Picture/login_background.jpg");
+    min-width: 1200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.HeaderBackground-Style {
+    background-color: #004469;
+    width: 100%;
+    min-width: 1200px;
+    height: 90px;
+    float: left;
+}
+
+.FooterBackground-Style {
+    background-color: #c3c8c9;
+    width: 100%;
+    min-width: 1200px;
+    height: 320px;
+    float: left;
+}
+
+.TitelBox-Style {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    padding-left: 5%;
+}
+
+.Titel-Style {
+    color: #FFF4E1;
+    font-family: 微軟正黑體;
+    font-size: 32px;
+    font-weight: bolder;
+    text-decoration:none;
+}
+
+div.DashBoardBox {
+    margin: auto;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-position: center;
+}
+div.DashBoardBoxContent {
+    height: 600px;
+    background-position: center;
+    background: #ffffff;
+    padding: 30px;
+    box-shadow: 0 0 5px 3px #003b3b3b;
+    display: flex;
+    flex-direction: column;
+}
+div.InputBox{
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+div.Button{
+    text-align: center;
+    flex-shrink: 0;
+}
+.SignOutButton{
+    font-family: 微軟正黑體;
+    font-size: 16px;
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    background: #004469;
+}
+.SignOutButton:hover {
+    background: #0d5982;
+}
+.SignOutButton:active{
+    background: #3d474d;
+}
+.UserDataTable{
+    min-height:100px;
+    height:100%;
+    width:100%;
+}
+.CenterButton{
+    font-family: 微軟正黑體;
+    font-size: 16px;
+    width: 160px;
+    height: 40px;
+    cursor: pointer;
+    background: #004469;
+    margin: 0px 10px;
+    font-family: 微軟正黑體;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+.CenterButton:hover {
+    background: #0d5982;
+}
+.CenterButton:active{
+    background: #3d474d;
+}
