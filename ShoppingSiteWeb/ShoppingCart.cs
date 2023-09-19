@@ -193,12 +193,10 @@ namespace Web.ShoppingCart
 
             ///單件價格
             String PriceNum =
-                Commodity.Commodity.priceToDecimalSeparator(
-                    CommodityData.CT_price);
+                    CommodityData.CT_price.ToString("N0");
             ///小計價格
             String SubPriceNum =
-                Commodity.Commodity.priceToDecimalSeparator(
-                    CommodityData.CT_price * CommodityData.SCT_selectNum);
+               (CommodityData.CT_price * CommodityData.SCT_selectNum).ToString("N0");
 
             //UI Css掛載
             this.CssClass = "SC_commodityItem";
@@ -385,8 +383,7 @@ namespace Web.ShoppingCart
             CommodityData.SCT_selectNum = int.Parse(num.Text);
             ///小計價格
             String SubPriceNum =
-                Commodity.Commodity.priceToDecimalSeparator(
-                    CommodityData.CT_price * CommodityData.SCT_selectNum);
+                    (CommodityData.CT_price * CommodityData.SCT_selectNum).ToString("N0");
             //顯示單項小計
             subPrice.Text = $"${SubPriceNum}";
             //重新計算總金額

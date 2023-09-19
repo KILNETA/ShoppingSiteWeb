@@ -56,36 +56,6 @@ namespace Web.Commodity
             this.shopId = int.Parse(shopId);
             this.shopName = shopName;
         }
-
-        /// <summary>
-        /// 價格 千分位分隔符 轉換 <br/>
-        /// 公用轉換函式 <br/>
-        /// int->string
-        /// </summary>
-        /// <param name="price">價格</param>
-        /// <returns>分位價格</returns>
-        public static string priceToDecimalSeparator(int price)
-        {
-            String Price = price.ToString();
-            for (int i = Price.Length - 1, total = Price.Length; i > 0; i--)
-                if ((total - i) % 3 == 0)
-                    Price = Price.Insert(i, ",");
-            return Price;
-        }
-
-        /// <summary>
-        /// 價格 千分位分隔符 轉換 <br/>
-        /// int->string
-        /// </summary>
-        /// <returns>分位價格</returns>
-        public string priceToDecimalSeparator()
-        {
-            String Price = this.price.ToString();
-            for (int i = Price.Length - 1, total = Price.Length; i > 0; i--)
-                if ((total - i) % 3 == 0)
-                    Price = Price.Insert(i, ",");
-            return Price;
-        }
     }
 
     /// <summary>
@@ -160,7 +130,7 @@ namespace Web.Commodity
             priceSymbol.CssClass = "CommodityPriceSymbol";
             priceSymbol.Text = "$";
             price.CssClass = "CommodityPriceText";
-            price.Text = commodity.priceToDecimalSeparator();
+            price.Text = commodity.price.ToString("N0");
             priceContent.Controls.Add(priceSymbol);
             priceContent.Controls.Add(price);
             //購物車
