@@ -92,6 +92,18 @@ namespace ShoppingSiteWeb
         /// </summary>
         private void showWelcomeUserInMenu()
         {
+
+            // 歡迎列表控件 (已登入)
+            Label LB_Welcome = new Label();
+            LinkButton LB_UserDashBoard = new LinkButton();
+            Label LB_Menuseparate = new Label();
+            LinkButton LB_UserSignOut = new LinkButton();
+
+            LB_Welcome.CssClass = "menuWelcome";
+            LB_UserDashBoard.CssClass = "generalLink";
+            LB_Menuseparate.CssClass = "TitelMenuseparate";
+            LB_UserSignOut.CssClass = "generalLink";
+
             /// <summary>
             /// SQL Server 數據暫存
             /// </summary>
@@ -108,17 +120,6 @@ namespace ShoppingSiteWeb
                     userTable.DataBind();
                 }
             );
-
-            // 歡迎列表控件 (已登入)
-            Label LB_Welcome = new Label();
-            LinkButton LB_UserDashBoard = new LinkButton();
-            Label LB_Menuseparate = new Label();
-            LinkButton LB_UserSignOut = new LinkButton();
-
-            LB_Welcome.CssClass = "menuWelcome";
-            LB_UserDashBoard.CssClass = "generalLink";
-            LB_Menuseparate.CssClass = "TitelMenuseparate";
-            LB_UserSignOut.CssClass = "generalLink";
 
             LB_Welcome.Text = "歡迎您！ ";
             LB_UserDashBoard.Text = userTable.Rows[0].Cells[1].Text;
