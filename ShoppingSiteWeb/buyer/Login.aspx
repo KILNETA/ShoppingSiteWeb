@@ -18,7 +18,7 @@
     <header class="HeaderBackground-Style">
         <div class="Body">
             <div class="TitelBox-Style">
-                <asp:LinkButton CssClass="Titel-Style" ID="LB_Titel" runat="server" PostBackUrl="~/Default.aspx">
+                <asp:LinkButton CssClass="Titel-Style" ID="LB_Titel" runat="server" href="../Default.aspx">
                     Einkaufen 愛康福
                 </asp:LinkButton>
             </div>
