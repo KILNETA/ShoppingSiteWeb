@@ -55,7 +55,7 @@ namespace ShoppingSiteWeb.search
             /// </summary>
             GridView gv = new GridView();
 
-            //調用DB 隨機取出商品 作為推薦
+            //調用DB 取出搜索的資料
             DB.connectionReader(
                 "selectSearchCommodity.sql",
                 new ArrayList {
