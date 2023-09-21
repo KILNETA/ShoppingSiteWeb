@@ -11,9 +11,7 @@ SELECT TOP(@ChooseNum)
 	CT.commodityName, 
 	CT.commodityPrice, 
 	CT.commodityNum, 
-	CT.commodityThumbnail, 
-	ST.shopId, 
-	ST.shopName 
+	CT.commodityThumbnail
 FROM commodityTable CT 
 INNER JOIN shop_commodityTable SCT 
 ON SCT.commodityId = CT.commodityId 

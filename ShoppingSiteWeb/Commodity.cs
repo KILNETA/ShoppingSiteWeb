@@ -25,8 +25,6 @@ namespace Web.Commodity
         public int price;
         public int num;
         public string thumbnail;
-        public int shopId;
-        public string shopName;
 
         /// <summary>
         /// 商品資料 建構子
@@ -43,9 +41,7 @@ namespace Web.Commodity
             string name,
             string price,
             string num,
-            string thumbnail,
-            string shopId,
-            string shopName
+            string thumbnail
         )
         {
             this.id = int.Parse(id);
@@ -53,8 +49,6 @@ namespace Web.Commodity
             this.price = int.Parse(price);
             this.num = int.Parse(num);
             this.thumbnail = thumbnail;
-            this.shopId = int.Parse(shopId);
-            this.shopName = shopName;
         }
     }
 
@@ -145,7 +139,7 @@ namespace Web.Commodity
                     );
                 };
             //連接商品頁面
-            string commodityLink = $"commodity/Item.aspx?commodityId={commodity.id}";
+            string commodityLink = $"../commodity/Item.aspx?commodityId={commodity.id}";
             thumbnailFrame.Attributes.Add("href", commodityLink);
             nameFrame.Attributes.Add("href", commodityLink);
             //掛載至文字框架

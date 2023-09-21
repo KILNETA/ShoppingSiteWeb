@@ -79,9 +79,7 @@ namespace ShoppingSiteWeb
                     gv.Rows[row].Cells[1].Text,
                     gv.Rows[row].Cells[2].Text,
                     gv.Rows[row].Cells[3].Text,
-                    gv.Rows[row].Cells[4].Text,
-                    gv.Rows[row].Cells[5].Text,
-                    gv.Rows[row].Cells[6].Text
+                    gv.Rows[row].Cells[4].Text
                 ));
             }
             ViewState["CommodityList"] = CommodityList;
