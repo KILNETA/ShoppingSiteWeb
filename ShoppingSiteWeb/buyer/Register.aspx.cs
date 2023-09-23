@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -8,29 +10,37 @@ using System.Web.UI.WebControls;
 
 namespace ShoppingSiteWeb.buyer
 {
+    /// <summary>
+    /// 註冊帳戶頁面
+    /// </summary>
     public partial class Register : System.Web.UI.Page
     {
-        /**
-         * 初始化 生日月份選單
-         */
+        /// <summary>
+        /// 1~12月 最大天數
+        /// </summary>
+        private static int[] maxDays = new int[13] { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+        /// <summary>
+        /// 初始化 生日月份選單
+        /// </summary>
         private void initDDL_BirthdayMonth()
         {
             DDL_BirthdayMonth.Items.Clear();
             DDL_BirthdayMonth.Items.Insert(0, new ListItem("－", "0"));
         }
 
-        /**
-         * 初始化 生日日期選單
-         */
+        /// <summary>
+        /// 初始化 生日日期選單
+        /// </summary>
         private void initDDL_BirthdayDay()
         {
             DDL_BirthdayDay.Items.Clear();
             DDL_BirthdayDay.Items.Insert(0, new ListItem("－", "0"));
         }
 
-        /**
-         * 頁面載入
-         */
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
             //使網頁不被塊取記憶體存取 (但重整頁面仍能讀取 仍需搭配Token判斷表單是否被認證)
@@ -90,9 +100,9 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 生日選單 年份索引更改(事件)
-         */
+        /// <summary>
+        /// 生日選單 年份索引更改(事件)
+        /// </summary>
         protected void DDL_BirthdayYear_SelectedIndexChanged(object sender, EventArgs e)
         {
             //初始化 月份、日期 選項數值
@@ -110,14 +120,11 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 生日選單 月份索引更改(事件)
-         */
+        /// <summary>
+        /// 生日選單 月份索引更改(事件)
+        /// </summary>
         protected void DDL_BirthdayMonth_SelectedIndexChanged(object sender, EventArgs e)
         {
-            /*1~12月 最大天數*/
-            int[] maxDays = new int[13] { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
             //初始化 日期 選項數值
             initDDL_BirthdayDay();
 
@@ -138,11 +145,12 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 輸入框 用戶名內文更改(事件)
-         */
+        /// <summary>
+        /// 輸入框 用戶名內文更改(事件)
+        /// </summary>
         protected void TB_UserName_TextChanged(object sender, EventArgs e)
         {
+            //初始化參數
             ViewState["isFinish_UserName"] = "false";
             LB_ErrorMessage_UserName.ForeColor = System.Drawing.Color.Red;
 
@@ -165,40 +173,32 @@ namespace ShoppingSiteWeb.buyer
                 return;
             }
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_CheckUserName = new SqlDataSource();
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
+            GridView gv = new GridView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_CheckUserName.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+            //調用DB 確認用戶名是否被使用
+            DB.connectionReader(
+                "userNameHasBeenUsed.sql",
+                new ArrayList {
+                    new DB.Parameter("TB_User", SqlDbType.NVarChar, TB_UserName.Text)
+                },
+                (SqlDataReader ts) => {
+                    gv.DataSource = ts;
+                    gv.DataBind();
+                }
+            );
 
-            //新增SQL參數
-            SqlDataSource_CheckUserName.SelectParameters.Add("TB_User", TB_UserName.Text);
-
-            //SQL指令 ==
-            SqlDataSource_CheckUserName.SelectCommand =
-                $"Select userName " +
-                $"FROM userTable " +
-                $"WHERE ( userName = @TB_User COLLATE SQL_Latin1_General_CP1_CS_AS )";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_CheckUserName.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_CheckUserName.Select(new DataSourceSelectArguments());
-            //資料匯入表格
-            useCheckUserNameTable.DataSource = dv;
-            //更新表格
-            useCheckUserNameTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_CheckUserName.Dispose();
-
-            if (0 == useCheckUserNameTable.DataItemCount)
+            //用戶名未被使用 顯示可用消息(綠色)
+            if (0 == Int32.Parse(gv.Rows[0].Cells[0].Text))
             {
                 LB_ErrorMessage_UserName.ForeColor = System.Drawing.Color.Green;
                 LB_ErrorMessage_UserName.Text = "用戶名可用";
                 ViewState["isFinish_UserName"] = "true";
                 return;
             }
+            //用戶名已被使用 顯示錯誤消息(紅色)
             else
             {
                 LB_ErrorMessage_UserName.Text = "用戶名已被使用";
@@ -206,15 +206,17 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 輸入框 信箱內文更改(事件)
-         */
+        /// <summary>
+        /// 輸入框 信箱內文更改(事件)
+        /// </summary>
         protected void TB_EMail_TextChanged(object sender, EventArgs e)
         {
+            //初始化確認表
             ViewState["isFinish_EMail"] = "false";
             ViewState["isSendCheckCodeEMail"] = "false";
             ViewState["isFinish_CheckEMail"] = "false";
             IMG_EMailCheck.ImageUrl = "picture/verify_fail.png";
+            LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Red;
 
             if (!Regex.IsMatch(TB_EMail.Text, @"^([\w-]+\.)*?[\w-]+@[\w-]+\.([\w-]+\.)*?[\w]+$"))
             {
@@ -222,35 +224,25 @@ namespace ShoppingSiteWeb.buyer
                 return;
             }
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_CheckEmail = new SqlDataSource();
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
+            GridView gv = new GridView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_CheckEmail.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            //新增SQL參數
-            SqlDataSource_CheckEmail.SelectParameters.Add("TB_EMail", TB_EMail.Text);
-
-            //SQL指令 ==
-            SqlDataSource_CheckEmail.SelectCommand =
-                $"Select userEMail " +
-                $"FROM userTable " +
-                $"WHERE( userEMail = @TB_EMail )";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_CheckEmail.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_CheckEmail.Select(new DataSourceSelectArguments());
-            //資料匯入表格
-            useCheckEmailTable.DataSource = dv;
-            //更新表格
-            useCheckEmailTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_CheckEmail.Dispose();
+            //調用DB 確認Email是否被使用
+            DB.connectionReader(
+                "emailHasBeenUsed.sql",
+                new ArrayList {
+                    new DB.Parameter("TB_EMail", SqlDbType.NVarChar, TB_EMail.Text)
+                },
+                (SqlDataReader ts) => {
+                    gv.DataSource = ts;
+                    gv.DataBind();
+                }
+            );
 
             //信箱未被使用 顯示可用消息(綠色)
-            if (0 == useCheckEmailTable.DataItemCount)
+            if (0 == Int32.Parse(gv.Rows[0].Cells[0].Text))
             {
                 LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Green;
                 LB_ErrorMessage_EMail.Text = "信箱可用";
@@ -260,17 +252,17 @@ namespace ShoppingSiteWeb.buyer
             //信箱已被使用 顯示錯誤消息(紅色)
             else
             {
-                LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Red;
                 LB_ErrorMessage_EMail.Text = "此信箱已被使用";
                 return;
             }
         }
 
-        /**
-         * 按鈕 驗證信箱被觸發(事件)
-         */
+        /// <summary>
+        /// 按鈕 驗證信箱被觸發(事件)
+        /// </summary>
         protected void BT_SendCheckCodeEMail_Click(object sender, EventArgs e)
         {
+            //初始化確認表
             ViewState["isFinish_CheckEMail"] = "false";
             IMG_EMailCheck.ImageUrl = "picture/verify_fail.png";
 
@@ -291,11 +283,12 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 輸入框 信箱驗證碼更改(事件)
-         */
+        /// <summary>
+        /// 輸入框 信箱驗證碼更改(事件)
+        /// </summary>
         protected void TB_EMailCheckCode_TextChanged(object sender, EventArgs e)
         {
+            //初始化確認表
             ViewState["isFinish_CheckEMail"] = "false";
             //驗證 信箱驗證碼 成功
             if (TB_EMailCheckCode.Text == "1234" &&
@@ -311,11 +304,12 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 輸入框 密碼更改(事件)
-         */
+        /// <summary>
+        /// 輸入框 密碼更改(事件)
+        /// </summary>
         protected void TB_Password_TextChanged(object sender, EventArgs e)
         {
+            //初始化確認表
             ViewState["isFinish_Password"] = "false";
             ViewState["isFinish_PasswordCheck"] = "false";
             IMG_PasswordCheck.ImageUrl = "picture/verify_fail.png";
@@ -346,11 +340,12 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 輸入框 確認密碼更改(事件)
-         */
+        /// <summary>
+        /// 輸入框 確認密碼更改(事件)
+        /// </summary>
         protected void TB_PasswordCheck_TextChanged(object sender, EventArgs e)
         {
+            //初始化確認表
             ViewState["isFinish_PasswordCheck"] = "false";
             //確認密碼與密碼符合
             if (TB_Password.Text.Equals(TB_PasswordCheck.Text) &&
@@ -368,12 +363,12 @@ namespace ShoppingSiteWeb.buyer
             }
         }
 
-        /**
-         * 檢測未填寫或有誤的警告訊息
-         */
+        /// <summary>
+        /// 檢測未填寫或有誤的警告訊息
+        /// </summary>
         private bool RegisterWarningMessageCheck()
         {
-
+            //有誤的警告
             bool complete = true;
 
             //用戶名包含特殊字元
@@ -423,7 +418,7 @@ namespace ShoppingSiteWeb.buyer
                 LB_ErrorMessage_Password.Text = "　";
 
             //確認密碼為空
-            if (!TB_Password.Text.Equals(TB_PasswordCheck.Text) &&
+            if (!TB_Password.Text.Equals(TB_PasswordCheck.Text) ||
                 ViewState["isFinish_PasswordCheck"].ToString() != "true")
             {
                 complete = false;
@@ -511,9 +506,9 @@ namespace ShoppingSiteWeb.buyer
             return complete;
         }
 
-        /**
-         * 按鈕 啟動帳號註冊程序(事件)
-         */
+        /// <summary>
+        /// 按鈕 啟動帳號註冊程序(事件)
+        /// </summary>
         protected void RegisterButton_Click(object sender, EventArgs e)
         {
             //驗證Token
@@ -527,55 +522,28 @@ namespace ShoppingSiteWeb.buyer
             if( !RegisterWarningMessageCheck() )
                 return;
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
+            GridView gv = new GridView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            //新增SQL參數
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userName", TB_UserName.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userPhoneNum", TB_PhoneNum.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userEMail", TB_EMail.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userRealName", TB_RealName.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userBirthday", $"{DDL_BirthdayYear.Text}/{DDL_BirthdayMonth.Text}/{DDL_BirthdayDay.Text}");
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userAddress", TB_Address.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_userPassword", TB_PasswordCheck.Text);
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"INSERT INTO userTable([userName],[userPhoneNum],[userEMail],[userRealName],[userBirthday],[userAddress],[userPassword]) " +
-                $"Select " +
-                    $"@TB_userName, " +
-                    $"@TB_userPhoneNum, " +
-                    $"@TB_userEMail, " +
-                    $"@TB_userRealName, " +
-                    $"@TB_userBirthday, " +
-                    $"@TB_userAddress, " +
-                    $"@TB_userPassword " +
-                $"Where Not Exists( " +
-                    $"Select userTable.userName,userTable.userEMail " +
-                    $"From userTable " +
-                    $"Where userName = @TB_userName COLLATE SQL_Latin1_General_CP1_CS_AS " +
-                    $"OR userEMail = @TB_userEMail " +
-                    $") " +
-                $"SELECT ISNULL(successful.userId,0) userId " +
-                $"From (" +
-                    $"SELECT SCOPE_IDENTITY() AS userId" +
-                    $") " +
-                $"successful";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            //資料匯入表格
-            useCheckRegisterTable.DataSource = dv;
-            //更新表格
-            useCheckRegisterTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
+            //調用DB 確認用戶名是否被使用
+            DB.connectionReader(
+                "responseUser.sql",
+                new ArrayList {
+                    new DB.Parameter("TB_userName",     SqlDbType.NVarChar, TB_UserName.Text),
+                    new DB.Parameter("TB_userPhoneNum", SqlDbType.NVarChar, TB_PhoneNum.Text),
+                    new DB.Parameter("TB_userEMail",    SqlDbType.NVarChar, TB_EMail.Text),
+                    new DB.Parameter("TB_userRealName", SqlDbType.NVarChar, TB_RealName.Text),
+                    new DB.Parameter("TB_userBirthday", SqlDbType.NVarChar, $"{DDL_BirthdayYear.Text}/{DDL_BirthdayMonth.Text}/{DDL_BirthdayDay.Text}"),
+                    new DB.Parameter("TB_userAddress",  SqlDbType.NVarChar, TB_Address.Text),
+                    new DB.Parameter("TB_userPassword", SqlDbType.NVarChar, TB_PasswordCheck.Text),
+                },
+                (SqlDataReader ts) => {
+                    gv.DataSource = ts;
+                    gv.DataBind();
+                }
+            );
 
             //清除此頁面所有暫存資料
             ViewState.Clear();
@@ -583,23 +551,38 @@ namespace ShoppingSiteWeb.buyer
             Session.Remove("Token");
 
             //判斷用戶帳號註冊成功與否
-            if (1 == useCheckRegisterTable.DataItemCount
-                && useCheckRegisterTable.Rows[0].Cells[1].Text != "0")
+            if (1 == gv.Rows.Count
+                && gv.Rows[0].Cells[1].Text != "0")
             {
-                Session["UserId"] = useCheckRegisterTable.Rows[0].Cells[1].Text;
-                Response.Write("<script>alert('會員註冊成功！');window.location='DashBoard.aspx';</script>");
+                Session["UserId"] = gv.Rows[0].Cells[1].Text;
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('會員註冊成功！');" +
+                    "window.location.replace('DashBoard.aspx');",
+                    true);
             }
             //會員註冊失敗，用戶名或信箱已被使用
-            else if (useCheckRegisterTable.Rows[0].Cells[1].Text == "0")
+            else if (gv.Rows[0].Cells[1].Text == "0")
             {
                 Session["UserId"] = null;
-                Response.Write("<script>alert('會員註冊失敗，用戶名或信箱已被使用！');window.location='Register.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('會員註冊失敗，用戶名或信箱已被使用！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
             }
             //表單已失效，創建新註冊表單
             else
             {
                 Session["UserId"] = null;
-                Response.Write("<script>alert('表單已失效，創建新註冊表單！');window.location='Register.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('表單已失效，創建新註冊表單！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
             }
         }
     }
