@@ -33,13 +33,13 @@ namespace ShoppingSiteWeb.shop
         protected global::System.Web.UI.WebControls.Label userRealName;
 
         /// <summary>
-        /// GV_UserData 控制項。
+        /// GV_ShopData 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GV_UserData;
+        protected global::System.Web.UI.WebControls.GridView GV_ShopData;
 
         /// <summary>
         /// BT_OnShelves 控制項。
@@ -48,7 +48,7 @@ namespace ShoppingSiteWeb.shop
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BT_OnShelves;
+        protected global::System.Web.UI.WebControls.LinkButton BT_OnShelves;
 
         /// <summary>
         /// BT_GoShop 控制項。
@@ -57,7 +57,7 @@ namespace ShoppingSiteWeb.shop
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BT_GoShop;
+        protected global::System.Web.UI.WebControls.LinkButton BT_GoShop;
 
         /// <summary>
         /// SignOutButton 控制項。

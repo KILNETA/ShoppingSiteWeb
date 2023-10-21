@@ -1,59 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace ShoppingSiteWeb.shop
 {
+
+    /// <summary>
+    /// 商店儀錶板頁面
+    /// </summary>
     public partial class DashBoard : System.Web.UI.Page
     {
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
-            {
+            {   //next load
+                //檢驗用戶狀態
                 if (Session["UserId"] == null)
                 {
                     Response.Write("<script>alert('已登出！返回登入頁面！');window.location='~/buyer/Login.aspx';</script>");
                 }
             }
             else
-            {
+            {   //first load
+                //已登入
                 if (Session["UserId"] != null)
                 {
-                    SqlDataSource SqlDataSource_LoginUser = new SqlDataSource();
-                    //連結資料庫的連接字串 ConnectionString
-                    SqlDataSource_LoginUser.ConnectionString =
-                        "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-                    SqlDataSource_LoginUser.SelectParameters.Add("UserID", Session["UserId"].ToString());
-
-                    // SQL指令 ==
-                    SqlDataSource_LoginUser.SelectCommand =
-                        $"Select shopTable.* " +
-                        $"FROM [shopTable] " +
-                        $"Inner join [user_shopTable] " +
-                        $"On shopTable.shopId = user_shopTable.shopId " +
-                        $"Inner join [userTable] " +
-                        $"On user_shopTable.userId = userTable.userId " +
-                        $"WHERE( userTable.userId = @UserID ) ";
-
-                    // 執行SQL指令 .select() ==
-                    SqlDataSource_LoginUser.DataSourceMode = SqlDataSourceMode.DataSet;
-                    DataView dv = (DataView)SqlDataSource_LoginUser.Select(new DataSourceSelectArguments());
-
-                    GV_UserData.DataSource = dv;
-                    GV_UserData.DataBind();
-
-                    SqlDataSource_LoginUser.Dispose();
-
-                    if (GV_UserData.Rows.Count == 0)
-                        Response.Write("<script>alert('尚未註冊商店！進入商店註冊頁面！');window.location='Register.aspx';</script>");
-                    else
-                        BT_GoShop.PostBackUrl = $"Shop.aspx?shopId={GV_UserData.Rows[0].Cells[0].Text}";
+                    // 加載商店資料
+                    LoadShopData();
                 }
                 else
                 {
@@ -62,6 +39,34 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
+        /// <summary>
+        /// 加載商店資料
+        /// </summary>
+        private void LoadShopData()
+        {
+            //調用DB 取得商店資料
+            DB.connectionReader(
+                "selectShopData.sql",
+                new ArrayList {
+                    new DB.Parameter("UserId", SqlDbType.Int, Session["UserId"])
+                },
+                (SqlDataReader ts) => {
+                    GV_ShopData.DataSource = ts;
+                    GV_ShopData.DataBind();
+                }
+            );
+
+            if (GV_ShopData.Rows.Count == 0)
+                // 店鋪不存在
+                Response.Write("<script>alert('尚未註冊商店！進入商店註冊頁面！');window.location='Register.aspx';</script>");
+            else
+                // 為按鈕添加前往店鋪的連結
+                BT_GoShop.Attributes.Add("href", $"../shop/Shop.aspx?shopId={GV_ShopData.Rows[0].Cells[0].Text}");
+        }
+
+        /// <summary>
+        /// 登出按鈕 事件
+        /// </summary>
         protected void SignOutButton_Click(object sender, EventArgs e)
         {
             Session["UserId"] = null;
