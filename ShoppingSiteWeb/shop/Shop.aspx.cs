@@ -1,150 +1,149 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
+using System.Data.SqlClient;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
+using Web.Commodity;
 
 namespace ShoppingSiteWeb.shop
 {
+    /// <summary>
+    /// 商店頁面
+    /// </summary>
     public partial class Shop : System.Web.UI.Page
     {
-        /* C->commodity S->shop */
-        private static readonly String[] dataNames =  {
-            "CId",
-            "CName",
-            "CPrice",
-            "CNum",
-            "CThumbnail"
-        };
 
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!new Regex("^[0-9]*$").IsMatch(Context.Request.QueryString["shopId"].ToString()))
+            //檢查 Request 是否有 shopId 參數
+            //檢查 shopId 是否為 數字編號
+            if (Context.Request.QueryString["shopId"] == null || 
+                !new Regex("^[0-9]*$").IsMatch(Context.Request.QueryString["shopId"].ToString()))
             {
+                //返回首頁
                 Response.Redirect("../Default.aspx");
                 return;
             }
+            //顯示商店資料
+            showShopData();
 
+            if (IsPostBack)
+            {   //next load
+
+            }
+            else
+            {   //first load
+                //加載商品資料
+                selectRecommendCommoditys();
+            }
+            //加載商品目錄
+            showCommodityPage();
+
+            //設置右上角的用戶狀態
             if (Session["UserId"] != null)
                 showWelcomeUserInMenu();
             else
                 showLoginInMenu();
-
-            if (IsPostBack)
-            {
-
-            }
-            else
-            {
-                selectRecommendCommoditys();
-            }
-            showShopData();
-            showCommodityPage();
         }
 
+        /// <summary>
+        /// 顯示商店資料
+        /// </summary>
         private void showShopData()
         {
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
-
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("ShopId", Context.Request.QueryString["shopId"].ToString());
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"SELECT " +
-                    $"shopName, " +
-                    $"shopEMail, " +
-                    $"shopPhoneNum, " +
-                    $"shopAddress " +
-                $"FROM shopTable " +
-                $"WHERE shopId = @ShopId";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
             GridView gv = new GridView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
 
+            //調用DB 取得商店資料
+            DB.connectionReader(
+                "selectShopData.sql",
+                new ArrayList {
+                    new DB.Parameter("ShopId", SqlDbType.Int, Context.Request.QueryString["shopId"].ToString())
+                },
+                (SqlDataReader ts) => {
+                    gv.DataSource = ts;
+                    gv.DataBind();
+                }
+            );
+
+            //查找結果存在商店
             if (gv.Rows.Count != 0) {
                 LB_shopName.Text = gv.Rows[0].Cells[0].Text;
                 LB_shopEMail.Text += gv.Rows[0].Cells[1].Text;
                 LB_shopPhone.Text += gv.Rows[0].Cells[2].Text;
                 LB_shopAddress.Text += gv.Rows[0].Cells[3].Text;
             }
+            //找不到商店返回首頁
             else
             {
                 Response.Redirect("../Default.aspx");
             }
         }
 
+        /// <summary>
+        /// 加載商品資料
+        /// </summary>
         private void selectRecommendCommoditys()
         {
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
-
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("ShopId", Context.Request.QueryString["shopId"].ToString());
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"SELECT " +
-                    $"CT.commodityId, " +
-                    $"CT.commodityName, " +
-                    $"CT.commodityPrice, " +
-                    $"CT.commodityNum, " +
-                    $"CT.commodityThumbnail " +
-                $"FROM commodityTable CT " +
-                $"INNER JOIN shop_commodityTable SCT " +
-                $"ON SCT.commodityId = CT.commodityId " +
-                $"WHERE SCT.shopId = @ShopId";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
             GridView gv = new GridView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
 
-            ViewState["commodityNum"] = gv.Rows.Count;
+            //調用DB 取出商店販賣的商品
+            DB.connectionReader(
+                "selectCommodityOfShop.sql",
+                new ArrayList {
+                    new DB.Parameter("ShopId", SqlDbType.Int, Context.Request.QueryString["shopId"].ToString())
+                },
+                (SqlDataReader ts) => {
+                    gv.DataSource = ts;
+                    gv.DataBind();
+                }
+            );
 
+            //將 商品數據 存儲至 網頁暫存
             saveRecommendCommoditys(gv);
         }
 
+        /// <summary>
+        /// 暫存商品數據
+        /// </summary>
+        /// <param name="gv">商品數據</param>
         private void saveRecommendCommoditys(GridView gv)
         {
-            for (int cell = 0; cell < dataNames.Length; cell++)
+            /// <summary>
+            /// 商品列表
+            /// </summary>
+            ArrayList CommodityList = new ArrayList();
+            //將 商品數據 根據資料結構 定序後暫存
+            foreach (GridViewRow commodity in gv.Rows)
             {
-                for (int row = 0; row < Int32.Parse(ViewState["commodityNum"].ToString()); row++)
-                {
-                    // ViewState[dataNames_Index]
-                    ViewState[$"{dataNames[cell]}_{row}"] = gv.Rows[row].Cells[cell].Text;
-                }
+                CommodityList.Add(new Commodity(
+                    commodity.Cells[0].Text,
+                    commodity.Cells[1].Text,
+                    commodity.Cells[2].Text,
+                    commodity.Cells[3].Text,
+                    commodity.Cells[4].Text
+                ));
             }
+            ViewState["CommodityList"] = CommodityList;
         }
 
+        /// <summary>
+        /// 顯示用戶選單 (已登入)
+        /// </summary>
         private void showWelcomeUserInMenu()
         {
+
+            // 歡迎列表控件 (已登入)
             Label LB_Welcome = new Label();
             LinkButton LB_UserDashBoard = new LinkButton();
             Label LB_Menuseparate = new Label();
@@ -155,57 +154,54 @@ namespace ShoppingSiteWeb.shop
             LB_Menuseparate.CssClass = "TitelMenuseparate";
             LB_UserSignOut.CssClass = "generalLink";
 
-            SqlDataSource SqlDataSource_LoginUser = new SqlDataSource();
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_LoginUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_LoginUser.SelectParameters.Add("UserID", Session["UserId"].ToString());
-
-            // SQL指令 ==
-            SqlDataSource_LoginUser.SelectCommand =
-                $"Select [userName] " +
-                $"FROM [userTable] " +
-                $"WHERE( userId = @UserID ) ";
-
-            // 執行SQL指令 .select() ==
-            SqlDataSource_LoginUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            DataView dv = (DataView)SqlDataSource_LoginUser.Select(new DataSourceSelectArguments());
-
+            /// <summary>
+            /// SQL Server 數據暫存
+            /// </summary>
             DetailsView userTable = new DetailsView();
-            userTable.DataSource = dv;
-            userTable.DataBind();
 
-            SqlDataSource_LoginUser.Dispose();
+            // 調用DB 取得用戶名稱
+            DB.connectionReader(
+                "selectUserName.sql",
+                new ArrayList {
+                    new DB.Parameter("UserID", SqlDbType.Int, Session["UserId"])
+                },
+                (SqlDataReader ts) => {
+                    userTable.DataSource = ts;
+                    userTable.DataBind();
+                }
+            );
 
             LB_Welcome.Text = "歡迎您！ ";
             LB_UserDashBoard.Text = userTable.Rows[0].Cells[1].Text;
             LB_Menuseparate.Text = "|";
             LB_UserSignOut.Text = "登出";
 
-            LB_UserDashBoard.PostBackUrl = "~/buyer/DashBoard.aspx";
+            // 連接 個人儀表板 Url
+            LB_UserDashBoard.Attributes.Add("href", "/buyer/DashBoard.aspx");
 
+            // 掛載 "歡迎列表控件"
             Panel_TitelMenuLogin.Controls.Add(LB_Welcome);
             Panel_TitelMenuLogin.Controls.Add(LB_UserDashBoard);
             Panel_TitelMenuLogin.Controls.Add(LB_Menuseparate);
             Panel_TitelMenuLogin.Controls.Add(LB_UserSignOut);
 
-            LB_UserSignOut.Click += new EventHandler(this.SignOutButton_Click);
-
+            // 登出按鍵 掛載 登出事件
+            LB_UserSignOut.Click += new EventHandler(
+                (object sender, EventArgs e) => {
+                    Session["UserId"] = null;
+                    Response.Write("<script>alert('成功登出！');window.location.reload();</script>");
+                });
         }
 
-        protected void SignOutButton_Click(object sender, EventArgs e)
-        {
-            Session["UserId"] = null;
-            Response.Write("<script>alert('成功登出！');window.location='../Default.aspx';</script>");
-        }
-
+        /// <summary>
+        /// 顯示用戶選單 (未登入)
+        /// </summary>
         private void showLoginInMenu()
         {
+            // 歡迎列表控件 (未登入)
             LinkButton LB_Register = new LinkButton();
             LinkButton LB_Login = new LinkButton();
             Label LB_Menuseparate = new Label();
-
 
             LB_Register.CssClass = "generalLink";
             LB_Login.CssClass = "generalLink";
@@ -215,194 +211,87 @@ namespace ShoppingSiteWeb.shop
             LB_Login.Text = "會員登入";
             LB_Menuseparate.Text = "|";
 
-            LB_Register.PostBackUrl = "~/buyer/Register.aspx";
-            LB_Login.PostBackUrl = "~/buyer/Login.aspx";
+            //連接 會員註冊、會員登入 Url
+            LB_Register.Attributes.Add("href", "/buyer/Register.aspx");
+            LB_Login.Attributes.Add("href", "/buyer/Login.aspx");
 
+            // 掛載 "歡迎列表控件"
             Panel_TitelMenuLogin.Controls.Add(LB_Register);
             Panel_TitelMenuLogin.Controls.Add(LB_Menuseparate);
             Panel_TitelMenuLogin.Controls.Add(LB_Login);
         }
 
-
+        /// <summary>
+        /// 顯示商品頁面
+        /// </summary>
         private void showCommodityPage()
         {
+            /// <summary>
+            /// 商品列表
+            /// </summary>
+            var CommodityList = (ArrayList)ViewState["CommodityList"];
+            /// <summary>
+            /// 商品列數量
+            /// </summary>
+            int column = CommodityList.Count / 6 + (CommodityList.Count % 6 == 0 ? 0 : 1);
+            /// <summary>
+            /// 商品頁(框架)
+            /// </summary>
             List<Panel> commodityPage = new List<Panel>();
 
-            int RowNum = Int32.Parse(ViewState["commodityNum"].ToString()) / 6;
-
-            if (Int32.Parse(ViewState["commodityNum"].ToString()) % 6 != 0)
-                RowNum++;
-
-            for (int i = 0; i < RowNum; i++)
+            for (int i = 0; i < column; i++)
             {
-                commodityPage.Add(showCommodityList(i));
+                commodityPage.Add(showCommodityRow(i));
                 commodityPage[i].CssClass = "CommodityList";
                 Panel_CommodityPage.Controls.Add(commodityPage[i]);
             }
         }
 
-        private Panel showCommodityList(int index)
+        /// <summary>
+        /// 展示商品列
+        /// </summary>
+        /// <param name="colIndex">所在column</param>
+        /// <returns></returns>
+        private Panel showCommodityRow(int colIndex)
         {
-            Panel commodityList = new Panel();
+            /// <summary>
+            /// 商品列展示數量
+            /// </summary>
+            int rowCount = 6;
+            /// <summary>
+            /// 商品列(框架)
+            /// </summary>
+            Panel commodityRow = new Panel();
+            /// <summary>
+            /// 商品列表
+            /// </summary>
+            var CommodityList = (ArrayList)ViewState["CommodityList"];
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < rowCount; i++)
             {
-                commodityList.Controls.Add(showCommodityItem(index * 6 + i));
-            }
-
-            return commodityList;
-        }
-
-        private Panel showCommodityItem(int index)
-        {
-            Panel commodityItem = new Panel();
-            commodityItem.CssClass = "CommodityItem";
-
-            if(index >= Int32.Parse(ViewState["commodityNum"].ToString()))
-            {
-                commodityItem.CssClass = "CommodityItem_none";
-                return commodityItem;
-            }
-
-            String PriceNum = ViewState[$"CPrice_{index}"].ToString();
-            if (PriceNum.Length > 3)
-                PriceNum = PriceNum.Insert(PriceNum.Length - 3, ",");
-
-            LinkButton commodityThumbnail_Box = new LinkButton();
-            Image commodityThumbnail = new Image();
-            Panel commodityContent = new Panel();
-            LinkButton commodityName_Box = new LinkButton();
-            Label commodityName = new Label();
-            Panel commodityPriceContent = new Panel();
-            Label commodityPriceSymbol = new Label();
-            Label commodityPrice = new Label();
-            LinkButton commodityShoppingCart = new LinkButton();
-            Panel commodityShoppingCart_Icon = new Panel();
-
-            commodityThumbnail.CssClass = "CommodityIcon";
-            commodityThumbnail.ImageUrl = ViewState[$"CThumbnail_{index}"].ToString();
-            commodityThumbnail_Box.Controls.Add(commodityThumbnail);
-
-            commodityContent.CssClass = "CommodityContent";
-
-            commodityName_Box.CssClass = "CommodityNameText";
-            commodityName.Text = ViewState[$"CName_{index}"].ToString();
-            commodityName_Box.Controls.Add(commodityName);
-
-            commodityPriceContent.CssClass = "CommodityPriceBox";
-            commodityPriceSymbol.CssClass = "CommodityPriceSymbol";
-            commodityPriceSymbol.Text = "$";
-            commodityPrice.CssClass = "CommodityPriceText";
-            commodityPrice.Text = PriceNum;
-            commodityPriceContent.Controls.Add(commodityPriceSymbol);
-            commodityPriceContent.Controls.Add(commodityPrice);
-
-            commodityShoppingCart.CssClass = "ShoppingCart";
-            commodityShoppingCart_Icon.CssClass = "ShoppingCart_Icon";
-            commodityShoppingCart.Controls.Add(commodityShoppingCart_Icon);
-            commodityShoppingCart.Click +=
-                delegate (object sender1, EventArgs e1) {
-                    VBT_ShoppingCart(
-                        new object(),
-                        new EventArgs(),
-                        ViewState[$"CId_{index}"].ToString()
+                if (colIndex * rowCount + i < CommodityList.Count)
+                {   //顯示商品控件
+                    commodityRow.Controls.Add(
+                        new CommodityUI(
+                            (Commodity)CommodityList[colIndex * rowCount + i],
+                            this
+                        )
                     );
-                };
-
-            commodityThumbnail_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"CId_{index}"]}";
-            commodityName_Box.PostBackUrl = $"~/commodity/Item.aspx?commodityId={ViewState[$"CId_{index}"]}";
-
-            commodityContent.Controls.Add(commodityName_Box);
-            commodityContent.Controls.Add(commodityPriceContent);
-
-            commodityItem.Controls.Add(commodityThumbnail_Box);
-            commodityItem.Controls.Add(commodityShoppingCart);
-            commodityItem.Controls.Add(commodityContent);
-
-            return commodityItem;
-        }
-
-        protected void VBT_ShoppingCart(object sender, EventArgs e, String commodityId)
-        {
-
-            if (Session["UserId"] == null)
-            {
-                Response.Write("<script>alert('尚未登入！進入登入頁面！');window.location='../buyer/Login.aspx';</script>");
-                return;
+                }
+                else
+                {   //商品佔位符
+                    Panel commodityItem = new Panel();
+                    commodityItem.CssClass = "CommodityItem_none";
+                    commodityRow.Controls.Add(commodityItem);
+                }
             }
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
-
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
-            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityId", commodityId);
-            SqlDataSource_RegisterUser.SelectParameters.Add("CommodityNum", "1");
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"DECLARE @hasInCart INT " +
-
-                $"IF EXISTS( " +
-                    $"SELECT 1 " +
-                    $"From shoppingCartTable " +
-                    $"Where  userId = @UserId " +
-                    $"AND commodityId = @CommodityId " +
-                $") " +
-                    $"SET @hasInCart = 1 " +
-                $"ELSE " +
-                    $"SET @hasInCart = 0 " +
-
-                $"IF(@hasInCart = 0) " +
-                    $"BEGIN " +
-                        $"DECLARE @successful INT " +
-
-                        $"INSERT INTO shoppingCartTable([joinDate],[userId],[commodityId],[commodityNum]) " +
-                        $"Select " +
-                            $"GETDATE(), " +
-                            $"@UserId, " +
-                            $"@CommodityId, " +
-                            $"@CommodityNum " +
-                        $"Where Not Exists( " +
-                            $"Select userId,commodityId " +
-                            $"From shoppingCartTable " +
-                            $"Where userId = @UserId " +
-                                $"AND commodityId = @CommodityId " +
-                        $") " +
-                            $"Select @@ROWCOUNT " +
-                    $"END " +
-                $"ELSE " +
-                    $"Select '-1' ";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            DetailsView gv = new DetailsView();
-            //資料匯入表格
-            gv.DataSource = dv;
-            //更新表格
-            gv.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
-
-            switch (gv.Rows[0].Cells[1].Text)
-            {
-                case "1":
-                    Response.Write("<script>alert('已加入購物車！')</script>");
-                    break;
-                case "-1":
-                    Response.Write("<script>alert('已存在購物車中！')</script>");
-                    break;
-                default:
-                    Response.Write("<script>alert('加入購物車失敗！')</script>");
-                    break;
-            }
+            return commodityRow;
         }
 
+        /// <summary>
+        /// 點擊商品搜索 (事件)
+        /// </summary>
         protected void LB_runSearch_Click(object sender, EventArgs e)
         {
             if (DDL_SearchMode.SelectedIndex == 0)
