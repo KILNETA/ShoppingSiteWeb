@@ -1,15 +1,15 @@
 /*
-取得商店資料
+查詢商店資料
 
 參數:
-	@UserId         用戶ID
+    @ShopId    商店編號
 輸出:
     商店資料
 */
-Select shopTable.*
-FROM [shopTable]
-Inner join [user_shopTable]
-On shopTable.shopId = user_shopTable.shopId
-Inner join [userTable]
-On user_shopTable.userId = userTable.userId
-WHERE( userTable.userId = @UserID )
+SELECT
+	shopName,
+	shopEMail,
+	shopPhoneNum,
+	shopAddress
+FROM shopTable
+WHERE shopId = @ShopId

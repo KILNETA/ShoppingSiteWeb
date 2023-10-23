@@ -75,7 +75,7 @@ namespace ShoppingSiteWeb.buyer
         {
             //調用DB 取得用戶商店資料
             DB.connectionReader(
-                "selectShopData.sql",
+                "selectShopDataUseUserId.sql",
                 new ArrayList {
                     new DB.Parameter("UserId", SqlDbType.Int, Session["UserId"])
                 },
