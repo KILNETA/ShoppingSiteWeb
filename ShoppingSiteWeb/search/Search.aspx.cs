@@ -79,15 +79,19 @@ namespace ShoppingSiteWeb.search
         /// </summary>
         private void saveRecommendCommoditys(GridView gv)
         {
+            /// <summary>
+            /// 商品列表
+            /// </summary>
             ArrayList CommodityList = new ArrayList();
-            for (int row = 0; row < gv.Rows.Count; row++)
+            //將 商品數據 根據資料結構 定序後暫存
+            foreach (GridViewRow commodity in gv.Rows)
             {
                 CommodityList.Add(new Commodity(
-                    gv.Rows[row].Cells[0].Text,
-                    gv.Rows[row].Cells[1].Text,
-                    gv.Rows[row].Cells[2].Text,
-                    gv.Rows[row].Cells[3].Text,
-                    gv.Rows[row].Cells[4].Text
+                    commodity.Cells[0].Text,
+                    commodity.Cells[1].Text,
+                    commodity.Cells[2].Text,
+                    commodity.Cells[3].Text,
+                    commodity.Cells[4].Text
                 ));
             }
             ViewState["CommodityList"] = CommodityList;
