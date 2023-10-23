@@ -144,7 +144,7 @@ namespace ShoppingSiteWeb.search
             LB_UserSignOut.Click += new EventHandler(
                 (object sender, EventArgs e) => {
                     Session["UserId"] = null;
-                    Response.Write("<script>alert('成功登出！');window.location='Default.aspx';</script>");
+                    Response.Write("<script>alert('成功登出！');window.location.reload();</script>");
                 });
         }
 
