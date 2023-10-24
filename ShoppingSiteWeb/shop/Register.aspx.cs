@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
@@ -10,8 +10,15 @@ using System.Web.UI.WebControls;
 
 namespace ShoppingSiteWeb.shop
 {
+    /// <summary>
+    /// 註冊商店頁面
+    /// </summary>
     public partial class Register : System.Web.UI.Page
     {
+
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
             //使網頁不被塊取記憶體存取 (但重整頁面仍能讀取 仍需搭配Token判斷表單是否被認證)
@@ -65,45 +72,45 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
+        /// <summary>
+        /// 確認是否已存在商店
+        /// </summary>
+        /// <returns></returns>
         private bool CheakHasShop()
         {
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_CheckUserName = new SqlDataSource();
+            /// <summary>
+            /// 暫存資料表
+            /// </summary>
+            DetailsView dv = new DetailsView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_CheckUserName.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+            //調用DB 確認是否已存在商店
+            DB.connectionReader(
+                "chackHasShop.sql",
+                new ArrayList {
+                    new DB.Parameter("UserId", SqlDbType.NVarChar,  Session["UserId"].ToString())
+                },
+                (SqlDataReader ts) => {
+                    dv.DataSource = ts;
+                    dv.DataBind();
+                }
+            );
 
-            //新增SQL參數
-            SqlDataSource_CheckUserName.SelectParameters.Add("UserId", Session["UserId"].ToString());
-
-            //SQL指令 ==
-            SqlDataSource_CheckUserName.SelectCommand =
-                $"Select shopId " +
-                $"FROM user_shopTable " +
-                $"WHERE ( userId = @UserId )";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_CheckUserName.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_CheckUserName.Select(new DataSourceSelectArguments());
-            DetailsView dvTable = new DetailsView();
-
-            dvTable.DataSource = dv;
-            dvTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_CheckUserName.Dispose();
-
-            if (1 == dvTable.DataItemCount)
+            //是否已存在商店
+            if (dv.Rows[0].Cells[1].Text == "1")
                 return true;
             else
                 return false;
         }
 
+        /// <summary>
+        /// 輸入框 商店名稱 更改
+        /// </summary>
         protected void TB_ShopName_TextChanged(object sender, EventArgs e)
         {
+            //重置表單狀態
             ViewState["isFinish_ShopName"] = "false";
             LB_ErrorMessage_ShopName.ForeColor = System.Drawing.Color.Red;
+
             //用戶名過長 >24
             if (TB_ShopName.Text.Length > 24)
             {
@@ -117,35 +124,25 @@ namespace ShoppingSiteWeb.shop
                 return;
             }
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_CheckUserName = new SqlDataSource();
+            /// <summary>
+            /// 暫存資料表
+            /// </summary>
+            DetailsView dv = new DetailsView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_CheckUserName.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+            //調用DB 確認是否已存在商店
+            DB.connectionReader(
+                "chackShopName.sql",
+                new ArrayList {
+                    new DB.Parameter("TB_ShopName", SqlDbType.NVarChar,  TB_ShopName.Text)
+                },
+                (SqlDataReader ts) => {
+                    dv.DataSource = ts;
+                    dv.DataBind();
+                }
+            );
 
-            //新增SQL參數
-            SqlDataSource_CheckUserName.SelectParameters.Add("TB_ShopName", TB_ShopName.Text);
-
-            //SQL指令 ==
-            SqlDataSource_CheckUserName.SelectCommand =
-                $"Select shopName " +
-                $"FROM shopTable " +
-                $"WHERE ( shopName = @TB_ShopName COLLATE SQL_Latin1_General_CP1_CS_AS )";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_CheckUserName.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_CheckUserName.Select(new DataSourceSelectArguments());
-            DetailsView dvTable = new DetailsView();
-            //資料匯入表格
-            dvTable.DataSource = dv;
-            //更新表格
-            dvTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_CheckUserName.Dispose();
-
-            if (0 == dvTable.DataItemCount)
+            //商店名是否可用
+            if (dv.Rows[0].Cells[1].Text == "0")
             {
                 LB_ErrorMessage_ShopName.ForeColor = System.Drawing.Color.Green;
                 LB_ErrorMessage_ShopName.Text = "商店名可用";
@@ -159,50 +156,44 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
+        /// <summary>
+        /// 輸入框 Email 更改
+        /// </summary>
         protected void TB_ShopEMail_TextChanged(object sender, EventArgs e)
         {
+            //重置表單狀態
             ViewState["isFinish_EMail"] = "false";
             ViewState["isSendCheckCodeEMail"] = "false";
             ViewState["isFinish_CheckEMail"] = "false";
             IMG_EMailCheck.ImageUrl = "picture/verify_fail.png";
+            LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Red;
 
+            //Email 格式檢查
             if (!Regex.IsMatch(TB_ShopEMail.Text, @"^([\w-]+\.)*?[\w-]+@[\w-]+\.([\w-]+\.)*?[\w]+$"))
             {
                 LB_ErrorMessage_EMail.Text = "格式錯誤";
                 return;
             }
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_CheckEmail = new SqlDataSource();
+            /// <summary>
+            /// 暫存資料表
+            /// </summary>
+            DetailsView dv = new DetailsView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_CheckEmail.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            //新增SQL參數
-            SqlDataSource_CheckEmail.SelectParameters.Add("TB_ShopEMail", TB_ShopEMail.Text);
-
-            //SQL指令 ==
-            SqlDataSource_CheckEmail.SelectCommand =
-                $"Select shopEMail " +
-                $"FROM shopTable " +
-                $"WHERE( shopEMail = @TB_ShopEMail )";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_CheckEmail.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_CheckEmail.Select(new DataSourceSelectArguments());
-
-            DetailsView dvTable = new DetailsView();
-            //資料匯入表格
-            dvTable.DataSource = dv;
-            //更新表格
-            dvTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_CheckEmail.Dispose();
+            //調用DB 確認信箱是否被使用
+            DB.connectionReader(
+                "chackShopEmail.sql",
+                new ArrayList {
+                    new DB.Parameter("TB_ShopEMail", SqlDbType.NVarChar,  TB_ShopEMail.Text)
+                },
+                (SqlDataReader ts) => {
+                    dv.DataSource = ts;
+                    dv.DataBind();
+                }
+            );
 
             //信箱未被使用 顯示可用消息(綠色)
-            if (0 == dvTable.DataItemCount)
+            if (dv.Rows[0].Cells[1].Text == "0")
             {
                 LB_ErrorMessage_EMail.ForeColor = System.Drawing.Color.Green;
                 LB_ErrorMessage_EMail.Text = "信箱可用";
@@ -218,6 +209,9 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
+        /// <summary>
+        /// 輸入框 驗證碼 更改
+        /// </summary>
         protected void TB_EMailCheckCode_TextChanged(object sender, EventArgs e)
         {
             ViewState["isFinish_CheckEMail"] = "false";
@@ -235,8 +229,12 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
+        /// <summary>
+        /// 按鈕 驗證 按下
+        /// </summary>
         protected void BT_SendCheckCodeEMail_Click(object sender, EventArgs e)
         {
+            //重置表單狀態
             ViewState["isFinish_CheckEMail"] = "false";
             IMG_EMailCheck.ImageUrl = "picture/verify_fail.png";
 
@@ -257,12 +255,13 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
-        /**
-         * 檢測未填寫或有誤的警告訊息
-         */
+        /// <summary>
+        /// 檢測未填寫或有誤的警告訊息
+        /// </summary>
+        /// <returns>填寫狀態</returns>
         private bool RegisterWarningMessageCheck()
         {
-
+            // 填寫狀態
             bool complete = true;
 
             //用戶名過長 >24
@@ -329,6 +328,9 @@ namespace ShoppingSiteWeb.shop
             return complete;
         }
 
+        /// <summary>
+        /// 按鈕 註冊 按下
+        /// </summary>
         protected void ShopRegisterButton_Click(object sender, EventArgs e)
         {
             //驗證Token
@@ -342,61 +344,26 @@ namespace ShoppingSiteWeb.shop
             if (!RegisterWarningMessageCheck())
                 return;
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_RegisterUser = new SqlDataSource();
+            /// <summary>
+            /// 暫存資料表
+            /// </summary>
+            DetailsView dv = new DetailsView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_RegisterUser.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            //新增SQL參數
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_ShopName", TB_ShopName.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_ShopEMail", TB_ShopEMail.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_ShopPhoneNum", TB_ShopPhoneNum.Text);
-            SqlDataSource_RegisterUser.SelectParameters.Add("TB_ShopAddress", TB_ShopAddress.Text);
-
-            SqlDataSource_RegisterUser.SelectParameters.Add("UserId", Session["UserId"].ToString());
-
-            //SQL指令
-            SqlDataSource_RegisterUser.SelectCommand =
-                $"INSERT INTO shopTable([shopName],[shopEMail],[shopPhoneNum],[shopAddress]) " +
-                $"SELECT " +
-                    $"@TB_ShopName, " +
-                    $"@TB_ShopEMail, " +
-                    $"@TB_ShopPhoneNum, " +
-                    $"@TB_ShopAddress " +
-                $"WHERE Not Exists(" +
-                    $"SELECT shopTable.shopName, shopTable.shopEMail " +
-                    $"FROM shopTable " +
-                    $"WHERE shopName = @TB_ShopName COLLATE SQL_Latin1_General_CP1_CS_AS " +
-                    $"OR shopEMail = @TB_ShopEMail " +
-                    $") " +
-                $"if (@@ROWCOUNT != 0) " +
-                    $"BEGIN " +
-                        $"DECLARE @shopId INT " +
-                        $"SELECT @shopId = ISNULL(successful.shopId, 0)  from(SELECT SCOPE_IDENTITY() AS shopId) successful " +
-
-                        $"INSERT INTO user_shopTable([userId], [shopId]) " +
-                        $"SELECT @UserId, @shopId " +
-                        $"WHERE Not Exists( " +
-                            $"SELECT user_shopTable.userId " +
-                            $"FROM user_shopTable " +
-                            $"WHERE userId = @UserId " +
-                        $") " +
-                    $"END " +
-                $"SELECT @@ROWCOUNT ";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_RegisterUser.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_RegisterUser.Select(new DataSourceSelectArguments());
-            DetailsView dvTable = new DetailsView();
-            //資料匯入表格
-            dvTable.DataSource = dv;
-            //更新表格
-            dvTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_RegisterUser.Dispose();
+            //調用DB 註冊商店
+            DB.connectionReader(
+                "responseShop.sql",
+                new ArrayList {
+                    new DB.Parameter("TB_ShopName",     SqlDbType.NVarChar,  TB_ShopName.Text           ),
+                    new DB.Parameter("TB_ShopEMail",    SqlDbType.NVarChar,  TB_ShopEMail.Text          ),
+                    new DB.Parameter("TB_ShopPhoneNum", SqlDbType.NVarChar,  TB_ShopPhoneNum.Text       ),
+                    new DB.Parameter("TB_ShopAddress",  SqlDbType.NVarChar,  TB_ShopAddress.Text        ),
+                    new DB.Parameter("UserId",          SqlDbType.NVarChar,  Session["UserId"].ToString())
+                },
+                (SqlDataReader ts) => {
+                    dv.DataSource = ts;
+                    dv.DataBind();
+                }
+            );
 
             //清除此頁面所有暫存資料
             ViewState.Clear();
@@ -404,20 +371,34 @@ namespace ShoppingSiteWeb.shop
             Session.Remove("Token");
 
             //判斷用戶帳號註冊成功與否
-            if (1 == dvTable.DataItemCount
-                && dvTable.Rows[0].Cells[1].Text != "0")
+            if (dv.Rows[0].Cells[1].Text == "1")
             {
-                Response.Write("<script>alert('商店註冊成功！');window.location='DashBoard.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('商店註冊成功！');" +
+                    "window.location='DashBoard.aspx';",
+                    true);
             }
             //會員註冊失敗，用戶名或信箱已被使用
-            else if (dvTable.Rows[0].Cells[1].Text == "0")
+            else if (dv.Rows[0].Cells[1].Text == "0")
             {
-                Response.Write("<script>alert('商店註冊失敗，商店名或信箱已被使用！');window.location='Register.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('商店註冊失敗，商店名或信箱已被使用！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
             }
             //表單已失效，創建新註冊表單
             else
             {
-                Response.Write("<script>alert('表單已失效，創建新商店註冊表單！');window.location='Register.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('表單已失效，創建新商店註冊表單！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
             }
         }
     }
