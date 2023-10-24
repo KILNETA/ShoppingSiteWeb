@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
@@ -12,8 +10,15 @@ using System.Web.UI.WebControls;
 
 namespace ShoppingSiteWeb.shop
 {
+    /// <summary>
+    /// 商品上架頁面
+    /// </summary>
     public partial class OnShelves : System.Web.UI.Page
     {
+
+        /// <summary>
+        /// 頁面加載
+        /// </summary>
         protected void Page_Load(object sender, EventArgs e)
         {
             //使網頁不被塊取記憶體存取 (但重整頁面仍能讀取 仍需搭配Token判斷表單是否被認證)
@@ -58,60 +63,61 @@ namespace ShoppingSiteWeb.shop
 
                 //在表單存入Token許可證
                 TB_Token.Text = Token;
-
-                //初始化各項 (只存儲於該頁面的數據) 用於判斷表單是否填寫正確
             }
         }
 
+        /// <summary>
+        /// 確認是否已存在商店
+        /// </summary>
+        /// <returns>是否已存在商店</returns>
         private bool CheakHasShop()
         {
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_CheckUserName = new SqlDataSource();
+            /// <summary>
+            /// 暫存資料表
+            /// </summary>
+            DetailsView dv = new DetailsView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_CheckUserName.ConnectionString =
-                "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
+            //調用DB 確認是否已存在商店
+            DB.connectionReader(
+                "chackHasShop.sql",
+                new ArrayList {
+                    new DB.Parameter("UserId", SqlDbType.NVarChar,  Session["UserId"].ToString())
+                },
+                (SqlDataReader ts) => {
+                    dv.DataSource = ts;
+                    dv.DataBind();
+                }
+            );
 
-            //新增SQL參數
-            SqlDataSource_CheckUserName.SelectParameters.Add("UserId", Session["UserId"].ToString());
-
-            //SQL指令 ==
-            SqlDataSource_CheckUserName.SelectCommand =
-                $"Select shopId " +
-                $"FROM user_shopTable " +
-                $"WHERE ( userId = @UserId )";
-
-            //執行SQL指令 .select() ==
-            SqlDataSource_CheckUserName.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_CheckUserName.Select(new DataSourceSelectArguments());
-            DetailsView dvTable = new DetailsView();
-
-            dvTable.DataSource = dv;
-            dvTable.DataBind();
-            //SqlDataSource元件釋放資源
-            SqlDataSource_CheckUserName.Dispose();
-
-            if (1 == dvTable.DataItemCount)
+            //是否已存在商店
+            if (dv.Rows[0].Cells[1].Text == "1")
                 return true;
             else
                 return false;
         }
 
+
+        /// <summary>
+        /// 按鈕 商品縮圖預覽 按下
+        /// </summary>
         protected void CommodityThumbnailViewButton_Click(object sender, EventArgs e)
         {
+            //圖片連結欄位是否為空
             if (TB_CommodityThumbnail.Text == String.Empty) 
             {
                 LB_ErrorMessage_CommodityThumbnail.Text = "此欄不可為空";
             }
             else
             {
+                //顯示商品縮圖於圖片控件
                 CommodityThumbnailView.ImageUrl = TB_CommodityThumbnail.Text;
                 LB_ErrorMessage_CommodityThumbnail.Text = "　";
             }
-
         }
 
+        /// <summary>
+        /// 輸入框 商品名稱 更改
+        /// </summary>
         protected void TB_CommodityName_TextChanged(object sender, EventArgs e)
         {
             if (TB_CommodityName.Text == String.Empty)
@@ -137,6 +143,9 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
+        /// <summary>
+        /// 輸入框 商品價格 更改
+        /// </summary>
         protected void TB_CommodityPrice_TextChanged(object sender, EventArgs e)
         {
             if (TB_CommodityPrice.Text == String.Empty)
@@ -167,6 +176,9 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
+        /// <summary>
+        /// 輸入框 商品數量 更改
+        /// </summary>
         protected void TB_CommodityNum_TextChanged(object sender, EventArgs e)
         {
             if (TB_CommodityNum.Text == String.Empty)
@@ -197,11 +209,13 @@ namespace ShoppingSiteWeb.shop
             }
         }
 
-        /**
-         * 檢測未填寫或有誤的警告訊息
-         */
+        /// <summary>
+        /// 檢測未填寫或有誤的警告訊息
+        /// </summary>
+        /// <returns>填寫狀態</returns>
         private bool RegisterWarningMessageCheck()
         {
+            // 填寫狀態
             bool complete = true;
 
             if (TB_CommodityName.Text == String.Empty)
@@ -303,6 +317,9 @@ namespace ShoppingSiteWeb.shop
             return complete;
         }
 
+        /// <summary>
+        /// 按鈕 商品上架 按下
+        /// </summary>
         protected void OnShelvesButton_Click(object sender, EventArgs e)
         {
             //驗證Token
@@ -316,64 +333,27 @@ namespace ShoppingSiteWeb.shop
             if (!RegisterWarningMessageCheck())
                 return;
 
-            //新建SqlDataSource元件
-            SqlDataSource SqlDataSource_OnShelves = new SqlDataSource();
+            /// <summary>
+            /// 暫存資料表
+            /// </summary>
+            DetailsView dv = new DetailsView();
 
-            //連結資料庫的連接字串 ConnectionString
-            SqlDataSource_OnShelves.ConnectionString =
-                        "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database_Main.mdf;Integrated Security=True";
-
-            SqlDataSource_OnShelves.SelectParameters.Add("UserID", Session["UserId"].ToString());
-
-            SqlDataSource_OnShelves.SelectParameters.Add("TB_CommodityName", TB_CommodityName.Text);
-            SqlDataSource_OnShelves.SelectParameters.Add("TB_CommodityPrice", TB_CommodityPrice.Text);
-            SqlDataSource_OnShelves.SelectParameters.Add("TB_CommodityNum", TB_CommodityNum.Text);
-            SqlDataSource_OnShelves.SelectParameters.Add("TB_CommodityIntroduction", TB_CommodityIntroduction.Text);
-            SqlDataSource_OnShelves.SelectParameters.Add("TB_CommodityThumbnail", TB_CommodityThumbnail.Text);
-
-            // SQL指令 ==
-            SqlDataSource_OnShelves.SelectCommand =
-                $"DECLARE @shopId INT " +
-                $"SELECT @shopId = user_shopTable.shopId " +
-                $"FROM shopTable " +
-                $"INNER JOIN user_shopTable " +
-                $"ON shopTable.shopId = user_shopTable.shopId " +
-                $"WHERE user_shopTable.userId = @UserID " +
-
-                $"INSERT INTO commodityTable([commodityName],[commodityPrice],[commodityNum],[commodityIntroduction],[commodityThumbnail]) " +
-                $"VALUES( " +
-                    $"@TB_CommodityName, " +
-                    $"@TB_CommodityPrice, " +
-                    $"@TB_CommodityNum, " +
-                    $"@TB_CommodityIntroduction, " +
-                    $"@TB_CommodityThumbnail " +
-                $") " +
-                $"DECLARE @commodityId INT " +
-                $"SELECT @commodityId = ISNULL(successful.commodityId, 0) from(SELECT SCOPE_IDENTITY() AS commodityId) successful " +
-
-                $"IF (@commodityId != 0) " +
-                    $"BEGIN " +
-                        $"INSERT INTO shop_commodityTable([commodityId], [shopId]) " +
-                        $"SELECT @commodityId, @shopId " +
-                        $"Where Not Exists( " +
-                            $"Select shop_commodityTable.commodityId " +
-                            $"From shop_commodityTable " +
-                            $"Where commodityId = @commodityId " +
-                        $") " +
-                    $"END " +
-                $"SELECT @@ROWCOUNT ";
-
-            // 執行SQL指令 .select() ==
-            SqlDataSource_OnShelves.DataSourceMode = SqlDataSourceMode.DataSet;
-            //取得查找資料
-            DataView dv = (DataView)SqlDataSource_OnShelves.Select(new DataSourceSelectArguments());
-            DetailsView dvTable = new DetailsView();
-            //資料匯入表格
-            dvTable.DataSource = dv;
-            //更新表格
-            dvTable.DataBind();
-
-            SqlDataSource_OnShelves.Dispose();
+            //調用DB 註冊商店
+            DB.connectionReader(
+                "onShelvesCommodity.sql",
+                new ArrayList {
+                    new DB.Parameter("UserID",                  SqlDbType.NVarChar,  Session["UserId"].ToString()   ),
+                    new DB.Parameter("TB_CommodityName",        SqlDbType.NVarChar,  TB_CommodityName.Text          ),
+                    new DB.Parameter("TB_CommodityPrice",       SqlDbType.NVarChar,  TB_CommodityPrice.Text         ),
+                    new DB.Parameter("TB_CommodityNum",         SqlDbType.NVarChar,  TB_CommodityNum.Text           ),
+                    new DB.Parameter("TB_CommodityIntroduction",SqlDbType.NVarChar,  TB_CommodityIntroduction.Text  ),
+                    new DB.Parameter("TB_CommodityThumbnail",   SqlDbType.NVarChar,  TB_CommodityThumbnail.Text     )
+                },
+                (SqlDataReader ts) => {
+                    dv.DataSource = ts;
+                    dv.DataBind();
+                }
+            );
 
             //清除此頁面所有暫存資料
             ViewState.Clear();
@@ -381,21 +361,34 @@ namespace ShoppingSiteWeb.shop
             Session.Remove("Token");
 
             //判斷用戶帳號註冊成功與否
-            if (1 == dvTable.DataItemCount
-                && dvTable.Rows[0].Cells[1].Text != "0")
+            if ( dv.Rows[0].Cells[1].Text == "1")
             {
-                Response.Write("<script>alert('商品上架成功！');window.location='DashBoard.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('商品上架成功！');" +
+                    "window.location='DashBoard.aspx';",
+                    true);
             }
             //會員註冊失敗，用戶名或信箱已被使用
-            else if (dvTable.Rows[0].Cells[1].Text == "0")
+            else if (dv.Rows[0].Cells[1].Text == "0")
             {
-                Response.Write("<script>alert('商品上架失敗！');window.location='OnShelves.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('商品上架失敗！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
             }
             //表單已失效，創建新註冊表單
             else
             {
-                Session["UserId"] = null;
-                Response.Write("<script>alert('表單已失效，創建新商品上架表單！');window.location='OnShelves.aspx';</script>");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(),
+                    "goBackJS",
+                    "alert('表單已失效，創建新商品上架表單！');" +
+                    "window.location.replace(window.location.href);",
+                    true);
             }
         }
     }

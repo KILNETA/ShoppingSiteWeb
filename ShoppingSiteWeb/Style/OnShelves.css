@@ -1,0 +1,136 @@
+html,body,form {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+div.Body{
+    margin: auto;
+    width: 1200px;
+    height: 100%;
+    background-position: center;
+    display: flex;
+}
+p,div{
+    font-family: 微軟正黑體;
+}
+
+div.contentBody{
+    background-image: url("../Default_Picture/login_background.jpg");
+    min-width: 1200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.HeaderBackground-Style {
+    background-color: #004469;
+    width: 100%;
+    min-width: 1200px;
+    height: 90px;
+    float: left;
+}
+
+.FooterBackground-Style {
+    background-color: #c3c8c9;
+    width: 100%;
+    min-width: 1200px;
+    height: 320px;
+    float: left;
+}
+
+.TitelBox-Style {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    padding-left: 5%;
+}
+
+.Titel-Style {
+    color: #FFF4E1;
+    font-family: 微軟正黑體;
+    font-size: 32px;
+    font-weight: bolder;
+    text-decoration:none;
+}
+
+div.RegisterBox {
+    margin: auto;
+    padding: 40px 0px;
+    background-position: center;
+}
+div.RegisterBoxContent {
+    width: 460px;
+    background-position: center;
+    background: #ffffff;
+    padding: 30px;
+    box-shadow: 0 0 5px 3px #003b3b3b;
+    display: flex;
+    flex-direction: column;
+}
+div.InputBox{
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+div.InputField{
+    display: flex;
+}
+div.FieldText{
+    margin: auto 0px;
+    font-size: 16px;
+    margin-right: 10px;
+    height: 100%;
+}
+.TextBox{
+    border: 1px solid #AAAAAA;
+    border-radius: 3px;
+    padding: 13px;
+    outline: none;
+    box-sizing: border-box; 
+    font-size: 12px;
+    flex-grow: 1;
+    resize: none;
+}
+.TextBox:hover,.TextBox:active{
+    border: 1px solid #004469;
+}
+.TextBox:focus{
+    border: 1px solid #004469;
+    box-shadow: 0 0 3px 2px #003b3b3b;
+}
+.ErrorMessage{
+    font-size: 12px; 
+    margin-top:0px; 
+    color:red
+}
+.NoticeMessage{
+    font-size: 12px; 
+    margin-top:0px; 
+    color:green
+}
+div.Button{
+    text-align: center;
+    flex-shrink: 0;
+    flex-direction: row;
+}
+.RegisterButton{
+    font-family: 微軟正黑體;
+    font-size: 16px;
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    background: #004469;
+}
+.RegisterButton:hover {
+    background: #0d5982;
+}
+.RegisterButton:active{
+    background: #3d474d;
+}
+.DropDownList{
+    text-align:center;
+    width: 82px;
+}
+.CommodityThumbnailView{
+    width: 400px;
+    height: 400px;
+    object-fit: scale-down;
+}
