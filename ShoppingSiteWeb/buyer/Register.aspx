@@ -146,9 +146,6 @@
         </div>
     </footer>
     <asp:TextBox ID="TB_Token" runat="server" Enabled="False" Visible="False"></asp:TextBox>
-    <asp:DetailsView ID="useCheckUserNameTable" runat="server" Height="50px" Width="125px" Visible="False"></asp:DetailsView>
-    <asp:DetailsView ID="useCheckEmailTable" runat="server" Height="50px" Width="125px" Visible="False"></asp:DetailsView>
-    <asp:DetailsView ID="useCheckRegisterTable" runat="server" Height="50px" Width="125px" Visible="False"></asp:DetailsView>
 </form>
 </body>
 </html>
