@@ -13,7 +13,6 @@
 -- 開始交易
 BEGIN TRANSACTION
 
-/**/
 INSERT INTO shopTable([shopName],[shopEMail],[shopPhoneNum],[shopAddress])
 SELECT
     @TB_ShopName,
