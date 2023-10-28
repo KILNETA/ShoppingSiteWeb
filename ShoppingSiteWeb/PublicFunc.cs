@@ -11,18 +11,24 @@ using Newtonsoft.Json;
 class WebConfig
 {
     /// <summary>
-    ///SQL script path
+    /// SQL script path
     /// </summary>
     public static string pathSQL = 
         @"D:\ShoppingSiteWeb\ShoppingSiteWeb\App_Data\SQL_script\";
 
     /// <summary>
-    ///MS LocalDB path
+    /// MS LocalDB path
     /// </summary>
     public static string pathDB = 
         @"Data Source=(LocalDB)\MSSQLLocalDB;" +
         @"AttachDbFilename=|DataDirectory|\Database_Main.mdf;" +
         @"Integrated Security=True";
+
+    /// <summary>
+    /// Mail Server Source Path
+    /// </summary>
+    public static string mailServerSourcePath =
+        @"D:\ShoppingSiteWeb\mailServerConfig.json";
 }
 
 /// <summary>
@@ -41,34 +47,32 @@ class DB
         ArrayList parameters,
         Action<SqlDataReader> returnFunc
     ){
-        /// <summary>
-        /// SQL Server 連線
-        /// </summary>
-        SqlConnection connection = new SqlConnection(WebConfig.pathDB);
-        /// <summary>
-        /// SQL Server 指令腳本
-        /// </summary>
-        SqlCommand readerCmd = new SqlCommand(
-            File.ReadAllText(WebConfig.pathSQL + SQL_script),
-            connection
-            );
+        // SQL Server 連線
+        using (SqlConnection connection = new SqlConnection(WebConfig.pathDB)
+        ){
+            // SQL Server 指令腳本
+            using (SqlCommand readerCmd = new SqlCommand(
+                File.ReadAllText(WebConfig.pathSQL + SQL_script),
+                connection)
+            ){
+                //導入傳遞的參數值給 readerCmd
+                foreach (Parameter element in parameters)
+                {
+                    readerCmd.Parameters.Add(
+                        element.Name,
+                        element.Type
+                    ).Value =
+                        element.Value;
+                }
 
-        //導入傳遞的參數值給 readerCmd
-        foreach (Parameter element in parameters)
-        {
-            readerCmd.Parameters.Add(
-                element.Name,
-                element.Type
-            ).Value = 
-                element.Value;
+                connection.Open();  // 資料庫 開啟連線  -----
+
+                //調用回傳函式將讀取的資料回傳
+                returnFunc(readerCmd.ExecuteReader());
+
+                connection.Close(); // 資料庫 關閉連線  -----
+            }
         }
-        
-        connection.Open();  // 資料庫 開啟連線  -----
-
-        //調用回傳函式將讀取的資料回傳
-        returnFunc(readerCmd.ExecuteReader());
-
-        connection.Close(); // 資料庫 關閉連線  -----
     }
 
     /// <summary>
